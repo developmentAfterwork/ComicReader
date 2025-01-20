@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.SettingsView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="SettingsView"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Label
+			Grid.Row="0"
+			Grid.Column="0"
+			Margin="8"
+			FontSize="Large"
+			HorizontalOptions="Center"
+			Text="Settings"
+			VerticalOptions="Center" />
+		<Grid
+			Grid.Row="1"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Backup all settings on disk"
+				VerticalOptions="Center" />
+			<Button
+				Grid.Column="1"
+				Command="{Binding WriteSettings}"
+				Text="write" />
+		</Grid>
+		<Grid
+			Grid.Row="2"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Load all settings from disk"
+				VerticalOptions="Center" />
+			<Button
+				Grid.Column="1"
+				Command="{Binding ReadSettings}"
+				Text="load" />
+		</Grid>
+	</Grid>
+</ContentPage>

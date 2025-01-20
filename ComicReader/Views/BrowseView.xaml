@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.BrowseView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:model="clr-namespace:ComicReader.Reader"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="BrowseView"
+	x:DataType="viewModel:BrowseViewModel"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<Page.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+	<StackLayout Orientation="Vertical">
+		<SearchBar
+			Margin="-14,8,-14,8"
+			Placeholder="Search in sources"
+			SearchCommand="{Binding OnSearch}"
+			Text="{Binding SearchText}" />
+		<Label Margin="8" Text="Sources" />
+		<ListView
+			Margin="8,0,8,0"
+			HasUnevenRows="True"
+			HorizontalOptions="StartAndExpand"
+			ItemsSource="{Binding AllReader}"
+			SelectionMode="None"
+			SeparatorVisibility="None"
+			VerticalOptions="Fill">
+			<ListView.Behaviors>
+				<xct:EventToCommandBehavior
+					Command="{Binding ItemSelectedCommand}"
+					EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"
+					EventName="ItemTapped" />
+			</ListView.Behaviors>
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="model:IReader">
+					<ViewCell>
+						<StackLayout Orientation="Horizontal">
+							<Ellipse
+								Margin="0,0,8,0"
+								Fill="Red"
+								HeightRequest="30"
+								HorizontalOptions="Start"
+								VerticalOptions="CenterAndExpand"
+								WidthRequest="30" />
+							<Label
+								HorizontalOptions="StartAndExpand"
+								Text="{Binding Title}"
+								VerticalOptions="CenterAndExpand" />
+							<Switch
+								HorizontalOptions="End"
+								IsToggled="{Binding IsEnabled}"
+								VerticalOptions="CenterAndExpand" />
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</StackLayout>
+</ContentPage>

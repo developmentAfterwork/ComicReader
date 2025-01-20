@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+	x:Class="ComicReader.AppShell"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:local="clr-namespace:ComicReader"
+	xmlns:view="clr-namespace:ComicReader.Views"
+	Title="ComicReader"
+	Shell.FlyoutBehavior="Disabled">
+
+	<TabBar>
+		<Tab Title="Library">
+			<ShellContent
+				Title="Home"
+				ContentTemplate="{DataTemplate view:LibraryView}"
+				Route="Library" />
+		</Tab>
+		<Tab Title="Updates">
+			<ShellContent
+				Title="Home"
+				ContentTemplate="{DataTemplate view:UpdatesView}"
+				Route="Updates" />
+		</Tab>
+		<Tab Title="Browse">
+			<ShellContent
+				Title="Home"
+				ContentTemplate="{DataTemplate view:BrowseView}"
+				Route="Browse" />
+		</Tab>
+		<Tab Title="Downloads">
+			<ShellContent
+				Title="Home"
+				ContentTemplate="{DataTemplate view:DownloadsView}"
+				Route="Downloads" />
+		</Tab>
+		<Tab Title="More">
+			<ShellContent
+				Title="Home"
+				ContentTemplate="{DataTemplate view:SettingsView}"
+				Route="More" />
+		</Tab>
+	</TabBar>
+
+</Shell>

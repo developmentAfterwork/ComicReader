@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.ReaderNewsView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="News"
+	x:DataType="viewModel:ReaderNewsViewModel"
+	Shell.NavBarIsVisible="True"
+	Shell.TabBarIsVisible="False">
+	<Page.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+	<Grid>
+		<ActivityIndicator
+			HeightRequest="70"
+			HorizontalOptions="Center"
+			IsRunning="{Binding IsLoading}"
+			IsVisible="{Binding IsLoading}"
+			VerticalOptions="Center"
+			Color="Orange" />
+		<ListView
+			Margin="8,0,8,0"
+			HasUnevenRows="True"
+			HorizontalOptions="StartAndExpand"
+			IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+			ItemsSource="{Binding LoadResult}"
+			SelectionMode="None"
+			SeparatorVisibility="None"
+			VerticalOptions="FillAndExpand">
+			<ListView.Behaviors>
+				<xct:EventToCommandBehavior
+					Command="{Binding ItemSelectedCommand}"
+					EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"
+					EventName="ItemTapped" />
+			</ListView.Behaviors>
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="inter:IManga">
+					<ViewCell>
+						<StackLayout
+							Margin="8"
+							HorizontalOptions="StartAndExpand"
+							Orientation="Horizontal"
+							VerticalOptions="StartAndExpand">
+							<Image
+								Margin="0,0,8,0"
+								Source="{Binding CoverUrl}"
+								WidthRequest="100" />
+							<StackLayout Orientation="Vertical">
+								<Label
+									FontAttributes="Bold"
+									FontSize="14"
+									Text="{Binding Name}" />
+								<Label
+									FontAttributes="Italic"
+									HorizontalOptions="StartAndExpand"
+									MaxLines="1"
+									MaximumWidthRequest="285"
+									Text="{Binding Source}"
+									VerticalOptions="Start" />
+								<Label
+									HorizontalOptions="StartAndExpand"
+									MaxLines="10"
+									MaximumWidthRequest="285"
+									Text="{Binding HomeUrl}"
+									VerticalOptions="StartAndExpand" />
+							</StackLayout>
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</Grid>
+</ContentPage>

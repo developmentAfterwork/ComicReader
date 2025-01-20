@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.UpdatesView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:i="clr-namespace:ComicReader.Views.Models"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="UpdatesView"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<Page.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+			<converters:CachedImageConverter x:Key="CachedImageConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="48" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<HorizontalStackLayout
+			Grid.Row="0"
+			Grid.Column="0"
+			Margin="4">
+			<Button
+				Command="{Binding SearchForUpdatesCommand}"
+				IsEnabled="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+				Text="Search for Updates" />
+			<ActivityIndicator
+				IsEnabled="{Binding IsSearching}"
+				IsRunning="{Binding IsSearching}"
+				IsVisible="{Binding IsSearching}"
+				Color="Orange" />
+		</HorizontalStackLayout>
+		<VerticalStackLayout
+			Grid.Row="1"
+			Grid.Column="0"
+			HorizontalOptions="CenterAndExpand"
+			IsVisible="{Binding HasChapters, Converter={StaticResource InvertedBoolConverter}}"
+			VerticalOptions="CenterAndExpand">
+			<Label
+				FontAttributes="Bold"
+				FontSize="48"
+				Text="∑(ಠ_ಠ)" />
+			<Label
+				HorizontalOptions="CenterAndExpand"
+				Text="Keine Änderungen"
+				VerticalOptions="CenterAndExpand" />
+		</VerticalStackLayout>
+		<ListView
+			Grid.Row="1"
+			Grid.Column="0"
+			Margin="0,0,8,0"
+			HasUnevenRows="True"
+			HorizontalOptions="StartAndExpand"
+			IsVisible="{Binding HasChapters}"
+			ItemsSource="{Binding NewChapters}"
+			SelectionMode="None"
+			SeparatorVisibility="None"
+			VerticalOptions="FillAndExpand">
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="i:MangaChapterViewModel">
+					<ViewCell>
+						<StackLayout
+							Margin="8"
+							HorizontalOptions="StartAndExpand"
+							Orientation="Horizontal"
+							VerticalOptions="StartAndExpand">
+							<Image
+								Grid.Column="0"
+								Margin="0,0,8,0"
+								Source="{Binding Manga.CoverUrl, Converter={StaticResource CachedImageConverter}}"
+								WidthRequest="50" />
+							<StackLayout Orientation="Vertical">
+								<Label
+									FontAttributes="Bold"
+									FontSize="14"
+									Text="{Binding Chapter.MangaName}" />
+								<Label
+									HorizontalOptions="StartAndExpand"
+									MaxLines="10"
+									MaximumWidthRequest="285"
+									Text="{Binding Chapter.Title}"
+									VerticalOptions="StartAndExpand" />
+								<Label
+									FontAttributes="Bold"
+									FontSize="14"
+									Text="{Binding Chapter.LastUpdate}" />
+							</StackLayout>
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</Grid>
+</ContentPage>

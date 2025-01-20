@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.ReadChapterView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:CarouselView.Abstractions;assembly=CarouselView.Maui"
+	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:pin="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="The Gamer"
+	Shell.NavBarIsVisible="True"
+	Shell.TabBarIsVisible="False">
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<converters:CachedImageConverter x:Key="CachedImageConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	<Shell.TitleView>
+		<StackLayout Orientation="Horizontal">
+			<StackLayout
+				Padding="4"
+				HorizontalOptions="EndAndExpand"
+				Orientation="Horizontal"
+				VerticalOptions="CenterAndExpand">
+				<Label Text="Swiping" VerticalOptions="Center" />
+				<Switch x:Name="Toogle" IsToggled="{Binding AllowSwipe}" />
+			</StackLayout>
+		</StackLayout>
+	</Shell.TitleView>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<controls:CarouselViewControl
+			x:Name="pagesCarusel"
+			Grid.Row="0"
+			Grid.Column="0"
+			HorizontalOptions="FillAndExpand"
+			IsSwipeEnabled="{Binding AllowSwipe}"
+			ItemsSource="{Binding Pages}"
+			SelectedItem="{Binding SelectedItem}">
+			<controls:CarouselViewControl.ItemTemplate>
+				<DataTemplate>
+					<ScrollView>
+						<pin:PinchToZoomContainer HorizontalOptions="FillAndExpand">
+							<pin:PinchToZoomContainer.Content>
+								<Image Aspect="AspectFit" Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
+							</pin:PinchToZoomContainer.Content>
+						</pin:PinchToZoomContainer>
+					</ScrollView>
+				</DataTemplate>
+			</controls:CarouselViewControl.ItemTemplate>
+		</controls:CarouselViewControl>
+		<ActivityIndicator
+			Grid.Row="0"
+			Grid.Column="0"
+			IsEnabled="{Binding IsLoading}"
+			IsRunning="{Binding IsLoading}"
+			IsVisible="{Binding IsLoading}"
+			Color="Orange" />
+		<Frame
+			Grid.Row="0"
+			Grid.Column="0"
+			Margin="12"
+			Padding="8"
+			Background="#B0000000"
+			BorderColor="Transparent"
+			HorizontalOptions="Center"
+			VerticalOptions="End">
+			<Label
+				x:Name="currentPageLabel"
+				FontAttributes="Bold"
+				FontSize="12"
+				HorizontalOptions="Center"
+				Text="{Binding Position}"
+				VerticalOptions="Center" />
+		</Frame>
+	</Grid>
+</ContentPage>

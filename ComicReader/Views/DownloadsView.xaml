@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.DownloadsView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:queue="clr-namespace:ComicReader.Services.Queue"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="DownloadsView"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<Page.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="80" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Button
+			Grid.Row="0"
+			Margin="8"
+			Command="{Binding StartQueueCommand}"
+			HorizontalOptions="Start"
+			IsEnabled="{Binding IsDownloading, Converter={StaticResource InvertedBoolConverter}}"
+			Text="Start"
+			WidthRequest="70" />
+		<ActivityIndicator
+			Grid.Row="0"
+			Grid.Column="1"
+			Margin="8"
+			HorizontalOptions="Start"
+			IsEnabled="{Binding IsDownloading}"
+			IsRunning="{Binding IsDownloading}"
+			IsVisible="{Binding IsDownloading}"
+			Color="Orange" />
+		<ListView
+			Grid.Row="1"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Margin="0,0,8,0"
+			HasUnevenRows="True"
+			HorizontalOptions="StartAndExpand"
+			ItemsSource="{Binding ChaptersToDownload}"
+			SelectionMode="None"
+			SeparatorVisibility="None"
+			VerticalOptions="FillAndExpand">
+			<ListView.Behaviors>
+				<xct:EventToCommandBehavior EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}" EventName="ItemTapped" />
+			</ListView.Behaviors>
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="queue:ChapterPageSources">
+					<ViewCell>
+						<StackLayout
+							Margin="8"
+							HorizontalOptions="StartAndExpand"
+							Orientation="Horizontal"
+							VerticalOptions="StartAndExpand">
+							<Frame
+								Margin="0,0,4,0"
+								BackgroundColor="Orange"
+								WidthRequest="50" />
+							<StackLayout Orientation="Vertical">
+								<Label
+									FontAttributes="Bold"
+									FontSize="14"
+									Text="{Binding MangaName}" />
+								<Label
+									HorizontalOptions="StartAndExpand"
+									MaxLines="10"
+									MaximumWidthRequest="285"
+									Text="{Binding Title}"
+									VerticalOptions="StartAndExpand" />
+							</StackLayout>
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+		<VerticalStackLayout
+			Grid.Row="1"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			HorizontalOptions="CenterAndExpand"
+			IsVisible="{Binding HasNoEntries}"
+			VerticalOptions="CenterAndExpand">
+			<Label
+				FontAttributes="Bold"
+				FontSize="48"
+				Text="∑(ಠ_ಠ)" />
+			<Label
+				HorizontalOptions="CenterAndExpand"
+				Text="Keine Downloads"
+				VerticalOptions="CenterAndExpand" />
+		</VerticalStackLayout>
+	</Grid>
+</ContentPage>

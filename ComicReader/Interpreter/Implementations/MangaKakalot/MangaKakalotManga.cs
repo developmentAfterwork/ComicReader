@@ -1,0 +1,85 @@
+﻿using ComicReader.Helper;
+
+namespace ComicReader.Interpreter.Implementations
+{
+	internal record MangaKakalotManga : IManga
+	{
+		public static readonly string SourceKey = "MangaKakalot";
+
+		private readonly RequestHelper requestHelper;
+		private readonly HtmlHelper htmlHelper;
+
+		public string Name { get; }
+
+		public string HomeUrl { get; }
+
+		public string CoverUrl { get; }
+
+		public string Autor { get; }
+
+		public string Status { get; }
+
+		public string LanguageFlagUrl { get; }
+
+		public string Description { get; }
+
+		public List<string> Genres { get; }
+
+		public string Source => MangaKakalotManga.SourceKey;
+
+		public MangaKakalotManga(
+			string name,
+			string homeUrl,
+			string coverUrl,
+			string autor,
+			string status,
+			string languageFlagUrl,
+			string description,
+			List<string> genres,
+			RequestHelper requestHelper,
+			HtmlHelper htmlHelper)
+		{
+			Name = name;
+			HomeUrl = homeUrl;
+			CoverUrl = coverUrl;
+
+			this.requestHelper = requestHelper;
+			this.htmlHelper = htmlHelper;
+
+			Autor = autor;
+			Status = status;
+			LanguageFlagUrl = languageFlagUrl;
+			Description = description;
+			Genres = genres;
+		}
+
+		public async Task<List<IChapter>> GetBooks()
+		{
+			var response = await requestHelper.DoGetRequest(HomeUrl, 3);
+
+			var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").First();
+
+			var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "a-h");
+
+			var chapters = new List<IChapter>();
+			for (int i = 0; i < allChapterHtmls.Count; i++) {
+				var chapterHtml = allChapterHtmls[i];
+
+				chapters.Add(ParseChapter(chapterHtml));
+			}
+
+			chapters.Reverse();
+
+			return chapters;
+		}
+
+		private MangaKakalotChapter ParseChapter(string html)
+		{
+			var url = htmlHelper.GetAttribute(html, "href");
+			var time = htmlHelper.ElementsByClass(html, "chapter-time").First();
+			var title = htmlHelper.ElementsByClass(html, "chapter-name").First();
+
+			return new MangaKakalotChapter(title, url, time, Name, Source, requestHelper, htmlHelper);
+		}
+	}
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.LibraryView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	Title="LibraryView"
+	x:DataType="viewModel:LibraryViewModel"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<converters:CachedImageConverter x:Key="CachedImageConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	<Grid HorizontalOptions="StartAndExpand">
+		<ScrollView>
+			<FlexLayout
+				BindableLayout.ItemsSource="{Binding BookmarkedMangas}"
+				Direction="Row"
+				HorizontalOptions="Center"
+				JustifyContent="Start"
+				VerticalOptions="Start"
+				Wrap="Wrap">
+				<BindableLayout.ItemTemplate>
+					<DataTemplate x:DataType="viewModel:MangaViewModel">
+						<Image
+							Margin="4,4,0,0"
+							HeightRequest="245"
+							Source="{Binding CoverUrl, Converter={StaticResource CachedImageConverter}}">
+							<Image.GestureRecognizers>
+								<TapGestureRecognizer Command="{Binding MangeSelected}" />
+							</Image.GestureRecognizers>
+						</Image>
+					</DataTemplate>
+				</BindableLayout.ItemTemplate>
+			</FlexLayout>
+		</ScrollView>
+	</Grid>
+</ContentPage>
