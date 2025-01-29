@@ -1,4 +1,5 @@
-﻿using ComicReader.Helper;
+﻿using Android.Text;
+using ComicReader.Helper;
 
 namespace ComicReader.Interpreter.Implementations
 {
@@ -57,7 +58,11 @@ namespace ComicReader.Interpreter.Implementations
 		{
 			var response = await requestHelper.DoGetRequest(HomeUrl, 3);
 
-			var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").First();
+			var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").FirstOrDefault();
+
+			if (chaptersHtml is null) {
+				return GetAlternative(response);
+			}
 
 			var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "a-h");
 
@@ -80,6 +85,31 @@ namespace ComicReader.Interpreter.Implementations
 			var title = htmlHelper.ElementsByClass(html, "chapter-name").First();
 
 			return new MangaKakalotChapter(title, url, time, Name, Source, requestHelper, htmlHelper);
+		}
+
+		private List<IChapter> GetAlternative(string? response)
+		{
+			var chaptersHtml = htmlHelper.ElementsByClass(response, "chapter-list").FirstOrDefault();
+
+			if (chaptersHtml is null) {
+				return new List<IChapter>();
+			}
+
+			var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "row");
+
+			var chapters = new List<IChapter>();
+			for (int i = 0; i < allChapterHtmls.Count; i++) {
+				var chapterHtml = allChapterHtmls[i];
+				var a = htmlHelper.ElementByType(chapterHtml, "span");
+				var url = htmlHelper.GetAttribute(a, "href");
+				var title = htmlHelper.ElementByType(chapterHtml, "a");
+
+				chapters.Add(new MangaKakalotChapter(title, url, "...", Name, Source, requestHelper, htmlHelper));
+			}
+
+			chapters.Reverse();
+
+			return chapters;
 		}
 	}
 }
