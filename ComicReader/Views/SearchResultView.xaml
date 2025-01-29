@@ -62,10 +62,13 @@
 									Text="{Binding Source}"
 									VerticalOptions="Start" />
 								<Label
+									FontSize="12"
 									HorizontalOptions="StartAndExpand"
-									MaxLines="10"
-									MaximumWidthRequest="285"
-									Text="{Binding HomeUrl}"
+									LineBreakMode="TailTruncation"
+									MaxLines="6"
+									MaximumHeightRequest="100"
+									MaximumWidthRequest="255"
+									Text="{Binding Description}"
 									VerticalOptions="StartAndExpand" />
 							</StackLayout>
 						</StackLayout>

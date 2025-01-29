@@ -96,7 +96,7 @@
 				<Label
 					FontSize="12"
 					LineBreakMode="TailTruncation"
-					MaxLines="4"
+					MaxLines="6"
 					Text="{Binding Description}" />
 			</StackLayout>
 			<ScrollView

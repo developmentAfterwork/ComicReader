@@ -58,7 +58,7 @@ namespace ComicReader.Reader
 			var autor = "unknown";
 			var status = "completed";
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
-			var desc = "...";
+			var desc = HtmlHelper.ElementsByClass(mangaToParse, "summary").FirstOrDefault() ?? "...";
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
 			return new MangaKatanaManga(title, homeUrl, preViewImage, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
