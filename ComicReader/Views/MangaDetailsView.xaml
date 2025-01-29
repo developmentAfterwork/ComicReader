@@ -93,11 +93,13 @@
 					FontAttributes="Bold"
 					FontSize="16"
 					Text="About this manga" />
-				<Label
-					FontSize="12"
-					LineBreakMode="TailTruncation"
-					MaxLines="6"
-					Text="{Binding Description}" />
+				<ScrollView MaximumHeightRequest="100">
+					<Label
+						FontSize="12"
+						LineBreakMode="TailTruncation"
+						MaxLines="20"
+						Text="{Binding Description}" />
+				</ScrollView>
 			</StackLayout>
 			<ScrollView
 				Margin="8,0,0,0"
