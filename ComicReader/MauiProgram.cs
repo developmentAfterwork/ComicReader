@@ -51,6 +51,9 @@ namespace ComicReader
 			builder.Logging.AddDebug();
 #endif
 
+			builder.Services.AddSingleton<IWindowCreator, WindowCreator>();
+			builder.Services.AddTransient<AppShell>();
+
 			AddServices(builder);
 			AddViewModels(builder);
 			AddViews(builder);
