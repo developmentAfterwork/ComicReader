@@ -61,7 +61,13 @@ namespace ComicReader.Interpreter.Implementations
 			var desc = (HtmlHelper.ElementsByType(mangaToParse, "p").FirstOrDefault() ?? "...").TrimStart();
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
+			desc = FixDescription(desc);
 			return new MangaKakalotManga(title, homeUrl, prevImageUrl, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
+		}
+
+		private string FixDescription(string desc)
+		{
+			return desc.Replace("<br>", "").Replace("<b>", "").Replace("</b>", "").Replace("<i>", "").Replace("</i>", "").Replace("&quot;", "").Replace("&#8230;", "").Replace("&#8220;", "").Replace("&#8217;", "").Replace("&#8221;", "").Replace("&#8213;", "").Replace("&#333;;", "");
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
