@@ -7,6 +7,7 @@ using ComicReader.Helper;
 using System.Collections.ObjectModel;
 using CsQuery.ExtensionMethods.Internal;
 using ComicReader.Views.Models;
+using ComicReader.Services.Queue;
 
 namespace ComicReader.ViewModels
 {
@@ -20,6 +21,7 @@ namespace ComicReader.ViewModels
 		private readonly SettingsService settingsService;
 		private readonly Factory mangaFactory;
 		private readonly SimpleNotificationService simpleNotificationService;
+		private readonly MangaQueue mangaQueue;
 
 		[ObservableProperty]
 		private ObservableCollection<MangaChapterViewModel> _newChapters = new ObservableCollection<MangaChapterViewModel>();
@@ -27,12 +29,13 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _HasChapters = false;
 
-		public UpdateViewModel(SettingsService settingsService, Factory mangaFactory, SimpleNotificationService simpleNotificationService)
+		public UpdateViewModel(SettingsService settingsService, Factory mangaFactory, SimpleNotificationService simpleNotificationService, MangaQueue mangaQueue)
 		{
 			SearchForUpdatesCommand = new AsyncRelayCommand(OnSearchingForUpdates);
 			this.settingsService = settingsService;
 			this.mangaFactory = mangaFactory;
 			this.simpleNotificationService = simpleNotificationService;
+			this.mangaQueue = mangaQueue;
 		}
 
 		private async Task OnSearchingForUpdates()
@@ -70,6 +73,10 @@ namespace ComicReader.ViewModels
 			NewChapters.Clear();
 			NewChapters.AddRange(chaptersForUpdate);
 			HasChapters = NewChapters.Any();
+
+			foreach (var chapter in NewChapters) {
+				await mangaQueue.AddChapter(chapter.Chapter);
+			}
 
 			IsSearching = false;
 		}
