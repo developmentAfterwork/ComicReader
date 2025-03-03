@@ -21,5 +21,7 @@
 		Task<List<IChapter>> GetBooks();
 
 		List<string> Genres { get; }
+
+		Dictionary<string, string>? RequestHeaders { get; }
 	}
 }

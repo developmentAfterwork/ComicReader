@@ -26,6 +26,8 @@ namespace ComicReader.Interpreter
 
 		public string Source { get; set; } = string.Empty;
 
+		public Dictionary<string, string>? RequestHeaders => null;
+
 		public Task<List<IChapter>> GetBooks()
 		{
 			return Task.FromResult(Books.Cast<IChapter>().ToList());

@@ -62,7 +62,7 @@ namespace ComicReader.Converter
 			return value;
 		}
 
-		private string CheckAndGetPathFromUrl(string url)
+		public static string CheckAndGetPathFromUrl(string url)
 		{
 			var path = url.Replace("https://", "");
 			var pathSplit = path.Split('/').ToList();

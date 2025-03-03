@@ -12,7 +12,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public bool IsEnabled { get; set; } = true;
 
-		public string HomeUrl => "https://mangakakalot.com/";
+		public string HomeUrl => "https://mangakakalot.gg/";
 
 		public MangaKakalotReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
 		{
@@ -23,7 +23,7 @@ namespace ComicReader.Interpreter.Implementations
 		public async Task<List<IManga>> Search(string keyWords)
 		{
 			var text = keyWords.Replace(" ", "_");
-			var url = $"https://mangakakalot.com/search/story/{text}";
+			var url = $"https://mangakakalot.gg/search/story/{text}";
 			var response = await RequestHelper.DoGetRequest(url, 3);
 
 			var mangas = GetMangasFromResponse(response);
@@ -66,7 +66,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
 		{
-			string url = "https://mangakakalot.com/manga_list?type=latest&category=all&state=all&page=1";
+			string url = "https://www.mangakakalot.gg/manga-list/new-manga";
 
 			var response = await RequestHelper.DoGetRequest(url, 3);
 

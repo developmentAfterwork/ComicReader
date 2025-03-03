@@ -28,6 +28,10 @@ namespace ComicReader.Interpreter.Implementations
 
 		public string Source => MangaKakalotManga.SourceKey;
 
+		public Dictionary<string, string>? RequestHeaders => new() {
+			{ "referer", "https://www.mangakakalot.gg/" }
+		};
+
 		public MangaKakalotManga(
 			string name,
 			string homeUrl,

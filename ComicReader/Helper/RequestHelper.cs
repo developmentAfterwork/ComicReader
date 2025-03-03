@@ -1,4 +1,5 @@
 ﻿using ComicReader.Services;
+using SkiaSharp;
 
 namespace ComicReader.Helper
 {
@@ -52,8 +53,38 @@ namespace ComicReader.Helper
 					await Task.Delay(500);
 				}
 			}
+		}
 
-			throw new NotImplementedException();
+		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null)
+		{
+			if (url == "") {
+				return await Task.FromResult<MemoryStream?>(null);
+			}
+
+			for (int i = 0; i < 3; i++) {
+				try {
+
+					if (header is not null) {
+						_httpClient.DefaultRequestHeaders.Clear();
+						foreach (var pair in header) {
+							_httpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
+						}
+					}
+
+					CancellationToken token = new CancellationToken();
+					using (var stream = await _httpClient.GetStreamAsync(url, token).ConfigureAwait(false)) {
+						var memorySteam = new MemoryStream();
+						stream.CopyTo(memorySteam);
+						memorySteam.Position = 0;
+
+						return memorySteam;
+					}
+				} catch (Exception ex) {
+					await Task.Delay(500);
+				}
+			}
+
+			return await Task.FromResult<MemoryStream?>(null);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using ComicReader.Interpreter;
 using ComicReader.Reader;
 using ComicReader.Services;
+using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
@@ -15,7 +16,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IManga> _LoadResult = new ObservableCollection<IManga>();
+		private ObservableCollection<IMangaModel> _LoadResult = new ObservableCollection<IMangaModel>();
 
 		[ObservableProperty]
 		private bool _IsLoading = true;
@@ -40,8 +41,13 @@ namespace ComicReader.ViewModels
 				_ = Task.Run(async () => {
 					var mangas = await activeReaders.LoadUpdatesAndNewMangs();
 
+					List<IMangaModel> mangaModels = new List<IMangaModel>();
+					foreach (var manga in mangas) {
+						mangaModels.Add(await IMangaModel.Create(manga, manga.RequestHeaders));
+					}
+
 					LoadResult.Clear();
-					LoadResult.AddRange(mangas);
+					LoadResult.AddRange(mangaModels);
 
 					IsLoading = false;
 				});
@@ -50,10 +56,10 @@ namespace ComicReader.ViewModels
 
 		public async Task MangaSelected(object? mangaObj)
 		{
-			IManga? manga = mangaObj as IManga;
+			IMangaModel? manga = mangaObj as IMangaModel;
 
 			if (manga != null) {
-				inMemoryDatabase.Set<IManga>("selectedManga", manga);
+				inMemoryDatabase.Set<IManga>("selectedManga", manga.Manga);
 
 				await navigation.GoToMangaDetails();
 			}

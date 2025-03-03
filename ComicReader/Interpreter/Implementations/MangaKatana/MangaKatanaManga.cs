@@ -27,6 +27,8 @@ namespace ComicReader.Interpreter
 
 		public string Source => MangaKatanaManga.SourceKey;
 
+		public Dictionary<string, string>? RequestHeaders => null;
+
 		public MangaKatanaManga(
 			string name,
 			string homeUrl,

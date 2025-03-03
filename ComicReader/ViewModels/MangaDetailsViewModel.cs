@@ -1,4 +1,5 @@
-﻿using ComicReader.Helper;
+﻿using ComicReader.Converter;
+using ComicReader.Helper;
 using ComicReader.Interpreter;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
@@ -7,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using static Android.Graphics.ColorSpace;
 
 namespace ComicReader.ViewModels
 {
@@ -19,6 +21,7 @@ namespace ComicReader.ViewModels
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly FileSaverService fileSaverService;
 		private readonly Factory factory;
+		private readonly RequestHelper requestHelper;
 		[ObservableProperty]
 		private ObservableCollection<IChapter> _Chapters = new ObservableCollection<IChapter>();
 
@@ -61,7 +64,10 @@ namespace ComicReader.ViewModels
 
 		private Task _initTask;
 
-		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory)
+		[ObservableProperty]
+		public ImageSource _coverUrlImageSource;
+
+		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, RequestHelper requestHelper)
 		{
 			inMemoryDatabase = database;
 			this.navigation = navigation;
@@ -70,6 +76,8 @@ namespace ComicReader.ViewModels
 			this.simpleNotificationService = simpleNotificationService;
 			this.fileSaverService = fileSaverService;
 			this.factory = factory;
+			this.requestHelper = requestHelper;
+
 			ItemSelectedCommand = new AsyncRelayCommand<object>(ChapterSelected);
 			BookmarkManga = new AsyncRelayCommand(AddBookmarkManga);
 			DownloadMissingManga = new AsyncRelayCommand(OnDownloadMissingManga);
@@ -121,6 +129,16 @@ namespace ComicReader.ViewModels
 			Genres.Clear();
 			Genres.AddRange(manga.Genres);
 
+			string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
+			if (File.Exists(pathWithFile)) {
+				CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
+			} else {
+				var mem = await (new RequestHelper()).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
+				if (mem != null) {
+					CoverUrlImageSource = ImageSource.FromStream(() => mem);
+				}
+			}
+
 			IsSearching = false;
 		}
 
@@ -138,7 +156,13 @@ namespace ComicReader.ViewModels
 		{
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 			settingsService.BookmarkManga(manga);
+
 			await manga.Save();
+
+			string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
+			if (!File.Exists(pathWithFile)) {
+				await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
+			}
 		}
 
 		public async Task OnDownloadMissingManga()
