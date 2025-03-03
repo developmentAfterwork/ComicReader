@@ -73,13 +73,17 @@ namespace ComicReader.Reader
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
 		{
-			string url = "https://mangakatana.com/latest";
+			List<IManga> l = new List<IManga>();
 
+			string url = "https://mangakatana.com/new-manga";
 			var response = await RequestHelper.DoGetRequest(url, 3);
+			l.AddRange(GetMangasFromResponse(response));
 
-			var mangas = GetMangasFromResponse(response);
+			url = "https://mangakatana.com/latest";
+			response = await RequestHelper.DoGetRequest(url, 3);
+			l.AddRange(GetMangasFromResponse(response));
 
-			return mangas;
+			return l;
 		}
 	}
 }

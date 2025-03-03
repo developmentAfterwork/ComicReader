@@ -72,8 +72,21 @@ namespace ComicReader.Interpreter.Implementations
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
 		{
-			string url = "https://www.mangakakalot.gg/manga-list/new-manga";
+			List<IManga> l = new List<IManga>();
 
+			string url = "https://www.mangakakalot.gg/manga-list/new-manga";
+			List<IManga> mangas = await GetMangasFromResponseUpdate(url);
+			l.AddRange(mangas);
+
+			url = "https://www.mangakakalot.gg/manga-list/latest-manga";
+			mangas = await GetMangasFromResponseUpdate(url);
+			l.AddRange(mangas);
+
+			return l;
+		}
+
+		private async Task<List<IManga>> GetMangasFromResponseUpdate(string url)
+		{
 			var response = await RequestHelper.DoGetRequest(url, 3);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
