@@ -14,6 +14,10 @@ namespace ComicReader.Interpreter.Implementations
 
 		public string HomeUrl => "https://mangakakalot.gg/";
 
+		public Dictionary<string, string>? RequestHeaders => new() {
+			{ "referer", "https://www.mangakakalot.gg/" }
+		};
+
 		public MangaKakalotReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
 		{
 			RequestHelper = requestHelper;
@@ -24,7 +28,7 @@ namespace ComicReader.Interpreter.Implementations
 		{
 			var text = keyWords.Replace(" ", "_");
 			var url = $"https://mangakakalot.gg/search/story/{text}";
-			var response = await RequestHelper.DoGetRequest(url, 3);
+			var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
 
 			var mangas = GetMangasFromResponse(response);
 
@@ -52,7 +56,8 @@ namespace ComicReader.Interpreter.Implementations
 			var prevImageUrl = HtmlHelper.GetAttribute(prevImage, "src");
 			var homeUrl = HtmlHelper.GetAttribute(mangaToParse, "href");
 
-			var title = HtmlHelper.GetAttribute(prevImage, "alt");
+			var titleElement = HtmlHelper.ElementsByClass(mangaToParse, "story_name").FirstOrDefault() ?? "";
+			var title = HtmlHelper.ElementByType(titleElement, "a");
 
 			var autor = "unknown";
 			var status = "completed";
@@ -62,6 +67,7 @@ namespace ComicReader.Interpreter.Implementations
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
 			desc = FixDescription(desc);
+			title = FixDescription(title);
 			return new MangaKakalotManga(title, homeUrl, prevImageUrl, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
 		}
 
@@ -87,7 +93,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private async Task<List<IManga>> GetMangasFromResponseUpdate(string url)
 		{
-			var response = await RequestHelper.DoGetRequest(url, 3);
+			var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");

@@ -9,10 +9,17 @@ namespace ComicReader.Helper
 
 		private HttpClient _httpClient = new HttpClient();
 
-		public async Task<string> DoGetRequest(string url, int repeatCount)
+		public async Task<string> DoGetRequest(string url, int repeatCount, Dictionary<string, string>? header = null)
 		{
 			for (int i = 0; i < repeatCount; i++) {
 				try {
+					if (header is not null) {
+						_httpClient.DefaultRequestHeaders.Clear();
+						foreach (var pair in header) {
+							_httpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
+						}
+					}
+
 					using (var response = await _httpClient.GetAsync(url)) {
 						var text = await response.Content.ReadAsStringAsync();
 

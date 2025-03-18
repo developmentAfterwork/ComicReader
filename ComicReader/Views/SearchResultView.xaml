@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:models="clr-namespace:ComicReader.ViewModels.Model"
 	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="Search"
@@ -38,7 +39,7 @@
 					EventName="ItemTapped" />
 			</ListView.Behaviors>
 			<ListView.ItemTemplate>
-				<DataTemplate x:DataType="inter:IManga">
+				<DataTemplate x:DataType="models:IMangaModel">
 					<ViewCell>
 						<StackLayout
 							Margin="8"
@@ -47,7 +48,7 @@
 							VerticalOptions="StartAndExpand">
 							<Image
 								Margin="0,0,8,0"
-								Source="{Binding CoverUrl}"
+								Source="{Binding SourcCoverUrlSource}"
 								WidthRequest="100" />
 							<StackLayout Orientation="Vertical">
 								<Label

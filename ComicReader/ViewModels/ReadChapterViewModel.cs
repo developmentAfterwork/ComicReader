@@ -14,6 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
+
 		[ObservableProperty]
 		private ObservableCollection<string> _Pages = new ObservableCollection<string>();
 

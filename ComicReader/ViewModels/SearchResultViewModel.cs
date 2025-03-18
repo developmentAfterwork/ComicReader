@@ -1,6 +1,7 @@
 ﻿using ComicReader.Interpreter;
 using ComicReader.Reader;
 using ComicReader.Services;
+using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
@@ -15,7 +16,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IManga> _SearchResult = new ObservableCollection<IManga>();
+		private ObservableCollection<IMangaModel> _SearchResult = new ObservableCollection<IMangaModel>();
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -55,8 +56,13 @@ namespace ComicReader.ViewModels
 
 				var searchResults = searchTasks.ToDictionary(a => a.Key, a => a.Value.Result);
 
+				List<IMangaModel> mangaModels = new List<IMangaModel>();
+				foreach (var manga in searchResults.Values.SelectMany(s => s)) {
+					mangaModels.Add(await IMangaModel.Create(manga, manga.RequestHeaders));
+				}
+
 				SearchResult.Clear();
-				SearchResult.AddRange(searchResults.Values.SelectMany(t => t));
+				SearchResult.AddRange(mangaModels);
 
 				IsSearching = false;
 			});
