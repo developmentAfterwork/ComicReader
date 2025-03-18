@@ -57,7 +57,12 @@ namespace ComicReader.Interpreter.Implementations
 			var homeUrl = HtmlHelper.GetAttribute(mangaToParse, "href");
 
 			var titleElement = HtmlHelper.ElementsByClass(mangaToParse, "story_name").FirstOrDefault() ?? "";
-			var title = HtmlHelper.ElementByType(titleElement, "a");
+			string title;
+			if (titleElement == "") {
+				title = HtmlHelper.GetAttribute(mangaToParse, "title");
+			} else {
+				title = HtmlHelper.ElementByType(titleElement, "a");
+			}
 
 			var autor = "unknown";
 			var status = "completed";
@@ -81,12 +86,18 @@ namespace ComicReader.Interpreter.Implementations
 			List<IManga> l = new List<IManga>();
 
 			string url = "https://www.mangakakalot.gg/manga-list/new-manga";
-			List<IManga> mangas = await GetMangasFromResponseUpdate(url);
-			l.AddRange(mangas);
+			try {
+				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
+				l.AddRange(mangas);
+			} catch (Exception ex) {
 
-			url = "https://www.mangakakalot.gg/manga-list/latest-manga";
-			mangas = await GetMangasFromResponseUpdate(url);
-			l.AddRange(mangas);
+			}
+
+			try {
+				url = "https://www.mangakakalot.gg/manga-list/latest-manga";
+				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
+				l.AddRange(mangas);
+			} catch { }
 
 			return l;
 		}
