@@ -5,6 +5,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:controls="clr-namespace:CarouselView.Abstractions;assembly=CarouselView.Maui"
 	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
 	xmlns:pin="clr-namespace:ComicReader.Controls;assembly=ComicReader"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -49,7 +50,10 @@
 					<ScrollView>
 						<pin:PinchToZoomContainer HorizontalOptions="FillAndExpand">
 							<pin:PinchToZoomContainer.Content>
-								<Image  Aspect="AspectFit" Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
+								<ffimageloading:CachedImage
+									Aspect="AspectFit"
+									DownsampleToViewSize="True"
+									Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
 							</pin:PinchToZoomContainer.Content>
 						</pin:PinchToZoomContainer>
 					</ScrollView>

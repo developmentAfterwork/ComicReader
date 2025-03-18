@@ -8,6 +8,7 @@ using ComicReader.Services.Queue;
 using ComicReader.ViewModels;
 using ComicReader.Views;
 using CommunityToolkit.Maui;
+using FFImageLoading.Maui;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
@@ -32,6 +33,7 @@ namespace ComicReader
 				.UseMauiCommunityToolkit()
 				.UseMPowerKitNuke()
 				.UseMauiCarouselView()
+				.UseFFImageLoading()
 				.ConfigurePhotoBrowser()
 				.UseLocalNotification(config => {
 					config.AddAndroid(android => {
