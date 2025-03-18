@@ -49,7 +49,7 @@
 					<ScrollView>
 						<pin:PinchToZoomContainer HorizontalOptions="FillAndExpand">
 							<pin:PinchToZoomContainer.Content>
-								<Image Aspect="AspectFit" Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
+								<Image  Aspect="AspectFit" Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
 							</pin:PinchToZoomContainer.Content>
 						</pin:PinchToZoomContainer>
 					</ScrollView>

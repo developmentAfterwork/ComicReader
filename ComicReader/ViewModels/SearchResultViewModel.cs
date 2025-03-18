@@ -70,10 +70,10 @@ namespace ComicReader.ViewModels
 
 		public async Task MangaSelected(object? mangaObj)
 		{
-			IManga? manga = mangaObj as IManga;
+			IMangaModel? manga = mangaObj as IMangaModel;
 
 			if (manga != null) {
-				inMemoryDatabase.Set<IManga>("selectedManga", manga);
+				inMemoryDatabase.Set<IManga>("selectedManga", manga.Manga);
 
 				await navigation.GoToMangaDetails();
 			}
