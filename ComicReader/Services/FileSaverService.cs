@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
+using static Android.Graphics.ImageDecoder;
+using static Java.Util.Jar.Attributes;
 
 namespace ComicReader.Services
 {
@@ -214,6 +216,26 @@ namespace ComicReader.Services
 			var path = FileSaverService.CheckFolderExists(root, addons);
 
 			return path;
+		}
+
+		internal void DeleteManga(IManga manga)
+		{
+			var jsonString = JsonConvert.SerializeObject(manga);
+
+			var path = GetMangaJsonPath(manga);
+			File.Delete(path);
+
+			var start = FileSaverService.RootDirectoryDocuments;
+			List<string> addOns = GetAddonsForDocuments(manga.Source, manga.Name);
+
+			path = CheckFolderExists(start, addOns);
+			Directory.Delete(path, true);
+
+			start = FileSaverService.RootDirectoryImages;
+			addOns = GetAddonsForDocuments(manga.Source, manga.Name);
+
+			path = CheckFolderExists(start, addOns);
+			Directory.Delete(path, true);
 		}
 	}
 }

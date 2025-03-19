@@ -31,5 +31,10 @@ namespace ComicReader.Services
 		{
 			await Shell.Current.GoToAsync("/ReaderNews");
 		}
+
+		internal async Task CloseCurrent()
+		{
+			await Shell.Current.GoToAsync("..");
+		}
 	}
 }

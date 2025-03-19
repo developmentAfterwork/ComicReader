@@ -60,6 +60,8 @@ namespace ComicReader.ViewModels
 
 		public ICommand Refesh { get; set; }
 
+		public ICommand DeleteManga { get; set; }
+
 		private IManga? _lastManga;
 
 		private Task _initTask;
@@ -82,6 +84,7 @@ namespace ComicReader.ViewModels
 			BookmarkManga = new AsyncRelayCommand(AddBookmarkManga);
 			DownloadMissingManga = new AsyncRelayCommand(OnDownloadMissingManga);
 			Refesh = new AsyncRelayCommand(OnRefresh);
+			DeleteManga = new AsyncRelayCommand(OnDeleteManga);
 
 			_initTask = new Task(async () => await Init());
 		}
@@ -163,6 +166,15 @@ namespace ComicReader.ViewModels
 			if (!File.Exists(pathWithFile)) {
 				await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
 			}
+		}
+
+		public Task OnDeleteManga()
+		{
+			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
+			settingsService.BookmarkManga(manga);
+
+			fileSaverService.DeleteManga(manga);
+			return navigation.CloseCurrent();
 		}
 
 		public async Task OnDownloadMissingManga()

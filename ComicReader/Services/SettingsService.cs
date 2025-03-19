@@ -23,6 +23,19 @@ namespace ComicReader.Services
 			}
 		}
 
+		public void RemoveManga(IManga manga)
+		{
+			var allJson = Preferences.Get(BookmarkMangasKey, "[]");
+			var mangaNames = JsonConvert.DeserializeObject<List<string>>(allJson);
+
+			if (mangaNames != null) {
+				mangaNames.Remove(manga.GetUniqIdentifier());
+
+				mangaNames = mangaNames.Distinct().ToList();
+				Preferences.Set(BookmarkMangasKey, JsonConvert.SerializeObject(mangaNames));
+			}
+		}
+
 		public void BookmarkManga(string id)
 		{
 			var allJson = Preferences.Get(BookmarkMangasKey, "[]");

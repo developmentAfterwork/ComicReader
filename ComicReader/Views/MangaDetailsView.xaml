@@ -85,6 +85,10 @@
 					Margin="0,0,8,0"
 					Command="{Binding Refesh}"
 					Text="Refresh" />
+				<Button
+					Margin="0,0,8,0"
+					Command="{Binding DeleteManga}"
+					Text="Delete" />
 			</StackLayout>
 			<StackLayout
 				Margin="8,0,8,8"
