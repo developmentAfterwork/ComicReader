@@ -25,59 +25,51 @@
 			IsVisible="{Binding IsLoading}"
 			VerticalOptions="Center"
 			Color="Orange" />
-		<ListView
+		<CollectionView
 			Margin="8,0,8,0"
-			HasUnevenRows="True"
 			HorizontalOptions="StartAndExpand"
 			IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsSource="{Binding LoadResult}"
-			SelectionMode="None"
-			SeparatorVisibility="None"
+			SelectedItem="{Binding SelectedItem}"
+			SelectionChangedCommand="{Binding ItemSelectedCommand}"
+			SelectionMode="Single"
 			VerticalOptions="FillAndExpand">
-			<ListView.Behaviors>
-				<xct:EventToCommandBehavior
-					Command="{Binding ItemSelectedCommand}"
-					EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"
-					EventName="ItemTapped" />
-			</ListView.Behaviors>
-			<ListView.ItemTemplate>
+			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="models:IMangaModel">
-					<ViewCell>
-						<StackLayout
-							Margin="8"
-							HorizontalOptions="StartAndExpand"
-							Orientation="Horizontal"
-							VerticalOptions="StartAndExpand">
-							<Image
-								Margin="0,0,8,0"
-								Source="{Binding SourcCoverUrlSource}"
-								WidthRequest="100" />
-							<StackLayout Orientation="Vertical">
-								<Label
-									FontAttributes="Bold"
-									FontSize="14"
-									Text="{Binding Name}" />
-								<Label
-									FontAttributes="Italic"
-									HorizontalOptions="StartAndExpand"
-									MaxLines="1"
-									MaximumWidthRequest="285"
-									Text="{Binding Source}"
-									VerticalOptions="Start" />
-								<Label
-									FontSize="12"
-									HorizontalOptions="StartAndExpand"
-									LineBreakMode="TailTruncation"
-									MaxLines="6"
-									MaximumHeightRequest="100"
-									MaximumWidthRequest="255"
-									Text="{Binding Description}"
-									VerticalOptions="StartAndExpand" />
-							</StackLayout>
+					<StackLayout
+						Margin="8"
+						HorizontalOptions="StartAndExpand"
+						Orientation="Horizontal"
+						VerticalOptions="StartAndExpand">
+						<Image
+							Margin="0,0,8,0"
+							Source="{Binding SourcCoverUrlSource}"
+							WidthRequest="100" />
+						<StackLayout Orientation="Vertical">
+							<Label
+								FontAttributes="Bold"
+								FontSize="14"
+								Text="{Binding Name}" />
+							<Label
+								FontAttributes="Italic"
+								HorizontalOptions="StartAndExpand"
+								MaxLines="1"
+								MaximumWidthRequest="285"
+								Text="{Binding Source}"
+								VerticalOptions="Start" />
+							<Label
+								FontSize="12"
+								HorizontalOptions="StartAndExpand"
+								LineBreakMode="TailTruncation"
+								MaxLines="6"
+								MaximumHeightRequest="100"
+								MaximumWidthRequest="255"
+								Text="{Binding Description}"
+								VerticalOptions="StartAndExpand" />
 						</StackLayout>
-					</ViewCell>
+					</StackLayout>
 				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
 	</Grid>
 </ContentPage>

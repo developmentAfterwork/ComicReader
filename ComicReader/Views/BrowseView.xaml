@@ -24,43 +24,35 @@
 			SearchCommand="{Binding OnSearch}"
 			Text="{Binding SearchText}" />
 		<Label Margin="8" Text="Sources" />
-		<ListView
+		<CollectionView
 			Margin="8,0,8,0"
-			HasUnevenRows="True"
 			HorizontalOptions="StartAndExpand"
 			ItemsSource="{Binding AllReader}"
-			SelectionMode="None"
-			SeparatorVisibility="None"
+			SelectedItem="{Binding SelectedItem}"
+			SelectionChangedCommand="{Binding ItemSelectedCommand}"
+			SelectionMode="Single"
 			VerticalOptions="Fill">
-			<ListView.Behaviors>
-				<xct:EventToCommandBehavior
-					Command="{Binding ItemSelectedCommand}"
-					EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"
-					EventName="ItemTapped" />
-			</ListView.Behaviors>
-			<ListView.ItemTemplate>
+			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="model:IReader">
-					<ViewCell>
-						<StackLayout Orientation="Horizontal">
-							<Ellipse
-								Margin="0,0,8,0"
-								Fill="Red"
-								HeightRequest="30"
-								HorizontalOptions="Start"
-								VerticalOptions="CenterAndExpand"
-								WidthRequest="30" />
-							<Label
-								HorizontalOptions="StartAndExpand"
-								Text="{Binding Title}"
-								VerticalOptions="CenterAndExpand" />
-							<Switch
-								HorizontalOptions="End"
-								IsToggled="{Binding IsEnabled}"
-								VerticalOptions="CenterAndExpand" />
-						</StackLayout>
-					</ViewCell>
+					<StackLayout Orientation="Horizontal">
+						<Ellipse
+							Margin="0,0,8,0"
+							Fill="Red"
+							HeightRequest="30"
+							HorizontalOptions="Start"
+							VerticalOptions="CenterAndExpand"
+							WidthRequest="30" />
+						<Label
+							HorizontalOptions="StartAndExpand"
+							Text="{Binding Title}"
+							VerticalOptions="CenterAndExpand" />
+						<Switch
+							HorizontalOptions="End"
+							IsToggled="{Binding IsEnabled}"
+							VerticalOptions="CenterAndExpand" />
+					</StackLayout>
 				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
 	</StackLayout>
 </ContentPage>

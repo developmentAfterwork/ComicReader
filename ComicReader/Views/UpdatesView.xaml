@@ -50,50 +50,46 @@
 				Text="Keine Änderungen"
 				VerticalOptions="CenterAndExpand" />
 		</VerticalStackLayout>
-		<ListView
+		<CollectionView
 			Grid.Row="1"
 			Grid.Column="0"
 			Margin="0,0,8,0"
-			HasUnevenRows="True"
 			HorizontalOptions="StartAndExpand"
 			IsVisible="{Binding HasChapters}"
 			ItemsSource="{Binding NewChapters}"
 			SelectionMode="None"
-			SeparatorVisibility="None"
 			VerticalOptions="FillAndExpand">
-			<ListView.ItemTemplate>
+			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="i:MangaChapterViewModel">
-					<ViewCell>
-						<StackLayout
-							Margin="8"
-							HorizontalOptions="StartAndExpand"
-							Orientation="Horizontal"
-							VerticalOptions="StartAndExpand">
-							<Image
-								Grid.Column="0"
-								Margin="0,0,8,0"
-								Source="{Binding Manga.CoverUrl, Converter={StaticResource CachedImageConverter}}"
-								WidthRequest="50" />
-							<StackLayout Orientation="Vertical">
-								<Label
-									FontAttributes="Bold"
-									FontSize="14"
-									Text="{Binding Chapter.MangaName}" />
-								<Label
-									HorizontalOptions="StartAndExpand"
-									MaxLines="10"
-									MaximumWidthRequest="285"
-									Text="{Binding Chapter.Title}"
-									VerticalOptions="StartAndExpand" />
-								<Label
-									FontAttributes="Bold"
-									FontSize="14"
-									Text="{Binding Chapter.LastUpdate}" />
-							</StackLayout>
+					<StackLayout
+						Margin="8"
+						HorizontalOptions="StartAndExpand"
+						Orientation="Horizontal"
+						VerticalOptions="StartAndExpand">
+						<Image
+							Grid.Column="0"
+							Margin="0,0,8,0"
+							Source="{Binding Manga.CoverUrl, Converter={StaticResource CachedImageConverter}}"
+							WidthRequest="50" />
+						<StackLayout Orientation="Vertical">
+							<Label
+								FontAttributes="Bold"
+								FontSize="14"
+								Text="{Binding Chapter.MangaName}" />
+							<Label
+								HorizontalOptions="StartAndExpand"
+								MaxLines="10"
+								MaximumWidthRequest="285"
+								Text="{Binding Chapter.Title}"
+								VerticalOptions="StartAndExpand" />
+							<Label
+								FontAttributes="Bold"
+								FontSize="14"
+								Text="{Binding Chapter.LastUpdate}" />
 						</StackLayout>
-					</ViewCell>
+					</StackLayout>
 				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
 	</Grid>
 </ContentPage>

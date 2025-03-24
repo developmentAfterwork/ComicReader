@@ -67,14 +67,14 @@
 			IsRunning="{Binding IsLoading}"
 			IsVisible="{Binding IsLoading}"
 			Color="Orange" />
-		<Frame
+		<Border
 			Grid.Row="0"
 			Grid.Column="0"
 			Margin="12"
 			Padding="8"
 			Background="#B0000000"
-			BorderColor="Transparent"
 			HorizontalOptions="Center"
+			Stroke="Transparent"
 			VerticalOptions="End">
 			<Label
 				x:Name="currentPageLabel"
@@ -83,6 +83,6 @@
 				HorizontalOptions="Center"
 				Text="{Binding Position}"
 				VerticalOptions="Center" />
-		</Frame>
+		</Border>
 	</Grid>
 </ContentPage>

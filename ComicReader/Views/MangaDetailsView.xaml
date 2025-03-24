@@ -120,19 +120,22 @@
 					</CollectionView.ItemsLayout>
 					<CollectionView.ItemTemplate>
 						<DataTemplate x:DataType="x:String">
-							<Frame
+							<Border
 								Margin="0,0,8,0"
 								Padding="8,0,8,0"
 								BackgroundColor="Transparent"
-								BorderColor="Orange"
 								HeightRequest="40"
-								MinimumWidthRequest="100">
+								MinimumWidthRequest="100"
+								Stroke="Orange">
+								<Border.StrokeShape>
+									<RoundRectangle CornerRadius="10" />
+								</Border.StrokeShape>
 								<Label
 									HorizontalOptions="Center"
 									Text="{Binding}"
 									TextColor="Orange"
 									VerticalOptions="Center" />
-							</Frame>
+							</Border>
 						</DataTemplate>
 					</CollectionView.ItemTemplate>
 				</CollectionView>
@@ -149,42 +152,33 @@
 				Text="{Binding TotalChapersCount}"
 				VerticalOptions="Center" />
 			<Rectangle BackgroundColor="Orange" HeightRequest="1" />
-			<ListView
-				CachingStrategy="RecycleElementAndDataTemplate"
-				HasUnevenRows="True"
+			<CollectionView
 				IsEnabled="True"
 				ItemsSource="{Binding Chapters}"
-				SelectionMode="None"
-				SeparatorVisibility="Default"
+				SelectedItem="{Binding SelectedItem}"
+				SelectionChangedCommand="{Binding ItemSelectedCommand}"
+				SelectionMode="Single"
 				VerticalOptions="StartAndExpand">
-				<ListView.Behaviors>
-					<xct:EventToCommandBehavior
-						Command="{Binding ItemSelectedCommand}"
-						EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"
-						EventName="ItemTapped" />
-				</ListView.Behaviors>
-				<ListView.ItemTemplate>
+				<CollectionView.ItemTemplate>
 					<DataTemplate x:DataType="inter:IChapter">
-						<ViewCell>
-							<StackLayout Orientation="Vertical">
-								<Label
-									Margin="0,12,0,2"
-									FontAttributes="Bold"
-									FontSize="14"
-									LineBreakMode="TailTruncation"
-									MaxLines="1"
-									Text="{Binding Title}" />
-								<Label
-									Margin="0,2,0,12"
-									FontSize="12"
-									LineBreakMode="TailTruncation"
-									MaxLines="1"
-									Text="{Binding LastUpdate}" />
-							</StackLayout>
-						</ViewCell>
+						<StackLayout Orientation="Vertical">
+							<Label
+								Margin="0,12,0,2"
+								FontAttributes="Bold"
+								FontSize="14"
+								LineBreakMode="TailTruncation"
+								MaxLines="1"
+								Text="{Binding Title}" />
+							<Label
+								Margin="0,2,0,12"
+								FontSize="12"
+								LineBreakMode="TailTruncation"
+								MaxLines="1"
+								Text="{Binding LastUpdate}" />
+						</StackLayout>
 					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
 		</StackLayout>
 	</Grid>
 </ContentPage>

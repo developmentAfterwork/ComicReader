@@ -21,7 +21,11 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _IsSearching = true;
 
-		public ICommand ItemSelectedCommand { get; set; }
+		[ObservableProperty]
+		private ICommand _ItemSelectedCommand;
+
+		[ObservableProperty]
+		private IMangaModel _SelectedItem;
 
 		private string lastSearchWord = "";
 
@@ -70,10 +74,9 @@ namespace ComicReader.ViewModels
 
 		public async Task MangaSelected(object? mangaObj)
 		{
-			IMangaModel? manga = mangaObj as IMangaModel;
-
-			if (manga != null) {
-				inMemoryDatabase.Set<IManga>("selectedManga", manga.Manga);
+			if (SelectedItem != null) {
+				inMemoryDatabase.Set<IManga>("selectedManga", SelectedItem.Manga);
+				SelectedItem = null;
 
 				await navigation.GoToMangaDetails();
 			}

@@ -15,13 +15,18 @@ namespace ComicReader.ViewModels
 
 		public ICommand OnSearch => new AsyncRelayCommand(() => Search(SearchText));
 
-		public ICommand ItemSelectedCommand { get; set; }
+		[ObservableProperty]
+		private ICommand _ItemSelectedCommand;
+
+		[ObservableProperty]
+		private IReader _SelectedItem;
 
 		[ObservableProperty]
 		private string _SearchText = string.Empty;
 
 		[ObservableProperty]
 		private ObservableCollection<IManga> _SearchResult = new ObservableCollection<IManga>();
+
 		private readonly Factory readerFactory;
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
@@ -55,9 +60,9 @@ namespace ComicReader.ViewModels
 
 		public async Task OnItemSelected(object? obj)
 		{
-			var reader = obj as IReader;
-			if (reader is not null) {
-				inMemoryDatabase.Set<IReader>("selectedReader", reader);
+			if (SelectedItem is not null) {
+				inMemoryDatabase.Set<IReader>("selectedReader", SelectedItem);
+				SelectedItem = null;
 
 				await navigation.GotoReaderNews();
 			}

@@ -1,6 +1,7 @@
 ﻿using ComicReader.Converter;
 using ComicReader.Helper;
 using ComicReader.Interpreter;
+using ComicReader.Reader;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -28,7 +29,11 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private ObservableCollection<string> _Genres = new ObservableCollection<string>();
 
-		public ICommand ItemSelectedCommand { get; set; }
+		[ObservableProperty]
+		private ICommand _ItemSelectedCommand;
+
+		[ObservableProperty]
+		private IChapter _SelectedItem;
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -147,10 +152,10 @@ namespace ComicReader.ViewModels
 
 		public async Task ChapterSelected(object? chapterObj)
 		{
-			IChapter? chapter = chapterObj as IChapter;
+			if (SelectedItem != null) {
+				inMemoryDatabase.Set<IChapter>("selectedChapter", SelectedItem);
+				SelectedItem = null;
 
-			if (chapter != null) {
-				inMemoryDatabase.Set<IChapter>("selectedChapter", chapter);
 				await navigation.GoToReadChapter();
 			}
 		}
