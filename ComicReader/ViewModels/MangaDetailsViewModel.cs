@@ -176,7 +176,7 @@ namespace ComicReader.ViewModels
 		public Task OnDeleteManga()
 		{
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
-			settingsService.BookmarkManga(manga);
+			settingsService.RemoveManga(manga);
 
 			fileSaverService.DeleteManga(manga);
 			return navigation.CloseCurrent();
