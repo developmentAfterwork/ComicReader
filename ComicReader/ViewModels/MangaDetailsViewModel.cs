@@ -4,12 +4,13 @@ using ComicReader.Interpreter;
 using ComicReader.Reader;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using static Android.Graphics.ColorSpace;
+using PopupService = ComicReader.Services.PopupService;
 
 namespace ComicReader.ViewModels
 {
@@ -23,6 +24,8 @@ namespace ComicReader.ViewModels
 		private readonly FileSaverService fileSaverService;
 		private readonly Factory factory;
 		private readonly RequestHelper requestHelper;
+		private readonly PopupService popupService;
+
 		[ObservableProperty]
 		private ObservableCollection<IChapter> _Chapters = new ObservableCollection<IChapter>();
 
@@ -74,7 +77,7 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		public ImageSource _coverUrlImageSource;
 
-		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, RequestHelper requestHelper)
+		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, RequestHelper requestHelper, PopupService popupService)
 		{
 			inMemoryDatabase = database;
 			this.navigation = navigation;
@@ -84,6 +87,7 @@ namespace ComicReader.ViewModels
 			this.fileSaverService = fileSaverService;
 			this.factory = factory;
 			this.requestHelper = requestHelper;
+			this.popupService = popupService;
 
 			ItemSelectedCommand = new AsyncRelayCommand<object>(ChapterSelected);
 			BookmarkManga = new AsyncRelayCommand(AddBookmarkManga);
@@ -173,13 +177,18 @@ namespace ComicReader.ViewModels
 			}
 		}
 
-		public Task OnDeleteManga()
+		public async Task OnDeleteManga()
 		{
+			var result = await popupService.ShowPopupAsync("Delete Manga", "Do you want to delete that mange?", "Yes", "No");
+			if (!result) {
+				return;
+			}
+
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 			settingsService.RemoveManga(manga);
 
 			fileSaverService.DeleteManga(manga);
-			return navigation.CloseCurrent();
+			await navigation.CloseCurrent();
 		}
 
 		public async Task OnDownloadMissingManga()

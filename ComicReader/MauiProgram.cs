@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using PhotoBrowsers;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using PopupService = ComicReader.Services.PopupService;
 
 namespace ComicReader
 {
@@ -78,6 +79,7 @@ namespace ComicReader
 			builder.Services.AddSingleton<Factory>();
 			builder.Services.AddSingleton<MangaKakalotFactory>();
 			builder.Services.AddSingleton<MangaKatanaFactory>();
+			builder.Services.AddSingleton<PopupService>();
 		}
 
 		private static void AddViewModels(MauiAppBuilder builder)
