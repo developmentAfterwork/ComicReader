@@ -4,6 +4,7 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 	xmlns:inter="clr-namespace:ComicReader.Interpreter"
 	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -41,7 +42,7 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="140" />
 				</Grid.RowDefinitions>
-				<Image
+				<ffimageloading:CachedImage
 					Grid.Column="0"
 					Margin="0,0,8,0"
 					Source="{Binding CoverUrlImageSource}" />
@@ -62,7 +63,7 @@
 						Margin="0,4,0,0"
 						FontSize="12"
 						Text="{Binding Status}" />
-					<Image
+					<ffimageloading:CachedImage
 						Margin="0,8,0,0"
 						HeightRequest="20"
 						HorizontalOptions="Start"
