@@ -41,7 +41,18 @@ namespace ComicReader.ViewModels
 					MangaViewModel model = new MangaViewModel(manga);
 					model.Selected += OnMangeSelected;
 
-					m.Add(model);
+					if (settingsService.GetHideEmptyManga()) {
+						try {
+							var chapters = await manga.GetBooks().ConfigureAwait(false);
+							var toGo = chapters.Where(c => !settingsService.GetChapterReaded(c)).ToList();
+
+							if (toGo.Any()) {
+								m.Add(model);
+							}
+						} catch (Exception ex) { }
+					} else {
+						m.Add(model);
+					}
 				} catch (Exception ex) {
 					var e = ex.ToString();
 				}

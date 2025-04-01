@@ -19,6 +19,9 @@ namespace ComicReader.ViewModels
 
 		public ICommand ReadSettings { get; set; }
 
+		[ObservableProperty]
+		private bool _HideEmptyManga = true;
+
 		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory)
 		{
 			this.settingsService = settingsService;
@@ -27,6 +30,8 @@ namespace ComicReader.ViewModels
 			this.factory = factory;
 			WriteSettings = new AsyncRelayCommand(OnWriteSettings);
 			ReadSettings = new AsyncRelayCommand(OnReadSettings);
+
+			HideEmptyManga = settingsService.GetHideEmptyManga();
 		}
 
 		private async Task OnWriteSettings()
@@ -90,6 +95,11 @@ namespace ComicReader.ViewModels
 					}
 				}
 			}
+		}
+
+		internal void OnDisappearing()
+		{
+			settingsService.SetHideEmptyManga(HideEmptyManga);
 		}
 	}
 }

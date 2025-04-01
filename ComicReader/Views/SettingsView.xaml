@@ -11,6 +11,7 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -62,6 +63,26 @@
 				Grid.Column="1"
 				Command="{Binding ReadSettings}"
 				Text="load" />
+		</Grid>
+		<Grid
+			Grid.Row="3"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Hide empty Manga"
+				VerticalOptions="Center" />
+			<Switch
+				Grid.Column="1"
+				HorizontalOptions="End"
+				IsToggled="{Binding HideEmptyManga}" />
 		</Grid>
 	</Grid>
 </ContentPage>
