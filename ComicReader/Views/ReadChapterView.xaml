@@ -47,15 +47,11 @@
 			SelectedItem="{Binding SelectedItem}">
 			<controls:CarouselViewControl.ItemTemplate>
 				<DataTemplate>
-					<ScrollView>
-						<pin:PinchToZoomContainer HorizontalOptions="FillAndExpand">
-							<pin:PinchToZoomContainer.Content>
-								<ffimageloading:CachedImage
-									Aspect="AspectFit"
-									DownsampleToViewSize="True"
-									Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
-							</pin:PinchToZoomContainer.Content>
-						</pin:PinchToZoomContainer>
+					<ScrollView Orientation="Vertical">
+						<ffimageloading:CachedImage
+							Aspect="AspectFit"
+							Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
+							WidthRequest="400" />
 					</ScrollView>
 				</DataTemplate>
 			</controls:CarouselViewControl.ItemTemplate>

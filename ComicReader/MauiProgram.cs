@@ -61,7 +61,7 @@ namespace ComicReader
 			AddViewModels(builder);
 			AddViews(builder);
 
-			ImageHandler.Mapper.PrependToMapping(nameof(Microsoft.Maui.IImage.Source), (handler, view) => PrependToMappingImageSource(handler, view));
+			//ImageHandler.Mapper.PrependToMapping(nameof(Microsoft.Maui.IImage.Source), (handler, view) => PrependToMappingImageSource(handler, view));
 
 			return builder.Build();
 		}
