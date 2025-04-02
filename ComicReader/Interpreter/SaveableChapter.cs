@@ -7,6 +7,8 @@ namespace ComicReader.Interpreter
 	{
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 
+		public string? ID { get; set; } = null;
+
 		public string MangaName { get; set; } = string.Empty;
 
 		public string Title { get; set; } = string.Empty;
@@ -30,6 +32,7 @@ namespace ComicReader.Interpreter
 
 		public SaveableChapter(IChapter chapter)
 		{
+			ID = chapter.ID;
 			MangaName = chapter.MangaName;
 			Title = chapter.Title;
 			HomeUrl = chapter.HomeUrl;

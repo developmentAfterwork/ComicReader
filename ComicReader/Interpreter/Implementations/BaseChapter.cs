@@ -8,6 +8,8 @@ namespace ComicReader.Interpreter.Implementations
 		protected readonly RequestHelper RequestHelper;
 		protected readonly HtmlHelper HtmlHelper;
 
+		public string? ID { get; } = null;
+
 		public string Title { get; }
 
 		public string HomeUrl { get; }
@@ -30,6 +32,7 @@ namespace ComicReader.Interpreter.Implementations
 		public abstract Task<List<string>> ImplGetPageUrls();
 
 		public BaseChapter(
+			string? id,
 			string title,
 			string homeUrl,
 			string lastUpdate,
@@ -38,6 +41,7 @@ namespace ComicReader.Interpreter.Implementations
 			RequestHelper requestHelper,
 			HtmlHelper htmlHelper)
 		{
+			ID = id;
 			Title = title;
 			HomeUrl = homeUrl;
 			LastUpdate = lastUpdate;

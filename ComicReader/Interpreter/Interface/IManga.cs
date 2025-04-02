@@ -2,6 +2,8 @@
 {
 	public interface IManga
 	{
+		string? ID { get; }
+
 		string Source { get; }
 
 		string Name { get; }

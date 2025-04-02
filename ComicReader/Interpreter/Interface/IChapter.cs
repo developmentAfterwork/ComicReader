@@ -2,6 +2,8 @@
 {
 	public interface IChapter
 	{
+		string? ID { get; }
+
 		string Source { get; }
 
 		string MangaName { get; }

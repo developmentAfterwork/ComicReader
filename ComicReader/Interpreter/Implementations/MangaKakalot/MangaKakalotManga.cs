@@ -10,6 +10,8 @@ namespace ComicReader.Interpreter.Implementations
 		private readonly RequestHelper requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
+		public string? ID { get; }
+
 		public string Name { get; }
 
 		public string HomeUrl { get; }

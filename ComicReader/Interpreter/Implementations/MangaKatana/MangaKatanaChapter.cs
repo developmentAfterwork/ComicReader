@@ -12,7 +12,7 @@ namespace ComicReader.Interpreter
 			string mangaName,
 			string source,
 			RequestHelper requestHelper,
-			HtmlHelper htmlHelper) : base(title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
 		{ }
 
 		public override async Task<List<string>> ImplGetPageUrls()
