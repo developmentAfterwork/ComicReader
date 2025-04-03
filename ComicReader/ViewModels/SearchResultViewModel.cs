@@ -3,10 +3,8 @@ using ComicReader.Reader;
 using ComicReader.Services;
 using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace ComicReader.ViewModels
 {
@@ -16,16 +14,10 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModel> _SearchResult = new ObservableCollection<IMangaModel>();
+		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = new ObservableCollection<IMangaModelGroup>();
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
-
-		[ObservableProperty]
-		private ICommand _ItemSelectedCommand;
-
-		[ObservableProperty]
-		private IMangaModel _SelectedItem;
 
 		private string lastSearchWord = "";
 
@@ -33,8 +25,6 @@ namespace ComicReader.ViewModels
 		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
-
-			ItemSelectedCommand = new AsyncRelayCommand<object>(MangaSelected);
 		}
 
 		public void OnAppearing()
@@ -60,13 +50,22 @@ namespace ComicReader.ViewModels
 
 				var searchResults = searchTasks.ToDictionary(a => a.Key, a => a.Value.Result);
 
-				List<IMangaModel> mangaModels = new List<IMangaModel>();
+				List<IMangaModelGroup> mangaModelsGroup = new List<IMangaModelGroup>();
 				foreach (var manga in searchResults.Values.SelectMany(s => s)) {
-					mangaModels.Add(await IMangaModel.Create(manga, manga.RequestHeaders));
+					var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
+
+					if (!mangaModelsGroup.Any(m => m.Source == mangaModel.Source)) {
+						mangaModelsGroup.Add(new IMangaModelGroup() {
+							Source = manga.Source,
+							Mangas = new()
+						});
+					}
+
+					mangaModelsGroup.First(m => m.Source == mangaModel.Source).Mangas.Add(mangaModel);
 				}
 
-				SearchResult.Clear();
-				SearchResult.AddRange(mangaModels);
+				SearchResultGroup.Clear();
+				SearchResultGroup.AddRange(mangaModelsGroup);
 
 				IsSearching = false;
 			});
@@ -74,9 +73,9 @@ namespace ComicReader.ViewModels
 
 		public async Task MangaSelected(object? mangaObj)
 		{
-			if (SelectedItem != null) {
-				inMemoryDatabase.Set<IManga>("selectedManga", SelectedItem.Manga);
-				SelectedItem = null;
+			var model = mangaObj as IMangaModel;
+			if (model != null) {
+				inMemoryDatabase.Set<IManga>("selectedManga", model.Manga);
 
 				await navigation.GoToMangaDetails();
 			}

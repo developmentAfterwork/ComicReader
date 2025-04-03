@@ -1,15 +1,20 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Google.Crypto.Tink.Signature;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+
 
 namespace ComicReader.ViewModels.Model
 {
-	public class IMangaModel
+	public partial class IMangaModelGroup : ObservableObject
+	{
+		public string Source { get; set; }
+
+		[ObservableProperty]
+		private ObservableCollection<IMangaModel> _Mangas = new ObservableCollection<IMangaModel>();
+	}
+
+	public partial class IMangaModel : ObservableObject
 	{
 		public string Name { get; set; }
 
