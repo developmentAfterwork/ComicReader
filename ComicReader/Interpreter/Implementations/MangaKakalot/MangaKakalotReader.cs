@@ -26,13 +26,17 @@ namespace ComicReader.Interpreter.Implementations
 
 		public async Task<List<IManga>> Search(string keyWords)
 		{
-			var text = keyWords.Replace(" ", "_");
-			var url = $"https://mangakakalot.gg/search/story/{text}";
-			var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
+			try {
+				var text = keyWords.Replace(" ", "_");
+				var url = $"https://mangakakalot.gg/search/story/{text}";
+				var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
 
-			var mangas = GetMangasFromResponse(response);
+				var mangas = GetMangasFromResponse(response);
 
-			return mangas;
+				return mangas;
+			} catch {
+				return new();
+			}
 		}
 
 		private List<IManga> GetMangasFromResponse(string response)

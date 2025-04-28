@@ -22,13 +22,17 @@ namespace ComicReader.Reader
 
 		public async Task<List<IManga>> Search(string keyWords)
 		{
-			var text = keyWords.Replace(" ", "+");
-			var url = $"https://mangakatana.com/?search={text}&search_by=bo";
-			var response = await RequestHelper.DoGetRequest(url, 3);
+			try {
+				var text = keyWords.Replace(" ", "+");
+				var url = $"https://mangakatana.com/?search={text}&search_by=bo";
+				var response = await RequestHelper.DoGetRequest(url, 3);
 
-			var mangas = GetMangasFromResponse(response);
+				var mangas = GetMangasFromResponse(response);
 
-			return mangas;
+				return mangas;
+			} catch {
+				return new();
+			}
 		}
 
 		private List<IManga> GetMangasFromResponse(string response)
