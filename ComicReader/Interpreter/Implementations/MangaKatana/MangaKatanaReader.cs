@@ -11,7 +11,7 @@ namespace ComicReader.Reader
 			HtmlHelper = htmlHelper;
 		}
 
-		public string Title => "Manga Katana";
+		public string Title => "MangaKatana";
 
 		public bool IsEnabled { get; set; } = true;
 

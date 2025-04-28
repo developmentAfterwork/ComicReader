@@ -30,7 +30,7 @@ namespace ComicReader.Helper
 						return text;
 					}
 				} catch {
-					await Task.Delay(15000);
+					await Task.Delay(500);
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace ComicReader.Helper
 
 						return memorySteam;
 					}
-				} catch (Exception ex) {
+				} catch {
 					await Task.Delay(500);
 				}
 			}

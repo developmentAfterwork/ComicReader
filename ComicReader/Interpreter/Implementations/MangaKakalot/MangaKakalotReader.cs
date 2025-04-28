@@ -8,7 +8,7 @@ namespace ComicReader.Interpreter.Implementations
 		private RequestHelper RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
 
-		public string Title => "Manga Kakalot";
+		public string Title => "MangaKakalot";
 
 		public bool IsEnabled { get; set; } = true;
 

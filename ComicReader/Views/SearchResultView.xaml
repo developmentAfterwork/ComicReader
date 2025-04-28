@@ -38,10 +38,18 @@
 							FontAttributes="Bold"
 							FontSize="14"
 							Text="{Binding Source}" />
+						<ActivityIndicator
+							HeightRequest="70"
+							HorizontalOptions="Center"
+							IsRunning="{Binding IsSearching}"
+							IsVisible="{Binding IsSearching}"
+							VerticalOptions="Center"
+							Color="Orange" />
 						<ScrollView
 							Margin="8,0,0,0"
 							Padding="0"
 							HorizontalOptions="FillAndExpand"
+							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
 							Orientation="Horizontal"
 							VerticalOptions="FillAndExpand">
 							<CollectionView

@@ -11,7 +11,10 @@ namespace ComicReader.ViewModels.Model
 		public string Source { get; set; }
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModel> _Mangas = new ObservableCollection<IMangaModel>();
+		private bool _IsSearching;
+
+		[ObservableProperty]
+		private ObservableCollection<IMangaModel> _Mangas;
 	}
 
 	public partial class IMangaModel : ObservableObject

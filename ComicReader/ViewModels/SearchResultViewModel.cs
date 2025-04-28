@@ -14,7 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = new ObservableCollection<IMangaModelGroup>();
+		private ObservableCollection<IMangaModelGroup> _SearchResultGroup;
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -39,35 +39,35 @@ namespace ComicReader.ViewModels
 			lastSearchWord = searchWords;
 			List<IReader> activeReaders = inMemoryDatabase.Get<List<IReader>>("activeReaders");
 
-			var searchTasks = new Dictionary<string, Task<List<IManga>>>();
+			SearchResultGroup = new ObservableCollection<IMangaModelGroup>();
+			List<IMangaModelGroup> mangaModelsGroup = new List<IMangaModelGroup>();
+			foreach (IReader reader in activeReaders) {
+				mangaModelsGroup.Add(new IMangaModelGroup() {
+					Source = reader.Title,
+					IsSearching = true,
+					Mangas = new()
+				});
+			}
+			SearchResultGroup.AddRange(mangaModelsGroup);
+			IsSearching = false;
 
 			_ = Task.Run(async () => {
 				foreach (IReader reader in activeReaders) {
-					searchTasks.Add(reader.Title, reader.Search(searchWords));
+					await reader.Search(searchWords).ContinueWith(async a => {
+						List<IManga> r = a.Result;
+						List<IMangaModel> mList = new();
+						foreach (var manga in r) {
+							var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
+							mList.Add(mangaModel);
+						}
+
+						var group = SearchResultGroup.First(m => m.Source == (mList.FirstOrDefault()?.Source ?? ""));
+						if (group != null) {
+							group.Mangas.AddRange(mList);
+							group.IsSearching = false;
+						}
+					});
 				}
-
-				await Task.WhenAll(searchTasks.Values.ToArray());
-
-				var searchResults = searchTasks.ToDictionary(a => a.Key, a => a.Value.Result);
-
-				List<IMangaModelGroup> mangaModelsGroup = new List<IMangaModelGroup>();
-				foreach (var manga in searchResults.Values.SelectMany(s => s)) {
-					var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
-
-					if (!mangaModelsGroup.Any(m => m.Source == mangaModel.Source)) {
-						mangaModelsGroup.Add(new IMangaModelGroup() {
-							Source = manga.Source,
-							Mangas = new()
-						});
-					}
-
-					mangaModelsGroup.First(m => m.Source == mangaModel.Source).Mangas.Add(mangaModel);
-				}
-
-				SearchResultGroup.Clear();
-				SearchResultGroup.AddRange(mangaModelsGroup);
-
-				IsSearching = false;
 			});
 		}
 
