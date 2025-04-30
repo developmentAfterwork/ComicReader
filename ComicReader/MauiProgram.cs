@@ -95,6 +95,7 @@ namespace ComicReader
 			builder.Services.AddTransient<UpdateViewModel>();
 			builder.Services.AddTransient<SettingsViewModel>();
 			builder.Services.AddTransient<ReaderNewsViewModel>();
+			builder.Services.AddTransient<AllReaderNewsViewModel>();
 		}
 
 		private static void AddViews(MauiAppBuilder builder)
@@ -108,6 +109,7 @@ namespace ComicReader
 			builder.Services.AddTransient<MangaDetailsView>();
 			builder.Services.AddTransient<ReadChapterView>();
 			builder.Services.AddTransient<ReaderNewsView>();
+			builder.Services.AddTransient<AllReaderNewsView>();
 		}
 
 		public static void PrependToMappingImageSource(IImageHandler handler, Microsoft.Maui.IImage image)

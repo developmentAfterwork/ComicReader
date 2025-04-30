@@ -23,7 +23,12 @@
 			Placeholder="Search in sources"
 			SearchCommand="{Binding OnSearch}"
 			Text="{Binding SearchText}" />
-		<Label Margin="8" Text="Sources" />
+		<Border Stroke="Transparent">
+			<Border.GestureRecognizers>
+				<TapGestureRecognizer Command="{Binding OnGetAllNews}" />
+			</Border.GestureRecognizers>
+			<Label Margin="8" Text="Sources" />
+		</Border>
 		<CollectionView
 			Margin="8,0,8,0"
 			HorizontalOptions="StartAndExpand"

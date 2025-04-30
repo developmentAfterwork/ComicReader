@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.AllReaderNewsView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:models="clr-namespace:ComicReader.ViewModels.Model"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	Title="All News"
+	x:DataType="viewModel:AllReaderNewsViewModel">
+	<Page.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+		</ResourceDictionary>
+	</Page.Resources>
+	<Grid>
+		<ActivityIndicator
+			HeightRequest="70"
+			HorizontalOptions="Center"
+			IsRunning="{Binding IsSearching}"
+			IsVisible="{Binding IsSearching}"
+			VerticalOptions="Center"
+			Color="Orange" />
+		<CollectionView
+			Margin="8,0,8,0"
+			HorizontalOptions="StartAndExpand"
+			IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+			ItemsSource="{Binding SearchResultGroup}"
+			SelectionMode="None"
+			VerticalOptions="FillAndExpand">
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="models:IMangaModelGroup">
+					<StackLayout>
+						<Label
+							FontAttributes="Bold"
+							FontSize="14"
+							Text="{Binding Source}" />
+						<ActivityIndicator
+							HeightRequest="70"
+							HorizontalOptions="Center"
+							IsRunning="{Binding IsSearching}"
+							IsVisible="{Binding IsSearching}"
+							VerticalOptions="Center"
+							Color="Orange" />
+						<ScrollView
+							Margin="8,0,0,0"
+							Padding="0"
+							HorizontalOptions="FillAndExpand"
+							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+							Orientation="Horizontal"
+							VerticalOptions="FillAndExpand">
+							<CollectionView
+								ItemsSource="{Binding Mangas}"
+								SelectionChanged="CollectionView_SelectionChanged"
+								SelectionMode="Single">
+								<CollectionView.ItemsLayout>
+									<LinearItemsLayout Orientation="Horizontal" />
+								</CollectionView.ItemsLayout>
+								<CollectionView.ItemTemplate>
+									<DataTemplate x:DataType="models:IMangaModel">
+										<StackLayout
+											Margin="8"
+											HorizontalOptions="StartAndExpand"
+											Orientation="Horizontal"
+											VerticalOptions="StartAndExpand"
+											WidthRequest="300">
+											<StackLayout.Behaviors>
+												<xct:TouchBehavior Command="{Binding ItemSelectedCommand}" CommandParameter="{Binding}" />
+											</StackLayout.Behaviors>
+											<ffimageloading:CachedImage
+												Margin="0,0,8,0"
+												Source="{Binding SourcCoverUrlSource}"
+												WidthRequest="100" />
+											<StackLayout Orientation="Vertical">
+												<Label
+													FontAttributes="Bold"
+													FontSize="14"
+													LineBreakMode="TailTruncation"
+													MaxLines="1"
+													MaximumWidthRequest="190"
+													Text="{Binding Name}" />
+												<Label
+													FontSize="12"
+													HorizontalOptions="StartAndExpand"
+													LineBreakMode="TailTruncation"
+													MaxLines="7"
+													MaximumHeightRequest="120"
+													MaximumWidthRequest="190"
+													Text="{Binding Description}"
+													VerticalOptions="StartAndExpand" />
+											</StackLayout>
+										</StackLayout>
+									</DataTemplate>
+								</CollectionView.ItemTemplate>
+							</CollectionView>
+						</ScrollView>
+					</StackLayout>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</Grid>
+</ContentPage>

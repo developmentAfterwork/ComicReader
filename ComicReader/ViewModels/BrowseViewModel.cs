@@ -15,6 +15,8 @@ namespace ComicReader.ViewModels
 
 		public ICommand OnSearch => new AsyncRelayCommand(() => Search(SearchText));
 
+		public ICommand OnGetAllNews => new AsyncRelayCommand(GetAllNews);
+
 		[ObservableProperty]
 		private ICommand _ItemSelectedCommand;
 
@@ -56,6 +58,14 @@ namespace ComicReader.ViewModels
 			inMemoryDatabase.Set<List<IReader>>("activeReaders", activeReaders);
 
 			await navigation.GoToSearchResult();
+		}
+
+		private async Task GetAllNews()
+		{
+			var activeReaders = AllReader.Where(a => a.IsEnabled).ToList();
+			inMemoryDatabase.Set<List<IReader>>("activeReaders", activeReaders);
+
+			await navigation.GotoAllReaderNews();
 		}
 
 		public async Task OnItemSelected(object? obj)

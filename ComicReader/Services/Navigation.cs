@@ -10,6 +10,7 @@ namespace ComicReader.Services
 			Routing.RegisterRoute("MangaDetails", typeof(MangaDetailsView));
 			Routing.RegisterRoute("ReadChapter", typeof(ReadChapterView));
 			Routing.RegisterRoute("ReaderNews", typeof(ReaderNewsView));
+			Routing.RegisterRoute("AllReaderNews", typeof(AllReaderNewsView));
 		}
 
 		public async Task GoToSearchResult()
@@ -30,6 +31,11 @@ namespace ComicReader.Services
 		public async Task GotoReaderNews()
 		{
 			await Shell.Current.GoToAsync("/ReaderNews");
+		}
+
+		public async Task GotoAllReaderNews()
+		{
+			await Shell.Current.GoToAsync("/AllReaderNews");
 		}
 
 		internal async Task CloseCurrent()
