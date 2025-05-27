@@ -14,6 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
+		private readonly FileSaverService fileSaverService;
 
 		[ObservableProperty]
 		private ObservableCollection<string> _Pages = new ObservableCollection<string>();
@@ -37,11 +38,12 @@ namespace ComicReader.ViewModels
 
 		private bool automaticSwitchToNextChapter = true;
 
-		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory)
+		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService)
 		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.settingsService = settingsService;
 			this.factory = factory;
+			this.fileSaverService = fileSaverService;
 			StaticClassHolder<Singleton<InMemoryDatabase>>.Value = new Singleton<InMemoryDatabase>(inMemoryDatabase);
 		}
 
@@ -115,6 +117,10 @@ namespace ComicReader.ViewModels
 			var currentIndex = chapters.IndexOf(Chapter);
 
 			if (currentIndex > 0 && currentIndex + 1 <= chapters.Count) {
+				if (settingsService.GetDeleteChaptersAfterReading()) {
+					await fileSaverService.DeleteImagesFromChapter(chapters[currentIndex], factory);
+				}
+
 				Pages.Clear();
 				await InitChapter(chapters[currentIndex + 1]);
 			}

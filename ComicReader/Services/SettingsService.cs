@@ -8,6 +8,7 @@ namespace ComicReader.Services
 	{
 		private const string BookmarkMangasKey = "BookmarkMangas";
 		private const string HideEmptyMangaKey = "HideEmptyManga";
+		private const string DeleteChaptersAfterReading = "DeleteChaptersAfterReading";
 
 		public SettingsService() { }
 
@@ -113,6 +114,16 @@ namespace ComicReader.Services
 		public void SetHideEmptyManga(bool value)
 		{
 			Preferences.Set(HideEmptyMangaKey, value);
+		}
+
+		public bool GetDeleteChaptersAfterReading()
+		{
+			return Preferences.Get(DeleteChaptersAfterReading, false);
+		}
+
+		public void SetDeleteChaptersAfterReading(bool value)
+		{
+			Preferences.Set(DeleteChaptersAfterReading, value);
 		}
 	}
 }
