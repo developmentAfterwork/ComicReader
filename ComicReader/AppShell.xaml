@@ -11,33 +11,48 @@
 	<TabBar>
 		<Tab Title="Library">
 			<ShellContent
-				Title="Home"
+				Title="Library"
 				ContentTemplate="{DataTemplate view:LibraryView}"
 				Route="Library" />
+			<Tab.Icon>
+				<FontImageSource Glyph="⌂" Color="White" />
+			</Tab.Icon>
 		</Tab>
 		<Tab Title="Updates">
 			<ShellContent
-				Title="Home"
+				Title="Updates"
 				ContentTemplate="{DataTemplate view:UpdatesView}"
 				Route="Updates" />
+			<Tab.Icon>
+				<FontImageSource Glyph="⟲" Color="White" />
+			</Tab.Icon>
 		</Tab>
 		<Tab Title="Browse">
 			<ShellContent
-				Title="Home"
+				Title="Browse"
 				ContentTemplate="{DataTemplate view:BrowseView}"
 				Route="Browse" />
+			<Tab.Icon>
+				<FontImageSource Glyph="🔍" Color="White" />
+			</Tab.Icon>
 		</Tab>
 		<Tab Title="Downloads">
 			<ShellContent
-				Title="Home"
+				Title="Downloads"
 				ContentTemplate="{DataTemplate view:DownloadsView}"
 				Route="Downloads" />
+			<Tab.Icon>
+				<FontImageSource Glyph="📎" Color="White" />
+			</Tab.Icon>
 		</Tab>
 		<Tab Title="More">
 			<ShellContent
-				Title="Home"
+				Title="More"
 				ContentTemplate="{DataTemplate view:SettingsView}"
 				Route="More" />
+			<Tab.Icon>
+				<FontImageSource Glyph="🔧" Color="White" />
+			</Tab.Icon>
 		</Tab>
 	</TabBar>
 
