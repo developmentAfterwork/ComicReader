@@ -14,6 +14,8 @@ namespace ComicReader.Interpreter.Implementations
 
 		public string HomeUrl => "https://mangakakalot.gg/";
 
+		public bool ShowReader { get; set; } = true;
+
 		public Dictionary<string, string>? RequestHeaders => new() {
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};

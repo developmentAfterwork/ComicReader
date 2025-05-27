@@ -29,6 +29,8 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private ObservableCollection<IManga> _SearchResult = new ObservableCollection<IManga>();
 
+		public ICommand ShowAll => new RelayCommand(OnShowAll);
+
 		private readonly Factory readerFactory;
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
@@ -44,6 +46,8 @@ namespace ComicReader.ViewModels
 
 		public void OnAppearing()
 		{
+			Counter = 0;
+
 			AllReader.Clear();
 			foreach (IReader reader in readerFactory.CreateAllReaders()) {
 				AllReader.Add(reader);
@@ -75,6 +79,22 @@ namespace ComicReader.ViewModels
 				SelectedItem = null;
 
 				await navigation.GotoReaderNews();
+			}
+		}
+
+		[ObservableProperty]
+		private int _Counter = 0;
+
+		public void OnShowAll()
+		{
+			Counter++;
+
+			if (Counter == 10) {
+				AllReader.Clear();
+				foreach (IReader reader in readerFactory.CreateAllReaders()) {
+					reader.ShowReader = true;
+					AllReader.Add(reader);
+				}
 			}
 		}
 	}

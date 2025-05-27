@@ -98,7 +98,7 @@
 			</Grid.ColumnDefinitions>
 			<Label
 				Grid.Column="0"
-				Text="Delete the mange after readed"
+				Text="Delete readed manga chapter"
 				VerticalOptions="Center" />
 			<Switch
 				Grid.Column="1"

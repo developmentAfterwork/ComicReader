@@ -17,6 +17,8 @@ namespace ComicReader.Reader
 
 		public string HomeUrl => "https://mangakatana.com/";
 
+		public bool ShowReader { get; set; } = true;
+
 		private RequestHelper RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
 

@@ -15,6 +15,8 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public string HomeUrl => "https://mangadex.org";
 
+		public bool ShowReader { get; set; } = true;
+
 		public MangaDexReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
 		{
 			_requestHelper = requestHelper;

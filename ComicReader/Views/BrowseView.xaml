@@ -17,47 +17,61 @@
 			<xct:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
 		</ResourceDictionary>
 	</Page.Resources>
-	<StackLayout Orientation="Vertical">
-		<SearchBar
-			Margin="-14,8,-14,8"
-			Placeholder="Search in sources"
-			SearchCommand="{Binding OnSearch}"
-			Text="{Binding SearchText}" />
-		<Border Stroke="Transparent">
+	<Grid>
+		<StackLayout Orientation="Vertical">
+			<SearchBar
+				Margin="-14,8,-14,8"
+				Placeholder="Search in sources"
+				SearchCommand="{Binding OnSearch}"
+				Text="{Binding SearchText}" />
+			<Border Stroke="Transparent">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding OnGetAllNews}" />
+				</Border.GestureRecognizers>
+				<Label Margin="8" Text="Sources" />
+			</Border>
+			<CollectionView
+				Margin="8,0,8,0"
+				HorizontalOptions="StartAndExpand"
+				ItemsSource="{Binding AllReader}"
+				SelectedItem="{Binding SelectedItem}"
+				SelectionChangedCommand="{Binding ItemSelectedCommand}"
+				SelectionMode="Single"
+				VerticalOptions="Fill">
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="model:IReader">
+						<StackLayout IsVisible="{Binding ShowReader}" Orientation="Horizontal">
+							<Ellipse
+								Margin="0,0,8,0"
+								Fill="Red"
+								HeightRequest="30"
+								HorizontalOptions="Start"
+								VerticalOptions="CenterAndExpand"
+								WidthRequest="30" />
+							<Label
+								HorizontalOptions="StartAndExpand"
+								Text="{Binding Title}"
+								VerticalOptions="CenterAndExpand" />
+							<Switch
+								HorizontalOptions="End"
+								IsToggled="{Binding IsEnabled}"
+								VerticalOptions="CenterAndExpand" />
+						</StackLayout>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+		</StackLayout>
+		<Border
+			Margin="4,18,8,8"
+			Background="Transparent"
+			HeightRequest="26"
+			HorizontalOptions="Start"
+			Stroke="Transparent"
+			VerticalOptions="Start"
+			WidthRequest="26">
 			<Border.GestureRecognizers>
-				<TapGestureRecognizer Command="{Binding OnGetAllNews}" />
+				<TapGestureRecognizer Command="{Binding ShowAll}" />
 			</Border.GestureRecognizers>
-			<Label Margin="8" Text="Sources" />
 		</Border>
-		<CollectionView
-			Margin="8,0,8,0"
-			HorizontalOptions="StartAndExpand"
-			ItemsSource="{Binding AllReader}"
-			SelectedItem="{Binding SelectedItem}"
-			SelectionChangedCommand="{Binding ItemSelectedCommand}"
-			SelectionMode="Single"
-			VerticalOptions="Fill">
-			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="model:IReader">
-					<StackLayout Orientation="Horizontal">
-						<Ellipse
-							Margin="0,0,8,0"
-							Fill="Red"
-							HeightRequest="30"
-							HorizontalOptions="Start"
-							VerticalOptions="CenterAndExpand"
-							WidthRequest="30" />
-						<Label
-							HorizontalOptions="StartAndExpand"
-							Text="{Binding Title}"
-							VerticalOptions="CenterAndExpand" />
-						<Switch
-							HorizontalOptions="End"
-							IsToggled="{Binding IsEnabled}"
-							VerticalOptions="CenterAndExpand" />
-					</StackLayout>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
-	</StackLayout>
+	</Grid>
 </ContentPage>
