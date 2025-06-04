@@ -63,6 +63,7 @@ namespace ComicReader.ViewModels
 							chaptersForUpdate.Add(new MangaChapterViewModel(saveableManga, newChapters[key]));
 						}
 
+
 						await originManga.Save();
 					}
 				} catch (Exception ex) {
@@ -74,8 +75,10 @@ namespace ComicReader.ViewModels
 			NewChapters.AddRange(chaptersForUpdate);
 			HasChapters = NewChapters.Any();
 
-			foreach (var chapter in NewChapters) {
-				await mangaQueue.AddChapter(chapter.Chapter);
+			if (settingsService.GetAutoAddChaptersToQueue()) {
+				foreach (var chapter in NewChapters) {
+					await mangaQueue.AddChapter(chapter.Chapter);
+				}
 			}
 
 			IsSearching = false;

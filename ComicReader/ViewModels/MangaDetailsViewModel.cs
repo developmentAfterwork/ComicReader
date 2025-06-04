@@ -175,6 +175,13 @@ namespace ComicReader.ViewModels
 			if (!File.Exists(pathWithFile)) {
 				await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
 			}
+
+			if (settingsService.GetAutoAddChaptersToQueue()) {
+				var chapters = await manga.GetBooks();
+				foreach (var chapter in chapters) {
+					await mangaQueue.AddChapter(chapter);
+				}
+			}
 		}
 
 		public async Task OnDeleteManga()

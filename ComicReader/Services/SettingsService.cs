@@ -8,7 +8,8 @@ namespace ComicReader.Services
 	{
 		private const string BookmarkMangasKey = "BookmarkMangas";
 		private const string HideEmptyMangaKey = "HideEmptyManga";
-		private const string DeleteChaptersAfterReading = "DeleteChaptersAfterReading";
+		private const string DeleteChaptersAfterReadingKey = "DeleteChaptersAfterReading";
+		private const string AutoAddChaptersToQueueKey = "AutoAddChaptersToQueue";
 
 		public SettingsService() { }
 
@@ -118,12 +119,22 @@ namespace ComicReader.Services
 
 		public bool GetDeleteChaptersAfterReading()
 		{
-			return Preferences.Get(DeleteChaptersAfterReading, false);
+			return Preferences.Get(DeleteChaptersAfterReadingKey, false);
 		}
 
 		public void SetDeleteChaptersAfterReading(bool value)
 		{
-			Preferences.Set(DeleteChaptersAfterReading, value);
+			Preferences.Set(DeleteChaptersAfterReadingKey, value);
+		}
+
+		public bool GetAutoAddChaptersToQueue()
+		{
+			return Preferences.Get(AutoAddChaptersToQueueKey, false);
+		}
+
+		public void SetAutoAddChaptersToQueue(bool value)
+		{
+			Preferences.Set(AutoAddChaptersToQueueKey, value);
 		}
 	}
 }

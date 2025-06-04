@@ -25,17 +25,22 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _DeleteMangaAfterReaded = true;
 
+		[ObservableProperty]
+		private bool _AutoAddChaptersToQueue = false;
+
 		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory)
 		{
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
 			this.simpleNotificationService = simpleNotificationService;
 			this.factory = factory;
+
 			WriteSettings = new AsyncRelayCommand(OnWriteSettings);
 			ReadSettings = new AsyncRelayCommand(OnReadSettings);
 
 			HideEmptyManga = settingsService.GetHideEmptyManga();
 			DeleteMangaAfterReaded = settingsService.GetDeleteChaptersAfterReading();
+			AutoAddChaptersToQueue = settingsService.GetAutoAddChaptersToQueue();
 		}
 
 		private async Task OnWriteSettings()
@@ -105,6 +110,7 @@ namespace ComicReader.ViewModels
 		{
 			settingsService.SetHideEmptyManga(HideEmptyManga);
 			settingsService.SetDeleteChaptersAfterReading(DeleteMangaAfterReaded);
+			settingsService.SetAutoAddChaptersToQueue(AutoAddChaptersToQueue);
 		}
 	}
 }

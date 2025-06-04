@@ -13,6 +13,7 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -88,7 +89,7 @@
 		<Grid
 			Grid.Row="4"
 			Grid.Column="0"
-			Margin="8">
+			Margin="8,-8,8,8">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
@@ -104,6 +105,26 @@
 				Grid.Column="1"
 				HorizontalOptions="End"
 				IsToggled="{Binding DeleteMangaAfterReaded}" />
+		</Grid>
+		<Grid
+			Grid.Row="5"
+			Grid.Column="0"
+			Margin="8,-8,8,8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Automatic add chapters to queue"
+				VerticalOptions="Center" />
+			<Switch
+				Grid.Column="1"
+				HorizontalOptions="End"
+				IsToggled="{Binding AutoAddChaptersToQueue}" />
 		</Grid>
 	</Grid>
 </ContentPage>
