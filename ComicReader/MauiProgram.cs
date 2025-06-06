@@ -4,6 +4,7 @@ using ComicReader.Interpreter;
 using ComicReader.Interpreter.Implementations.MangaDex;
 using ComicReader.Interpreter.Implementations.MangaKakalot;
 using ComicReader.Interpreter.Implementations.MangaKatana;
+using ComicReader.Interpreter.Implementations.NHentai;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
 using ComicReader.ViewModels;
@@ -62,8 +63,6 @@ namespace ComicReader
 			AddViewModels(builder);
 			AddViews(builder);
 
-			//ImageHandler.Mapper.PrependToMapping(nameof(Microsoft.Maui.IImage.Source), (handler, view) => PrependToMappingImageSource(handler, view));
-
 			return builder.Build();
 		}
 
@@ -81,6 +80,7 @@ namespace ComicReader
 			builder.Services.AddSingleton<MangaKakalotFactory>();
 			builder.Services.AddSingleton<MangaKatanaFactory>();
 			builder.Services.AddSingleton<MangaDexFactory>();
+			builder.Services.AddSingleton<NHentaiFactory>();
 			builder.Services.AddSingleton<PopupService>();
 		}
 
@@ -110,11 +110,6 @@ namespace ComicReader
 			builder.Services.AddTransient<ReadChapterView>();
 			builder.Services.AddTransient<ReaderNewsView>();
 			builder.Services.AddTransient<AllReaderNewsView>();
-		}
-
-		public static void PrependToMappingImageSource(IImageHandler handler, Microsoft.Maui.IImage image)
-		{
-			handler.PlatformView?.Clear();
 		}
 
 		private static void AddUnhandledExceptionHandler()

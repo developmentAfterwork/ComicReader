@@ -18,6 +18,13 @@ namespace ComicReader.Helper
 			return allMangas.Select(m => m.InnerHTML).ToList();
 		}
 
+		public List<string> ElementsByClassOuter(string html, string className)
+		{
+			var allMangas = CQ.CreateDocument(html)["." + className].ToList();
+
+			return allMangas.Select(m => m.OuterHTML).ToList();
+		}
+
 		public string ElementByType(string html, string type)
 		{
 			CQ dom = CQ.CreateDocument(html);
