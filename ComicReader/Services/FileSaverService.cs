@@ -2,8 +2,6 @@
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
-using static Android.Graphics.ImageDecoder;
-using static Java.Util.Jar.Attributes;
 
 namespace ComicReader.Services
 {
@@ -28,7 +26,7 @@ namespace ComicReader.Services
 			var path = CheckFolderExists(start, addOns);
 			path = Path.Combine(path, "manga.json");
 
-			return path;
+			return FixPath(path);
 		}
 
 		private static List<string> GetAddonsForDocuments(string source, string mangaName)
@@ -39,7 +37,7 @@ namespace ComicReader.Services
 
 		private string GetChapterJsonPath(IChapter chapter)
 		{
-			return GetChapterJsonPath(chapter.Source, chapter.MangaName, chapter.Title);
+			return FixPath(GetChapterJsonPath(chapter.Source, chapter.MangaName, chapter.Title));
 		}
 
 		private string GetChapterJsonPath(string source, string mangaName, string title)
@@ -53,7 +51,7 @@ namespace ComicReader.Services
 
 			path = Path.Combine(path, $"{_title}.json");
 
-			return path;
+			return FixPath(path);
 		}
 
 		public static string GetChapterImageFolder(IChapter chapter)
@@ -64,7 +62,7 @@ namespace ComicReader.Services
 
 			var path = CheckFolderExists(root, addon);
 
-			return path;
+			return FixPath(path);
 		}
 
 		private static List<string> GetAddonsForImages(IChapter chapter)
@@ -79,17 +77,25 @@ namespace ComicReader.Services
 
 		public async Task SaveFile(string filePath, byte[] content)
 		{
-			await File.WriteAllBytesAsync(filePath, content);
+			var p = FixPath(filePath);
+			await File.WriteAllBytesAsync(p, content);
+		}
+
+		private static string FixPath(string path)
+		{
+			return path.Replace("\"", "").Replace("'", "");
 		}
 
 		public async Task SaveFile(string filePath, string content)
 		{
-			await File.WriteAllTextAsync(filePath, content);
+			var p = FixPath(filePath);
+			await File.WriteAllTextAsync(p, content);
 		}
 
 		public async Task<string> LoadFile(string filePath)
 		{
-			return await File.ReadAllTextAsync(filePath);
+			var p = FixPath(filePath);
+			return await File.ReadAllTextAsync(p);
 		}
 
 		public async Task SaveFile(IManga manga)
@@ -97,8 +103,9 @@ namespace ComicReader.Services
 			var jsonString = JsonConvert.SerializeObject(manga);
 
 			var path = GetMangaJsonPath(manga);
+			var p = FixPath(path);
 
-			await SaveFile(path, jsonString);
+			await SaveFile(p, jsonString);
 		}
 
 		public async Task SaveFile(IChapter chapter)
@@ -106,27 +113,31 @@ namespace ComicReader.Services
 			var jsonString = JsonConvert.SerializeObject(chapter);
 
 			var path = GetChapterJsonPath(chapter);
+			var p = FixPath(path);
 
-			await SaveFile(path, jsonString);
+			await SaveFile(p, jsonString);
 		}
 
 		public bool FileExists(IChapter chapter)
 		{
 			var path = GetChapterJsonPath(chapter);
+			var p = FixPath(path);
 
-			return File.Exists(path);
+			return File.Exists(p);
 		}
 
 		public void DeleteChapterFile(IChapter chapter)
 		{
 			var path = GetChapterJsonPath(chapter);
+			var p = FixPath(path);
 
-			File.Delete(path);
+			File.Delete(p);
 		}
 
 		public void DeleteFile(string path)
 		{
-			File.Delete(path);
+			var p = FixPath(path);
+			File.Delete(p);
 		}
 
 		public async Task DeleteImagesFromChapter(IChapter chapter, Factory factory)
@@ -134,8 +145,10 @@ namespace ComicReader.Services
 			var urls = await chapter.GetPageUrls(false, factory);
 			foreach (var url in urls) {
 				var filePath = chapter.UrlToLocalFileMapper[url];
-				if (FileExists(filePath)) {
-					File.Delete(filePath);
+				var p = FixPath(filePath);
+
+				if (FileExists(p)) {
+					File.Delete(p);
 				}
 			}
 		}
@@ -143,8 +156,9 @@ namespace ComicReader.Services
 		public async Task<IManga> LoadMangaFile(string source, string name)
 		{
 			var path = GetMangaJsonPath(source, name);
+			var p = FixPath(path);
 
-			var content = await LoadFile(path);
+			var content = await LoadFile(p);
 
 			return JsonConvert.DeserializeObject<SaveableManga>(content)!;
 		}
@@ -152,26 +166,28 @@ namespace ComicReader.Services
 		public async Task<SaveableChapter> LoadMangaChapterFile(string source, string mangeName, string chapter)
 		{
 			var path = GetChapterJsonPath(source, mangeName, chapter);
+			var p = FixPath(path);
 
-			var content = await LoadFile(path);
+			var content = await LoadFile(p);
 
 			return JsonConvert.DeserializeObject<SaveableChapter>(content)!;
 		}
 
 		public static string CheckFolderExists(string start, List<string> addons)
 		{
-			if (!Directory.Exists(start)) {
-				Directory.CreateDirectory(start);
+			var _sstart = FixPath(start);
+			if (!Directory.Exists(_sstart)) {
+				Directory.CreateDirectory(_sstart);
 			}
 
 			if (addons.Count > 0) {
 				var firstAddon = GetFilename(addons.First());
-				var newStart = Path.Combine(start, firstAddon);
+				var newStart = Path.Combine(_sstart, firstAddon);
 				var newAddons = addons.Skip(1).ToList();
 
-				return CheckFolderExists(newStart, newAddons);
+				return FixPath(CheckFolderExists(newStart, newAddons));
 			} else {
-				return start;
+				return FixPath(_sstart);
 			}
 		}
 
@@ -183,7 +199,7 @@ namespace ComicReader.Services
 
 		internal bool FileExists(string value)
 		{
-			return File.Exists(value);
+			return File.Exists(FixPath(value));
 		}
 
 		public string GetSecurePathToDocuments(string filename)
@@ -194,7 +210,7 @@ namespace ComicReader.Services
 			var path = FileSaverService.CheckFolderExists(root, addons);
 			path = Path.Combine(path, filename);
 
-			return path;
+			return FixPath(path);
 		}
 
 		public string GetSecurePathToDocuments(string filename, List<string> addons)
@@ -205,7 +221,7 @@ namespace ComicReader.Services
 			var path = FileSaverService.CheckFolderExists(root, combinedAddons);
 			path = Path.Combine(path, filename);
 
-			return path;
+			return FixPath(path);
 		}
 
 		public static string GetSecurePathToImages()
@@ -215,7 +231,7 @@ namespace ComicReader.Services
 
 			var path = FileSaverService.CheckFolderExists(root, addons);
 
-			return path;
+			return FixPath(path);
 		}
 
 		internal void DeleteManga(IManga manga)
@@ -223,18 +239,18 @@ namespace ComicReader.Services
 			var jsonString = JsonConvert.SerializeObject(manga);
 
 			var path = GetMangaJsonPath(manga);
-			File.Delete(path);
+			File.Delete(FixPath(path));
 
 			var start = FileSaverService.RootDirectoryDocuments;
 			List<string> addOns = GetAddonsForDocuments(manga.Source, manga.Name);
 
-			path = CheckFolderExists(start, addOns);
+			path = FixPath(CheckFolderExists(start, addOns));
 			Directory.Delete(path, true);
 
 			start = FileSaverService.RootDirectoryImages;
 			addOns = GetAddonsForDocuments(manga.Source, manga.Name);
 
-			path = CheckFolderExists(start, addOns);
+			path = FixPath(CheckFolderExists(start, addOns));
 			Directory.Delete(path, true);
 		}
 	}

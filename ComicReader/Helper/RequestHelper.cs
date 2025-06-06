@@ -1,5 +1,4 @@
 ﻿using ComicReader.Services;
-using SkiaSharp;
 
 namespace ComicReader.Helper
 {
