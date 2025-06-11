@@ -4,6 +4,8 @@ using ComicReader.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
+using FFImageLoading;
+using FFImageLoading.Helpers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -57,7 +59,19 @@ namespace ComicReader.ViewModels
 			IsLoading = true;
 
 			try {
-				var pages = await chapter.GetPageUrls(true, factory);
+				var predownloadFiles = settingsService.GetPreDownloadImages();
+
+				var ffConfig = new FFImageLoading.Config.Configuration();
+				if (chapter.RequestHeaders != null) {
+					foreach (var header in chapter.RequestHeaders) {
+						ffConfig.HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+					}
+				}
+
+				var imageService = ServiceHelper.GetService<IImageService>();
+				imageService.Initialize(ffConfig);
+
+				var pages = await chapter.GetPageUrls(predownloadFiles, factory);
 
 				inMemoryDatabase.Set<IChapter>("selectedChapter", chapter);
 				inMemoryDatabase.Set<IChapter>("ichapterParameter", chapter);
@@ -123,6 +137,15 @@ namespace ComicReader.ViewModels
 
 				Pages.Clear();
 				await InitChapter(chapters[currentIndex + 1]);
+			}
+		}
+
+		internal void OnDisappearing()
+		{
+			var predownloadFiles = settingsService.GetPreDownloadImages();
+
+			if (!predownloadFiles) {
+				fileSaverService.DeleteAllEmptyFolders();
 			}
 		}
 	}

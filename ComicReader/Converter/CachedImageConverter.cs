@@ -30,8 +30,6 @@ namespace ComicReader.Converter
 
 						if (File.Exists(pathWithFile)) {
 							return pathWithFile;
-						} else {
-							_ = requestHelper.DownloadFile(url, pathWithFile, 3);
 						}
 					}
 				} else {
@@ -51,8 +49,6 @@ namespace ComicReader.Converter
 
 							if (File.Exists(pathWithFile)) {
 								return pathWithFile;
-							} else {
-								_ = requestHelper.DownloadFile(url, pathWithFile, 3, chapter.RequestHeaders);
 							}
 						}
 					}
@@ -70,7 +66,7 @@ namespace ComicReader.Converter
 			var start = FileSaverService.GetSecurePathToImages();
 			var addOnsWithOutFile = pathSplit.Take(pathSplit.Count - 1).ToList();
 
-			var finalPath = FileSaverService.CheckFolderExists(start, addOnsWithOutFile);
+			var finalPath = FileSaverService.CheckFolderExists(start, addOnsWithOutFile, false);
 			var fileName = pathSplit.Last();
 
 			var pathWithFile = Path.Combine(finalPath, fileName);

@@ -30,6 +30,7 @@ public partial class ReadChapterView : ContentPage
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
+		readChapterViewModel.OnDisappearing();
 		pagesCarusel.PositionSelected -= PagesCarusel_PositionSelected;
 	}
 }

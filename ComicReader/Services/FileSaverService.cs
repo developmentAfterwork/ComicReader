@@ -1,4 +1,5 @@
-﻿using ComicReader.Interpreter;
+﻿using AndroidX.Core.Util;
+using ComicReader.Interpreter;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -173,11 +174,15 @@ namespace ComicReader.Services
 			return JsonConvert.DeserializeObject<SaveableChapter>(content)!;
 		}
 
-		public static string CheckFolderExists(string start, List<string> addons)
+		public static string CheckFolderExists(string start, List<string> addons, bool createFolderIfMissing = true)
 		{
 			var _sstart = FixPath(start);
 			if (!Directory.Exists(_sstart)) {
-				Directory.CreateDirectory(_sstart);
+				if (createFolderIfMissing) {
+					Directory.CreateDirectory(_sstart);
+				} else {
+					return "";
+				}
 			}
 
 			if (addons.Count > 0) {
@@ -185,7 +190,7 @@ namespace ComicReader.Services
 				var newStart = Path.Combine(_sstart, firstAddon);
 				var newAddons = addons.Skip(1).ToList();
 
-				return FixPath(CheckFolderExists(newStart, newAddons));
+				return FixPath(CheckFolderExists(newStart, newAddons, createFolderIfMissing));
 			} else {
 				return FixPath(_sstart);
 			}
@@ -252,6 +257,29 @@ namespace ComicReader.Services
 
 			path = FixPath(CheckFolderExists(start, addOns));
 			Directory.Delete(path, true);
+		}
+
+		internal void DeleteAllEmptyFolders()
+		{
+			var imagesPath = Path.Combine(RootDirectoryImages, "ComicReader");
+			var docPath = Path.Combine(RootDirectoryDocuments, "ComicReader");
+
+			DeleteEmptyFolder(imagesPath);
+			DeleteEmptyFolder(docPath);
+		}
+
+		private void DeleteEmptyFolder(string path)
+		{
+			foreach (var folder in Directory.GetDirectories(path)) {
+				DeleteEmptyFolder(folder);
+			}
+
+			var folders = Directory.GetDirectories(path);
+			var files = Directory.GetFiles(path);
+
+			if (!folders.Any() && !files.Any()) {
+				Directory.Delete(path, false);
+			}
 		}
 	}
 }

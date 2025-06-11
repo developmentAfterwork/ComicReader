@@ -10,6 +10,7 @@ namespace ComicReader.Services
 		private const string HideEmptyMangaKey = "HideEmptyManga";
 		private const string DeleteChaptersAfterReadingKey = "DeleteChaptersAfterReading";
 		private const string AutoAddChaptersToQueueKey = "AutoAddChaptersToQueue";
+		private const string PreDownloadImagesKey = "PreDownloadImages";
 
 		public SettingsService() { }
 
@@ -135,6 +136,16 @@ namespace ComicReader.Services
 		public void SetAutoAddChaptersToQueue(bool value)
 		{
 			Preferences.Set(AutoAddChaptersToQueueKey, value);
+		}
+
+		public bool GetPreDownloadImages()
+		{
+			return Preferences.Get(PreDownloadImagesKey, false);
+		}
+
+		public void SetPreDownloadImages(bool value)
+		{
+			Preferences.Set(PreDownloadImagesKey, value);
 		}
 	}
 }
