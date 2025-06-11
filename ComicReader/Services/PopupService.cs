@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 
 namespace ComicReader.Services
 {
@@ -14,7 +16,7 @@ namespace ComicReader.Services
 			return Shell.Current.CurrentPage.DisplayAlert(title, message, accept, cancel);
 		}
 
-		public Task<object?> ShowPopupAsync(Popup popup)
+		public Task<IPopupResult> ShowPopupAsync(Popup popup)
 		{
 			return Shell.Current.CurrentPage.ShowPopupAsync(popup);
 		}
