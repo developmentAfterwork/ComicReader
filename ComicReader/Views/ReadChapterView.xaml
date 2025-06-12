@@ -43,19 +43,31 @@
 			Grid.Column="0"
 			HorizontalOptions="FillAndExpand"
 			IsSwipeEnabled="{Binding AllowSwipe}"
+			IsVisible="{Binding AllowSwipe}"
 			ItemsSource="{Binding Pages}"
 			SelectedItem="{Binding SelectedItem}">
 			<controls:CarouselViewControl.ItemTemplate>
 				<DataTemplate>
 					<ScrollView Orientation="Vertical">
-						<ffimageloading:CachedImage
-							Aspect="AspectFit"
-							Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
-							WidthRequest="400" />
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<ffimageloading:CachedImage
+								Aspect="AspectFit"
+								Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
+								WidthRequest="400" />
+						</Grid>
 					</ScrollView>
 				</DataTemplate>
 			</controls:CarouselViewControl.ItemTemplate>
 		</controls:CarouselViewControl>
+		<local:PinchToZoomContainer IsVisible="{Binding AllowSwipe, Converter={StaticResource InvertedBoolConverter}}">
+			<ffimageloading:CachedImage
+				Aspect="AspectFit"
+				Source="{Binding SelectedItem}"
+				WidthRequest="400" />
+		</local:PinchToZoomContainer>
 		<ActivityIndicator
 			Grid.Row="0"
 			Grid.Column="0"

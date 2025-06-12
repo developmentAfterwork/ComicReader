@@ -1,4 +1,6 @@
-﻿namespace ComicReader.Controls
+﻿using System.Runtime.CompilerServices;
+
+namespace ComicReader.Controls
 {
 	public class PinchToZoomContainer : ContentView
 	{
@@ -23,6 +25,23 @@
 			var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
 			tapGesture.Tapped += DoubleTapped;
 			GestureRecognizers.Add(tapGesture);
+		}
+
+		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+
+			if (propertyName == "IsVisible") {
+				_currentScale = 1;
+				_startScale = 1;
+				_xOffset = 0;
+				_yOffset = 0;
+				_secondDoubleTapp = false;
+
+				Content.Scale = _startScale;
+				Content.TranslationX = _xOffset;
+				Content.TranslationY = _yOffset;
+			}
 		}
 
 		private void PinchUpdated(object? sender, PinchGestureUpdatedEventArgs e)

@@ -27,16 +27,16 @@ namespace ComicReader.ViewModels
 		public ICommand Changed = new RelayCommand(() => { });
 
 		[ObservableProperty]
-		private string _Position = "0/0";
+		private string _position = "0/0";
 
 		[ObservableProperty]
-		private bool _AllowSwipe = true;
+		private bool _allowSwipe = true;
 
 		[ObservableProperty]
 		private object _selectedItem = new();
 
 		[ObservableProperty]
-		private bool _IsLoading = false;
+		private bool _isLoading = false;
 
 		private bool automaticSwitchToNextChapter = true;
 
