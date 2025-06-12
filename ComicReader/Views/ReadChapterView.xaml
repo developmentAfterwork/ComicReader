@@ -49,15 +49,7 @@
 			<controls:CarouselViewControl.ItemTemplate>
 				<DataTemplate>
 					<ScrollView Orientation="Vertical">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<ffimageloading:CachedImage
-								Aspect="AspectFit"
-								Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
-								WidthRequest="400" />
-						</Grid>
+						<ffimageloading:CachedImage Aspect="AspectFill" Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}" />
 					</ScrollView>
 				</DataTemplate>
 			</controls:CarouselViewControl.ItemTemplate>
