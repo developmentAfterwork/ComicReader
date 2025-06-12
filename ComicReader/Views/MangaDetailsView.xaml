@@ -18,171 +18,173 @@
 			<converters:CachedImageConverter x:Key="CachedImageConverter" />
 		</ResourceDictionary>
 	</Page.Resources>
-	<StackLayout
-		Margin="0,8,8,0"
-		IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-		Orientation="Vertical">
-		<CollectionView
-			IsEnabled="True"
-			ItemsSource="{Binding Chapters}"
-			SelectedItem="{Binding SelectedItem}"
-			SelectionChangedCommand="{Binding ItemSelectedCommand}"
-			SelectionMode="Single"
-			VerticalOptions="StartAndExpand">
-			<CollectionView.Header>
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="auto" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
-					<StackLayout Grid.Row="0" Orientation="Vertical">
-						<ActivityIndicator
-							HeightRequest="70"
-							HorizontalOptions="Center"
-							IsRunning="{Binding IsSearching}"
-							IsVisible="{Binding IsSearching}"
-							VerticalOptions="Center"
-							Color="Orange" />
-						<Grid
-							Margin="0,8,8,8"
-							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-							VerticalOptions="Start">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="120" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="140" />
-							</Grid.RowDefinitions>
-							<ffimageloading:CachedImage
-								Grid.Column="0"
-								Margin="0,0,8,0"
-								Source="{Binding CoverUrlImageSource}" />
+	<Grid>
+		<ActivityIndicator
+			HeightRequest="70"
+			HorizontalOptions="Center"
+			IsRunning="{Binding IsSearching}"
+			IsVisible="{Binding IsSearching}"
+			VerticalOptions="Center"
+			Color="Orange" />
+		<StackLayout
+			Margin="0,8,8,0"
+			IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+			Orientation="Vertical">
+			<CollectionView
+				IsEnabled="True"
+				ItemsSource="{Binding Chapters}"
+				SelectedItem="{Binding SelectedItem}"
+				SelectionChangedCommand="{Binding ItemSelectedCommand}"
+				SelectionMode="Single"
+				VerticalOptions="StartAndExpand">
+				<CollectionView.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="auto" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<StackLayout Grid.Row="0" Orientation="Vertical">
+							<Grid
+								Margin="0,8,8,8"
+								IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+								VerticalOptions="Start">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="120" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="140" />
+								</Grid.RowDefinitions>
+								<ffimageloading:CachedImage
+									Grid.Column="0"
+									Margin="0,0,8,0"
+									Source="{Binding CoverUrlImageSource}" />
+								<StackLayout
+									Grid.Row="0"
+									Grid.Column="1"
+									Orientation="Vertical">
+									<Label
+										FontAttributes="Bold"
+										FontSize="18"
+										MaxLines="3"
+										Text="{Binding Title}" />
+									<Label
+										Margin="0,4,0,0"
+										FontSize="12"
+										Text="{Binding Autor}" />
+									<Label
+										Margin="0,4,0,0"
+										FontSize="12"
+										Text="{Binding Status}" />
+									<ffimageloading:CachedImage
+										Margin="0,8,0,0"
+										HeightRequest="20"
+										HorizontalOptions="Start"
+										Source="{Binding LanguageFlagUrl, Converter={StaticResource CachedImageConverter}}" />
+								</StackLayout>
+							</Grid>
+							<ScrollView Orientation="Horizontal">
+								<StackLayout
+									Margin="8,8,0,8"
+									IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+									Orientation="Horizontal">
+									<Button
+										Margin="0,0,8,0"
+										Command="{Binding BookmarkManga}"
+										Text="Add" />
+									<Button
+										Margin="0,0,8,0"
+										Command="{Binding DownloadMissingManga}"
+										Text="Download Chapters" />
+									<Button
+										Margin="0,0,8,0"
+										Command="{Binding Refesh}"
+										Text="Refresh" />
+									<Button
+										Margin="0,0,8,0"
+										Command="{Binding DeleteManga}"
+										Text="Delete" />
+								</StackLayout>
+							</ScrollView>
 							<StackLayout
-								Grid.Row="0"
-								Grid.Column="1"
+								Margin="8,0,8,8"
+								IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
 								Orientation="Vertical">
 								<Label
 									FontAttributes="Bold"
-									FontSize="18"
-									MaxLines="3"
-									Text="{Binding Title}" />
-								<Label
-									Margin="0,4,0,0"
-									FontSize="12"
-									Text="{Binding Autor}" />
-								<Label
-									Margin="0,4,0,0"
-									FontSize="12"
-									Text="{Binding Status}" />
-								<ffimageloading:CachedImage
-									Margin="0,8,0,0"
-									HeightRequest="20"
-									HorizontalOptions="Start"
-									Source="{Binding LanguageFlagUrl, Converter={StaticResource CachedImageConverter}}" />
+									FontSize="16"
+									Text="About this manga" />
+								<ScrollView MaximumHeightRequest="100">
+									<Label
+										FontSize="12"
+										LineBreakMode="TailTruncation"
+										MaxLines="20"
+										Text="{Binding Description}" />
+								</ScrollView>
 							</StackLayout>
-						</Grid>
-						<ScrollView Orientation="Horizontal">
-							<StackLayout
-								Margin="8,16,0,8"
+							<ScrollView
+								Margin="8,0,0,0"
+								Padding="0"
+								HeightRequest="40"
+								HorizontalOptions="FillAndExpand"
 								IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-								Orientation="Horizontal">
-								<Button
-									Margin="0,0,8,0"
-									Command="{Binding BookmarkManga}"
-									Text="Add" />
-								<Button
-									Margin="0,0,8,0"
-									Command="{Binding DownloadMissingManga}"
-									Text="Download Chapters" />
-								<Button
-									Margin="0,0,8,0"
-									Command="{Binding Refesh}"
-									Text="Refresh" />
-								<Button
-									Margin="0,0,8,0"
-									Command="{Binding DeleteManga}"
-									Text="Delete" />
-							</StackLayout>
-						</ScrollView>
-						<StackLayout
-							Margin="8,0,8,8"
-							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-							Orientation="Vertical">
-							<Label
-								FontAttributes="Bold"
-								FontSize="16"
-								Text="About this manga" />
-							<ScrollView MaximumHeightRequest="100">
-								<Label
-									FontSize="12"
-									LineBreakMode="TailTruncation"
-									MaxLines="20"
-									Text="{Binding Description}" />
+								Orientation="Horizontal"
+								VerticalOptions="FillAndExpand">
+								<CollectionView ItemsSource="{Binding Genres}">
+									<CollectionView.ItemsLayout>
+										<LinearItemsLayout Orientation="Horizontal" />
+									</CollectionView.ItemsLayout>
+									<CollectionView.ItemTemplate>
+										<DataTemplate x:DataType="x:String">
+											<Border
+												Margin="0,0,8,0"
+												Padding="8,0,8,0"
+												BackgroundColor="Transparent"
+												HeightRequest="40"
+												MinimumWidthRequest="100"
+												Stroke="Orange">
+												<Border.StrokeShape>
+													<RoundRectangle CornerRadius="10" />
+												</Border.StrokeShape>
+												<Label
+													HorizontalOptions="Center"
+													Text="{Binding}"
+													TextColor="Orange"
+													VerticalOptions="Center" />
+											</Border>
+										</DataTemplate>
+									</CollectionView.ItemTemplate>
+								</CollectionView>
 							</ScrollView>
+							<Label
+								Margin="0,8,0,8"
+								FontSize="14"
+								Text="{Binding TotalChapersCount}"
+								VerticalOptions="Center" />
+							<Rectangle BackgroundColor="Orange" HeightRequest="1" />
 						</StackLayout>
-						<ScrollView
-							Margin="8,0,0,0"
-							Padding="0"
-							HeightRequest="40"
-							HorizontalOptions="FillAndExpand"
-							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-							Orientation="Horizontal"
-							VerticalOptions="FillAndExpand">
-							<CollectionView ItemsSource="{Binding Genres}">
-								<CollectionView.ItemsLayout>
-									<LinearItemsLayout Orientation="Horizontal" />
-								</CollectionView.ItemsLayout>
-								<CollectionView.ItemTemplate>
-									<DataTemplate x:DataType="x:String">
-										<Border
-											Margin="0,0,8,0"
-											Padding="8,0,8,0"
-											BackgroundColor="Transparent"
-											HeightRequest="40"
-											MinimumWidthRequest="100"
-											Stroke="Orange">
-											<Border.StrokeShape>
-												<RoundRectangle CornerRadius="10" />
-											</Border.StrokeShape>
-											<Label
-												HorizontalOptions="Center"
-												Text="{Binding}"
-												TextColor="Orange"
-												VerticalOptions="Center" />
-										</Border>
-									</DataTemplate>
-								</CollectionView.ItemTemplate>
-							</CollectionView>
-						</ScrollView>
-						<Label
-							Margin="0,8,0,8"
-							FontSize="14"
-							Text="{Binding TotalChapersCount}"
-							VerticalOptions="Center" />
-						<Rectangle BackgroundColor="Orange" HeightRequest="1" />
-					</StackLayout>
-				</Grid>
-			</CollectionView.Header>
-			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="inter:IChapter">
-					<StackLayout Orientation="Vertical">
-						<Label
-							Margin="0,12,0,2"
-							FontAttributes="Bold"
-							FontSize="14"
-							LineBreakMode="TailTruncation"
-							MaxLines="1"
-							Text="{Binding Title}" />
-						<Label
-							Margin="0,2,0,12"
-							FontSize="12"
-							LineBreakMode="TailTruncation"
-							MaxLines="1"
-							Text="{Binding LastUpdate}" />
-					</StackLayout>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
-	</StackLayout>
+					</Grid>
+				</CollectionView.Header>
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="inter:IChapter">
+						<StackLayout Orientation="Vertical">
+							<Label
+								Margin="0,12,0,2"
+								FontAttributes="Bold"
+								FontSize="14"
+								LineBreakMode="TailTruncation"
+								MaxLines="1"
+								Text="{Binding Title}" />
+							<Label
+								Margin="0,2,0,12"
+								FontSize="12"
+								LineBreakMode="TailTruncation"
+								MaxLines="1"
+								Text="{Binding LastUpdate}" />
+						</StackLayout>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+		</StackLayout>
+	</Grid>
 </ContentPage>
