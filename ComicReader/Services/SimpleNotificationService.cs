@@ -119,5 +119,10 @@ namespace ComicReader.Services
 
 			await LocalNotificationCenter.Current.Show(notification);
 		}
+
+		internal void Close(int? id = null)
+		{
+			LocalNotificationCenter.Current.Clear(id ?? SimpleNotificationService.ProgressId);
+		}
 	}
 }

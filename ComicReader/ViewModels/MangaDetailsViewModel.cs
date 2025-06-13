@@ -178,9 +178,13 @@ namespace ComicReader.ViewModels
 
 			if (settingsService.GetAutoAddChaptersToQueue()) {
 				var chapters = await manga.GetBooks();
+
+				int i = 0;
 				foreach (var chapter in chapters) {
+					await simpleNotificationService.ShowProgress("Add chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
 					await mangaQueue.AddChapter(chapter);
 				}
+				simpleNotificationService.Close();
 			}
 		}
 
