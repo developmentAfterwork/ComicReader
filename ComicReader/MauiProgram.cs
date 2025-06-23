@@ -1,6 +1,7 @@
 ﻿using CarouselView;
 using ComicReader.Helper;
 using ComicReader.Interpreter;
+using ComicReader.Interpreter.Implementations.AsuraScans;
 using ComicReader.Interpreter.Implementations.MangaDex;
 using ComicReader.Interpreter.Implementations.MangaKakalot;
 using ComicReader.Interpreter.Implementations.MangaKatana;
@@ -81,6 +82,7 @@ namespace ComicReader
 			builder.Services.AddSingleton<MangaKatanaFactory>();
 			builder.Services.AddSingleton<MangaDexFactory>();
 			builder.Services.AddSingleton<NHentaiFactory>();
+			builder.Services.AddSingleton<AsuraScansFactory>();
 			builder.Services.AddSingleton<PopupService>();
 		}
 
