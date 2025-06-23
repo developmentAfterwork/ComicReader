@@ -8,6 +8,11 @@ namespace ComicReader.Helper
 
 		private HttpClient _httpClient = new HttpClient();
 
+		public RequestHelper()
+		{
+			_httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ComicReader", "1.0.0"));
+		}
+
 		public async Task<string> DoGetRequest(string url, int repeatCount, Dictionary<string, string>? header = null)
 		{
 			for (int i = 0; i < repeatCount; i++) {

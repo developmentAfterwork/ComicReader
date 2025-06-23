@@ -5,7 +5,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:converters="clr-namespace:ComicReader.Converter"
 	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
-	xmlns:inter="clr-namespace:ComicReader.Interpreter"
+	xmlns:inter="clr-namespace:ComicReader.Interpreter;assembly=Interpreter"
 	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="Details"

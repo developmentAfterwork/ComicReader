@@ -1,5 +1,4 @@
-﻿using Android.Text;
-using ComicReader.Helper;
+﻿using ComicReader.Helper;
 
 namespace ComicReader.Interpreter.Implementations
 {

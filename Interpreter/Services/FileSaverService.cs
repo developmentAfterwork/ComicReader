@@ -1,5 +1,4 @@
-﻿using AndroidX.Core.Util;
-using ComicReader.Interpreter;
+﻿using ComicReader.Interpreter;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -202,7 +201,7 @@ namespace ComicReader.Services
 			return filename.Replace(":", "").Replace("+", "").Replace("?", "");
 		}
 
-		internal bool FileExists(string value)
+		public bool FileExists(string value)
 		{
 			return File.Exists(FixPath(value));
 		}
@@ -239,7 +238,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		internal void DeleteManga(IManga manga)
+		public void DeleteManga(IManga manga)
 		{
 			var jsonString = JsonConvert.SerializeObject(manga);
 
@@ -259,7 +258,7 @@ namespace ComicReader.Services
 			Directory.Delete(path, true);
 		}
 
-		internal void DeleteAllEmptyFolders()
+		public void DeleteAllEmptyFolders()
 		{
 			var imagesPath = Path.Combine(RootDirectoryImages, "ComicReader");
 			var docPath = Path.Combine(RootDirectoryDocuments, "ComicReader");

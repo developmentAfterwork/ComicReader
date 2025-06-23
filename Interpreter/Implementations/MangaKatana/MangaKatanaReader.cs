@@ -3,7 +3,7 @@ using ComicReader.Interpreter;
 
 namespace ComicReader.Reader
 {
-	internal class MangaKatanaReader : IReader
+	public class MangaKatanaReader : IReader
 	{
 		public MangaKatanaReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
 		{

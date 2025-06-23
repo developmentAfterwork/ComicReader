@@ -17,7 +17,7 @@ namespace ComicReader.Interpreter
 			_factories[factory.SourceKey] = factory;
 		}
 
-		internal IEnumerable<IReader> CreateAllReaders()
+		public IEnumerable<IReader> CreateAllReaders()
 		{
 			return _factories.Values.Select(f => f.CreateReader());
 		}
@@ -31,12 +31,12 @@ namespace ComicReader.Interpreter
 			return saveableManga;
 		}
 
-		internal IManga GetOriginManga(SaveableManga saveableManga)
+		public IManga GetOriginManga(SaveableManga saveableManga)
 		{
 			return _factories[saveableManga.Source].GetOriginManga(saveableManga);
 		}
 
-		internal IChapter GetOriginChapter(SaveableChapter saveableChapter)
+		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
 		{
 			return _factories[saveableChapter.Source].GetOriginChapter(saveableChapter);
 		}

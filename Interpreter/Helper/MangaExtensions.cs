@@ -2,7 +2,7 @@
 
 namespace ComicReader.Helper
 {
-	internal static class MangaExtensions
+	public static class MangaExtensions
 	{
 		public static async Task Save(this IManga manga)
 		{

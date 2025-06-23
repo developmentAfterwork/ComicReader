@@ -2,7 +2,7 @@
 
 namespace ComicReader.Helper
 {
-	internal static class ChapterExtension
+	public static class ChapterExtension
 	{
 		public static async Task Save(this IChapter chapter, bool preDownloadChapters, Factory factory)
 		{
