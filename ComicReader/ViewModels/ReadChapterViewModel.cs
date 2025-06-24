@@ -36,7 +36,7 @@ namespace ComicReader.ViewModels
 		private object _selectedItem = new();
 
 		[ObservableProperty]
-		private string _currentPage = "";
+		private string? _currentPage = null;
 
 		[ObservableProperty]
 		private bool _isLoading = false;
