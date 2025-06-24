@@ -28,7 +28,7 @@ namespace ComicReader.Interpreter
 
 		public string Source { get; set; } = string.Empty;
 
-		public Dictionary<string, string>? RequestHeaders => null;
+		public Dictionary<string, string>? RequestHeaders { get; set; } = null;
 
 		public Task<List<IChapter>> GetBooks()
 		{
@@ -52,6 +52,7 @@ namespace ComicReader.Interpreter
 			Description = manga.Description;
 			Genres = manga.Genres;
 			Source = manga.Source;
+			RequestHeaders = manga.RequestHeaders;
 		}
 
 		public async Task Save()

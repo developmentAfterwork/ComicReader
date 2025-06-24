@@ -23,7 +23,7 @@ namespace ComicReader.Interpreter
 
 		public Dictionary<string, string> UrlToLocalFileMapper { get; set; } = new();
 
-		public Dictionary<string, string>? RequestHeaders { get; } = null;
+		public Dictionary<string, string>? RequestHeaders { get; set; } = null;
 
 		public SaveableChapter()
 		{
@@ -39,6 +39,7 @@ namespace ComicReader.Interpreter
 			LastUpdate = chapter.LastUpdate;
 			Source = chapter.Source;
 			UrlToLocalFileMapper = chapter.UrlToLocalFileMapper;
+			RequestHeaders = chapter.RequestHeaders;
 		}
 
 		public async Task Save()
