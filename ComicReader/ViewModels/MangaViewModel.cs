@@ -12,6 +12,9 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private string _CoverUrl = string.Empty;
 
+		[ObservableProperty]
+		private string _Title = string.Empty;
+
 		public ICommand MangeSelected => new RelayCommand(OnMangeSelected);
 
 		public ICommand DownloadManga => new RelayCommand(OnDownloadManga);
@@ -24,6 +27,7 @@ namespace ComicReader.ViewModels
 		{
 			CoverUrl = manga.CoverUrl;
 			this.manga = manga;
+			this.Title = manga.Name;
 		}
 
 		private void OnMangeSelected()
