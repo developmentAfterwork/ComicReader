@@ -55,7 +55,7 @@ namespace ComicReader.Interpreter.Implementations
 		private async Task<List<string>> ProcessPageUrls(bool preDownloadChapters, Factory factory)
 		{
 			var pages = await ImplGetPageUrls();
-			FillMapper(pages);
+			FillMapper(pages, preDownloadChapters);
 			if (preDownloadChapters) {
 				await PreDownloadChapters();
 			}
@@ -63,11 +63,11 @@ namespace ComicReader.Interpreter.Implementations
 			return pages;
 		}
 
-		private void FillMapper(List<string> urls)
+		private void FillMapper(List<string> urls, bool createFolderIfMissing = true)
 		{
 			foreach (var url in urls) {
 				if (!UrlToLocalFileMapper.ContainsKey(url)) {
-					var path = FileSaverService.GetChapterImageFolder(this);
+					var path = FileSaverService.GetChapterImageFolder(this, createFolderIfMissing);
 
 					var ext = url.Substring(url.LastIndexOf("."));
 					var fileName = $"{Guid.NewGuid()}{ext}";

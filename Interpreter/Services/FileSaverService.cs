@@ -54,13 +54,13 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		public static string GetChapterImageFolder(IChapter chapter)
+		public static string GetChapterImageFolder(IChapter chapter, bool createFolderIfMissing = true)
 		{
 			var root = FileSaverService.RootDirectoryImages;
 
 			List<string> addon = GetAddonsForImages(chapter);
 
-			var path = CheckFolderExists(root, addon);
+			var path = CheckFolderExists(root, addon, createFolderIfMissing);
 
 			return FixPath(path);
 		}
@@ -83,7 +83,7 @@ namespace ComicReader.Services
 
 		private static string FixPath(string path)
 		{
-			return path.Replace("\"", "").Replace("'", "");
+			return path.Replace("\"", "").Replace("'", "").Replace("[", "").Replace("]", "").Replace("|", "");
 		}
 
 		public async Task SaveFile(string filePath, string content)

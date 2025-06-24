@@ -15,14 +15,16 @@ namespace ComicReader.Interpreter.Implementations.NHentai
 			List<string> urls = new List<string>();
 			int i = 1;
 			foreach (var html in all) {
-				var newSiteUrl = $"{HomeUrl}{i++}";
-				var resultNewSite = await RequestHelper.DoGetRequest(newSiteUrl, 3);
+				try {
+					var newSiteUrl = $"{HomeUrl}{i++}";
+					var resultNewSite = await RequestHelper.DoGetRequest(newSiteUrl, 3);
 
-				var section = HtmlHelper.ElementById(resultNewSite, "image-container");
-				var a = HtmlHelper.ElementByType(section, "a");
-				var u = HtmlHelper.GetAttribute(a, "src");
+					var section = HtmlHelper.ElementById(resultNewSite, "image-container");
+					var a = HtmlHelper.ElementByType(section, "a");
+					var u = HtmlHelper.GetAttribute(a, "src");
 
-				urls.Add(u);
+					urls.Add(u);
+				} catch { }
 			}
 
 			return urls;

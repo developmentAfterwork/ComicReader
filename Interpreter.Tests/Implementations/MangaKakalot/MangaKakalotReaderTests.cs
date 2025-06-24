@@ -1,4 +1,6 @@
-﻿using ComicReader.Interpreter.Implementations;
+﻿using ComicReader.Interpreter;
+using ComicReader.Interpreter.Implementations;
+using ComicReader.Interpreter.Implementations.MangaKakalot;
 
 namespace Interpreter.Tests.Implementations.MangaKakalot
 {
@@ -6,11 +8,15 @@ namespace Interpreter.Tests.Implementations.MangaKakalot
 	public class MangaKakalotReaderTests
 	{
 		private MangaKakalotReader _reader;
+		private Factory _factory;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_reader = new MangaKakalotReader(new(), new());
+
+			_factory = new Factory();
+			_factory.Register(new MangaKakalotFactory(new(), new()));
 		}
 
 		[Test]
@@ -20,6 +26,18 @@ namespace Interpreter.Tests.Implementations.MangaKakalot
 
 			Assert.That(mangas, Is.Not.Null);
 			Assert.That(mangas.Count, Is.GreaterThan(0));
+
+			var manga = mangas.First();
+			var chapters = manga.GetBooks().Result;
+
+			Assert.That(chapters, Is.Not.Null);
+			Assert.That(chapters.Count, Is.GreaterThan(0));
+
+			var chapter = chapters.First();
+			var pages = chapter.GetPageUrls(false, _factory).Result;
+
+			Assert.That(pages, Is.Not.Null);
+			Assert.That(pages.Count, Is.GreaterThan(0));
 		}
 
 		[Test]
@@ -29,6 +47,18 @@ namespace Interpreter.Tests.Implementations.MangaKakalot
 
 			Assert.That(mangas, Is.Not.Null);
 			Assert.That(mangas.Count, Is.GreaterThan(0));
+
+			var manga = mangas.First();
+			var chapters = manga.GetBooks().Result;
+
+			Assert.That(chapters, Is.Not.Null);
+			Assert.That(chapters.Count, Is.GreaterThan(0));
+
+			var chapter = chapters.First();
+			var pages = chapter.GetPageUrls(false, _factory).Result;
+
+			Assert.That(pages, Is.Not.Null);
+			Assert.That(pages.Count, Is.GreaterThan(0));
 		}
 	}
 }
