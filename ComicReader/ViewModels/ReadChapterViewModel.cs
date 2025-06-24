@@ -36,6 +36,9 @@ namespace ComicReader.ViewModels
 		private object _selectedItem = new();
 
 		[ObservableProperty]
+		private string _currentPage = "";
+
+		[ObservableProperty]
 		private bool _isLoading = false;
 
 		private bool automaticSwitchToNextChapter = true;
@@ -102,6 +105,8 @@ namespace ComicReader.ViewModels
 
 		public async Task Scrolled(int position)
 		{
+			CurrentPage = Pages[position];
+
 			int currentPosition = position + 1;
 			int maxPosition = Pages.Count;
 			Position = $"{currentPosition}/{Pages.Count}";

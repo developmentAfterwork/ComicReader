@@ -60,7 +60,7 @@
 		<local:PinchToZoomContainer IsVisible="{Binding AllowSwipe, Converter={StaticResource InvertedBoolConverter}}">
 			<ffimageloading:CachedImage
 				Aspect="AspectFit"
-				Source="{Binding SelectedItem}"
+				Source="{Binding CurrentPage}"
 				WidthRequest="400" />
 		</local:PinchToZoomContainer>
 		<ActivityIndicator

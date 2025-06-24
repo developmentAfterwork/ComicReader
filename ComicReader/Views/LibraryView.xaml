@@ -41,7 +41,6 @@
 									Text="{Binding Title}" />
 								<ffimageloading:CachedImage
 									Margin="4,4,0,0"
-									BackgroundColor="DarkGray"
 									HeightRequest="250"
 									Source="{Binding CoverUrl, Converter={StaticResource CachedImageConverter}}">
 									<ffimageloading:CachedImage.GestureRecognizers>
