@@ -25,7 +25,11 @@
 				HorizontalOptions="EndAndExpand"
 				Orientation="Horizontal"
 				VerticalOptions="CenterAndExpand">
-				<Label Text="Swiping" VerticalOptions="Center" />
+				<Label
+					Text="Swiping"
+					TextColor="{AppThemeBinding Light={StaticResource White},
+					                            Dark={StaticResource White}}"
+					VerticalOptions="Center" />
 				<Switch x:Name="Toogle" IsToggled="{Binding AllowSwipe}" />
 			</StackLayout>
 		</StackLayout>
