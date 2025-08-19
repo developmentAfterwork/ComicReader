@@ -70,6 +70,8 @@ namespace ComicReader.ViewModels
 
 		public ICommand DeleteManga { get; set; }
 
+		public ICommand Open { get; set; }
+
 		private IManga? _lastManga;
 
 		private Task _initTask;
@@ -94,6 +96,7 @@ namespace ComicReader.ViewModels
 			DownloadMissingManga = new AsyncRelayCommand(OnDownloadMissingManga);
 			Refesh = new AsyncRelayCommand(OnRefresh);
 			DeleteManga = new AsyncRelayCommand(OnDeleteManga);
+			Open = new AsyncRelayCommand(OnOpen);
 
 			_initTask = new Task(async () => await Init());
 		}
@@ -166,40 +169,51 @@ namespace ComicReader.ViewModels
 
 		public async Task AddBookmarkManga()
 		{
+
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
-			settingsService.BookmarkManga(manga);
+			try {
+				settingsService.BookmarkManga(manga);
 
-			await manga.Save();
+				await manga.Save();
 
-			string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
-			if (!File.Exists(pathWithFile)) {
-				await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
-			}
-
-			if (settingsService.GetAutoAddChaptersToQueue()) {
-				var chapters = await manga.GetBooks();
-
-				int i = 0;
-				foreach (var chapter in chapters) {
-					await simpleNotificationService.ShowProgress("Add chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
-					await mangaQueue.AddChapter(chapter);
+				string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
+				if (!File.Exists(pathWithFile)) {
+					await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
 				}
-				simpleNotificationService.Close();
+
+				if (settingsService.GetAutoAddChaptersToQueue()) {
+					var chapters = await manga.GetBooks();
+
+					int i = 0;
+					foreach (var chapter in chapters) {
+						await simpleNotificationService.ShowProgress("Add chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
+						await mangaQueue.AddChapter(chapter);
+					}
+					simpleNotificationService.Close();
+				}
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError($"Error", $"{manga.Name} - {ex.Message}");
 			}
 		}
 
 		public async Task OnDeleteManga()
 		{
+
 			var result = await popupService.ShowPopupAsync("Delete Manga", "Do you want to delete that mange?", "Yes", "No");
 			if (!result) {
 				return;
 			}
 
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
-			settingsService.RemoveManga(manga);
 
-			fileSaverService.DeleteManga(manga);
-			await navigation.CloseCurrent();
+			try {
+				settingsService.RemoveManga(manga);
+
+				fileSaverService.DeleteManga(manga);
+				await navigation.CloseCurrent();
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError($"Error", $"{manga.Name} - {ex.Message}");
+			}
 		}
 
 		public async Task OnDownloadMissingManga()
@@ -220,23 +234,34 @@ namespace ComicReader.ViewModels
 			var allChapters = await manga.GetBooks();
 
 			foreach (var chapter in allChapters) {
-				if (fileSaverService.FileExists(chapter)) {
-					IChapter chapterObj = chapter;
-					if (chapter is SaveableChapter) {
-						var allPageUrls = await chapter.GetPageUrls(false, factory);
-						var mappedUrls = chapter.UrlToLocalFileMapper;
+				try {
+					if (fileSaverService.FileExists(chapter)) {
+						IChapter chapterObj = chapter;
+						if (chapter is SaveableChapter) {
+							var allPageUrls = await chapter.GetPageUrls(false, factory);
+							var mappedUrls = chapter.UrlToLocalFileMapper;
 
-						// check that all images are downloaded
-						var allImagesExists = mappedUrls.Values.All(f => File.Exists(f));
-						if (!allImagesExists) {
-							fileSaverService.DeleteChapterFile(chapterObj);
-							await fileSaverService.DeleteImagesFromChapter(chapterObj, factory);
+							// check that all images are downloaded
+							var allImagesExists = mappedUrls.Values.All(f => File.Exists(f));
+							if (!allImagesExists) {
+								fileSaverService.DeleteChapterFile(chapterObj);
+								await fileSaverService.DeleteImagesFromChapter(chapterObj, factory);
+							}
 						}
 					}
+				} catch (Exception ex) {
+					await simpleNotificationService.ShowError($"Error", $"{chapter.Title} - {ex.Message}");
 				}
 			}
 
 			IsSearching = false;
+		}
+
+		private async Task OnOpen()
+		{
+			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
+
+			await Browser.OpenAsync(manga.HomeUrl, BrowserLaunchMode.SystemPreferred);
 		}
 	}
 }

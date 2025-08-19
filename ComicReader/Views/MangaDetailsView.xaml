@@ -104,6 +104,10 @@
 										Margin="0,0,8,0"
 										Command="{Binding DeleteManga}"
 										Text="Delete" />
+									<Button
+										Margin="0,0,8,0"
+										Command="{Binding Open}"
+										Text="Open" />
 								</StackLayout>
 							</ScrollView>
 							<StackLayout
