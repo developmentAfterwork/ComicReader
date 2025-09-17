@@ -16,7 +16,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
 			var url = HomeUrl;
-			var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
+			var response = await RequestHelper.DoGetRequest(url, 3, true, RequestHeaders);
 
 			string startWord = $"\\\"name\\\":\\\"{MangaName}\\\"";
 			var startIndex = response.IndexOf(startWord) + startWord.Length;

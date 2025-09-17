@@ -31,7 +31,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			try {
 				var url = $"https://asuracomic.net/series?order=update";
-				var response = await requestHelper.DoGetRequest(url, 3);
+				var response = await requestHelper.DoGetRequest(url, 3, true);
 
 				var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
 				if (seriesList.Any()) {
@@ -59,7 +59,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			for (int i = 1; i <= 2; i++) {
 				try {
 					var url = $"https://asuracomic.net/series?page={i}&name={keyWords.Replace(" ", "%20")}";
-					var response = await requestHelper.DoGetRequest(url, 3);
+					var response = await requestHelper.DoGetRequest(url, 3, true);
 
 					var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
 					if (seriesList.Any()) {
@@ -92,7 +92,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			var status = "completed";
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 
-			var response = await requestHelper.DoGetRequest(mUrl, 3);
+			var response = await requestHelper.DoGetRequest(mUrl, 3, true);
 			var spans = htmlHelper.ElementsByClass(response, "text-sm");
 			var next = 0;
 			for (int i = 0; i < spans.Count; i++) {

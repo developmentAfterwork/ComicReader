@@ -11,11 +11,16 @@ namespace ComicReader.Helper
 
 		public RequestHelper()
 		{
+			_httpClient.Timeout = TimeSpan.FromSeconds(30);
 			_httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ComicReader", "1.0.0"));
 		}
 
-		public async Task<string> DoGetRequest(string url, int repeatCount, Dictionary<string, string>? header = null)
+		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null)
 		{
+			if (withFallback) {
+				throw new NotSupportedException();
+			}
+
 			for (int i = 0; i < repeatCount; i++) {
 				try {
 					if (header is not null) {

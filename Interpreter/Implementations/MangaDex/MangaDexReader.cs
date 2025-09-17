@@ -28,7 +28,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
 		{
-			var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&order[latestUploadedChapter]=desc", 3);
+			var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&order[latestUploadedChapter]=desc", 3, false);
 			var data = JsonConvert.DeserializeObject<MangaDexResult<List<SearchResultManga>>>(result);
 
 			var l = new List<IManga>();
@@ -38,7 +38,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 					try {
 						List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 						var coverId = m.Relationships.FirstOrDefault(r => r.Type == "cover_art")?.Id;
-						var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3).ConfigureAwait(false);
+						var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
 						var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
 						string coverFileName = coverResultData.Data.Attributes.FileName;
@@ -62,7 +62,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 		public async Task<List<IManga>> Search(string keyWords)
 		{
 			try {
-				var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&title=" + keyWords, 3);
+				var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&title=" + keyWords, 3, false);
 				var data = JsonConvert.DeserializeObject<MangaDexResult<List<SearchResultManga>>>(result);
 
 				var l = new List<IManga>();
@@ -72,7 +72,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 						try {
 							List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 							var coverId = m.Relationships.FirstOrDefault(r => r.Type == "cover_art")?.Id;
-							var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3).ConfigureAwait(false);
+							var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
 							var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
 							string coverFileName = coverResultData.Data.Attributes.FileName;

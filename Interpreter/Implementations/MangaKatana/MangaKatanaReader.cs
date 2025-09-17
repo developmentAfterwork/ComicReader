@@ -30,7 +30,7 @@ namespace ComicReader.Reader
 			try {
 				var text = keyWords.Replace(" ", "+");
 				var url = $"https://mangakatana.com/?search={text}&search_by=bo";
-				var response = await RequestHelper.DoGetRequest(url, 3);
+				var response = await RequestHelper.DoGetRequest(url, 3, true);
 
 				var mangas = GetMangasFromResponse(response);
 
@@ -49,7 +49,9 @@ namespace ComicReader.Reader
 			List<IManga> mangas = new List<IManga>();
 
 			foreach (var r in allMangaHtmls) {
-				mangas.Add(ParseManga(r));
+				try {
+					mangas.Add(ParseManga(r));
+				} catch { }
 			}
 
 			return mangas;
@@ -86,12 +88,21 @@ namespace ComicReader.Reader
 			List<IManga> l = new List<IManga>();
 
 			string url = "https://mangakatana.com/new-manga";
-			var response = await RequestHelper.DoGetRequest(url, 3);
-			l.AddRange(GetMangasFromResponse(response));
+			var response = await RequestHelper.DoGetRequest(url, 3, true);
+
+			try {
+				l.AddRange(GetMangasFromResponse(response));
+			} catch (Exception ex) {
+				await Notification.ShowError($"Error", ex.Message);
+			}
 
 			url = "https://mangakatana.com/latest";
-			response = await RequestHelper.DoGetRequest(url, 3);
-			l.AddRange(GetMangasFromResponse(response));
+			response = await RequestHelper.DoGetRequest(url, 3, true);
+			try {
+				l.AddRange(GetMangasFromResponse(response));
+			} catch (Exception ex) {
+				await Notification.ShowError($"Error", ex.Message);
+			}
 
 			return l;
 		}

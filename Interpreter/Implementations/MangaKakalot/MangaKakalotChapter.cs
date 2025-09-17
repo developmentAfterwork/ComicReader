@@ -11,7 +11,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
-			var response = await RequestHelper.DoGetRequest(HomeUrl, 6);
+			var response = await RequestHelper.DoGetRequest(HomeUrl, 6, true);
 
 			var div = HtmlHelper.ElementsByClass(response, "container-chapter-reader").First();
 			var allImgs = HtmlHelper.ElementsByTypeOuter(div, "img");

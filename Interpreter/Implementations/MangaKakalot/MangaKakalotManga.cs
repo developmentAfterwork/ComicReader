@@ -62,7 +62,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public async Task<List<IChapter>> GetBooks()
 		{
-			var response = await requestHelper.DoGetRequest(HomeUrl, 3);
+			var response = await requestHelper.DoGetRequest(HomeUrl, 3, true);
 
 			var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").FirstOrDefault();
 

@@ -20,7 +20,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
 			var url = $"https://api.mangadex.org/at-home/server/{ID}?forcePort443=true";
-			var result = await RequestHelper.DoGetRequest(url, 3).ConfigureAwait(false);
+			var result = await RequestHelper.DoGetRequest(url, 3, false).ConfigureAwait(false);
 			var data = JsonConvert.DeserializeObject<MangaDexPagesResult>(result);
 
 			List<string> pageUrls = new List<string>();

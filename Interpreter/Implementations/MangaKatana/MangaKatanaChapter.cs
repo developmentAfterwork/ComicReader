@@ -18,7 +18,7 @@ namespace ComicReader.Interpreter
 
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
-			var response = await RequestHelper.DoGetRequest(HomeUrl, 6);
+			var response = await RequestHelper.DoGetRequest(HomeUrl, 6, true);
 
 			var scripts = HtmlHelper.ElementsByType(response, "script");
 

@@ -57,7 +57,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			try {
 				do {
 					var url = $"https://api.mangadex.org/chapter?manga={ID}&limit=20&offset={offset}";
-					var chaptersResult = await _requestHelper.DoGetRequest(url, 3).ConfigureAwait(false);
+					var chaptersResult = await _requestHelper.DoGetRequest(url, 3, false).ConfigureAwait(false);
 					var data = JsonConvert.DeserializeObject<MangaDexResult<List<ChapterResult>>>(chaptersResult);
 
 					if (data != null && data.Result == "ok") {

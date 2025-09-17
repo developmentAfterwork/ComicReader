@@ -35,7 +35,7 @@ namespace ComicReader.Interpreter.Implementations
 			try {
 				var text = keyWords.Replace(" ", "_");
 				var url = $"https://mangakakalot.gg/search/story/{text}";
-				var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
+				var response = await RequestHelper.DoGetRequest(url, 3, true, RequestHeaders);
 
 				var mangas = GetMangasFromResponse(response);
 
@@ -117,7 +117,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private async Task<List<IManga>> GetMangasFromResponseUpdate(string url)
 		{
-			var response = await RequestHelper.DoGetRequest(url, 1, RequestHeaders);
+			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");

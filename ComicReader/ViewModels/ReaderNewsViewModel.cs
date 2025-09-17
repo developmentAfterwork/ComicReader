@@ -19,7 +19,7 @@ namespace ComicReader.ViewModels
 		private ObservableCollection<IMangaModel> _LoadResult = new ObservableCollection<IMangaModel>();
 
 		[ObservableProperty]
-		private bool _IsLoading = true;
+		private bool _IsLoading = false;
 
 		[ObservableProperty]
 		private ICommand _ItemSelectedCommand;
@@ -37,7 +37,7 @@ namespace ComicReader.ViewModels
 
 		public void OnAppearing()
 		{
-			if (IsLoading) {
+			if (!IsLoading) {
 				IsLoading = true;
 
 				IReader activeReaders = inMemoryDatabase.Get<IReader>("selectedReader");

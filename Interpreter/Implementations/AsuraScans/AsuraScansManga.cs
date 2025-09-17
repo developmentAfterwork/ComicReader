@@ -66,7 +66,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			List<IChapter> chapters = new List<IChapter>();
 
 			try {
-				var response = await _requestHelper.DoGetRequest(HomeUrl, 3);
+				var response = await _requestHelper.DoGetRequest(HomeUrl, 3, true);
 				var allChaptersHtml = _htmlHelper.ElementsByClass(response, "scrollbar-thumb-themecolor");
 
 				var allAHtmlOuter = _htmlHelper.ElementsByTypeOuter(allChaptersHtml[0], "a");
