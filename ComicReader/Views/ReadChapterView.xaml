@@ -21,16 +21,22 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 	<Shell.TitleView>
-		<StackLayout Orientation="Horizontal">
-			<StackLayout Padding="4" Orientation="Horizontal">
-				<Label
-					Text="Swiping"
-					TextColor="{AppThemeBinding Light={StaticResource White},
-					                            Dark={StaticResource White}}"
-					VerticalOptions="Center" />
-				<Switch x:Name="Toogle" IsToggled="{Binding AllowSwipe}" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<StackLayout Grid.Column="1" Orientation="Horizontal">
+				<StackLayout Padding="4" Orientation="Horizontal">
+					<Label
+						Text="Swiping"
+						TextColor="{AppThemeBinding Light={StaticResource White},
+						                            Dark={StaticResource White}}"
+						VerticalOptions="Center" />
+					<Switch x:Name="Toogle" IsToggled="{Binding AllowSwipe}" />
+				</StackLayout>
 			</StackLayout>
-		</StackLayout>
+		</Grid>
 	</Shell.TitleView>
 	<Grid>
 		<Grid.RowDefinitions>
@@ -48,11 +54,11 @@
 			ItemsSource="{Binding Pages}"
 			SelectedItem="{Binding SelectedItem}">
 			<controls:CarouselViewControl.ItemTemplate>
-				<DataTemplate>
+				<DataTemplate x:DataType="x:String">
 					<ScrollView Orientation="Vertical">
 						<ffimageloading:CachedImage
 							Aspect="AspectFit"
-							Source="{Binding Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
+							Source="{Binding ., Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
 							WidthRequest="400" />
 					</ScrollView>
 				</DataTemplate>

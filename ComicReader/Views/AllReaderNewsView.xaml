@@ -16,7 +16,18 @@
 		</ResourceDictionary>
 	</Page.Resources>
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 		<ActivityIndicator
+			Grid.Row="0"
+			Grid.RowSpan="3"
+			Grid.Column="0"
 			HeightRequest="70"
 			HorizontalOptions="Center"
 			IsRunning="{Binding IsSearching}"
@@ -24,6 +35,9 @@
 			VerticalOptions="Center"
 			Color="Orange" />
 		<CollectionView
+			Grid.Row="0"
+			Grid.RowSpan="3"
+			Grid.Column="0"
 			Margin="8,0,8,0"
 			IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsSource="{Binding SearchResultGroup}"

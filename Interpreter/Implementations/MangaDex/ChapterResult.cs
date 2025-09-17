@@ -13,7 +13,7 @@
 			public string TranslatedLanguage { get; set; } = default!;
 		}
 
-		public string Id { get; set; }
+		public string Id { get; set; } = default!;
 
 		public ChapterAttribute Attributes { get; set; } = default!;
 
