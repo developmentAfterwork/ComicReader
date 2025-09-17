@@ -21,7 +21,7 @@ namespace ComicReader.ViewModels
 		private ICommand _ItemSelectedCommand;
 
 		[ObservableProperty]
-		private IReader _SelectedItem;
+		private IReader? _SelectedItem;
 
 		[ObservableProperty]
 		private string _SearchText = string.Empty;
@@ -74,7 +74,7 @@ namespace ComicReader.ViewModels
 
 		public async Task OnItemSelected(object? obj)
 		{
-			if (SelectedItem is not null) {
+			if (SelectedItem != null) {
 				inMemoryDatabase.Set<IReader>("selectedReader", SelectedItem);
 				SelectedItem = null;
 

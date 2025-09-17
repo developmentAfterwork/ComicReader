@@ -8,28 +8,28 @@ namespace ComicReader.ViewModels.Model
 {
 	public partial class IMangaModelGroup : ObservableObject
 	{
-		public string Source { get; set; }
+		public string Source { get; set; } = default!;
 
 		[ObservableProperty]
 		private bool _IsSearching;
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModel> _Mangas;
+		private ObservableCollection<IMangaModel> _Mangas = new();
 	}
 
 	public partial class IMangaModel : ObservableObject
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = default!;
 
-		public string Source { get; set; }
+		public string Source { get; set; } = default!;
 
-		public string Description { get; set; }
+		public string Description { get; set; } = default!;
 
 		public ImageSource? SourcCoverUrlSource { get; set; }
 
-		public string CoverUrl { get; set; }
+		public string CoverUrl { get; set; } = default!;
 
-		public IManga Manga { get; set; }
+		public IManga Manga { get; set; } = default!;
 
 		public static async Task<IMangaModel> Create(IManga manga, Dictionary<string, string>? requestHeaders)
 		{

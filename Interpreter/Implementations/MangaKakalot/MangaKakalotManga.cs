@@ -95,7 +95,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private List<IChapter> GetAlternative(string? response)
 		{
-			var chaptersHtml = htmlHelper.ElementsByClass(response, "chapter-list").FirstOrDefault();
+			var chaptersHtml = htmlHelper.ElementsByClass(response ?? string.Empty, "chapter-list").FirstOrDefault();
 
 			if (chaptersHtml is null) {
 				return new List<IChapter>();

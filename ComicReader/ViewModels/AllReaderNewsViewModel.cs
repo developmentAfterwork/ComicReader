@@ -14,7 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModelGroup> _SearchResultGroup;
+		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = [];
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -67,8 +67,7 @@ namespace ComicReader.ViewModels
 
 		public async Task MangaSelected(object? mangaObj)
 		{
-			var model = mangaObj as IMangaModel;
-			if (model != null) {
+			if (mangaObj is IMangaModel model) {
 				inMemoryDatabase.Set<IManga>("selectedManga", model.Manga);
 
 				await navigation.GoToMangaDetails();

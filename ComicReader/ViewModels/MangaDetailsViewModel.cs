@@ -36,7 +36,7 @@ namespace ComicReader.ViewModels
 		private ICommand _ItemSelectedCommand;
 
 		[ObservableProperty]
-		private IChapter _SelectedItem;
+		private IChapter? _SelectedItem;
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -77,7 +77,7 @@ namespace ComicReader.ViewModels
 		private Task _initTask;
 
 		[ObservableProperty]
-		public ImageSource _coverUrlImageSource;
+		public ImageSource _coverUrlImageSource = default!;
 
 		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, RequestHelper requestHelper, PopupService popupService)
 		{

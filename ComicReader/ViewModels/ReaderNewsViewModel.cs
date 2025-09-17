@@ -25,7 +25,7 @@ namespace ComicReader.ViewModels
 		private ICommand _ItemSelectedCommand;
 
 		[ObservableProperty]
-		private IMangaModel _SelectedItem;
+		private IMangaModel? _SelectedItem;
 
 		public ReaderNewsViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation)
 		{

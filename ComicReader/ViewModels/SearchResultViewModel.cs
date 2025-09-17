@@ -14,7 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 
 		[ObservableProperty]
-		private ObservableCollection<IMangaModelGroup> _SearchResultGroup;
+		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = new();
 
 		[ObservableProperty]
 		private bool _IsSearching = true;

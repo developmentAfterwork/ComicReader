@@ -4,19 +4,19 @@
 	{
 		public class ChapterAttribute
 		{
-			public string Volume { get; set; }
+			public string Volume { get; set; } = default!;
 
-			public string Chapter { get; set; }
+			public string Chapter { get; set; } = default!;
 
-			public string UpdatedAt { get; set; }
+			public string UpdatedAt { get; set; } = default!;
 
-			public string TranslatedLanguage { get; set; }
+			public string TranslatedLanguage { get; set; } = default!;
 		}
 
 		public string Id { get; set; }
 
-		public ChapterAttribute Attributes { get; set; }
+		public ChapterAttribute Attributes { get; set; } = default!;
 
-		public List<MangaDexPair> Relationships { get; set; }
+		public List<MangaDexPair> Relationships { get; set; } = default!;
 	}
 }

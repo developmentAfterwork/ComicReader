@@ -23,6 +23,8 @@ public partial class AllReaderNewsView : ContentPage
 	{
 		var c = sender as CollectionView;
 		await allReaderNewsViewModel.MangaSelected(e.CurrentSelection.FirstOrDefault());
-		c.SelectedItem = null;
+		if (c != null) {
+			c.SelectedItem = null;
+		}
 	}
 }

@@ -19,7 +19,7 @@ namespace ComicReader.ViewModels
 		private readonly FileSaverService fileSaverService;
 
 		[ObservableProperty]
-		private ObservableCollection<string> _Pages = new ObservableCollection<string>();
+		private ObservableCollection<string> _pages = [];
 
 		[ObservableProperty]
 		private IChapter _Chapter = new SaveableChapter();
@@ -33,7 +33,7 @@ namespace ComicReader.ViewModels
 		private bool _allowSwipe = true;
 
 		[ObservableProperty]
-		private object _selectedItem = new();
+		private string _selectedItem = string.Empty;
 
 		[ObservableProperty]
 		private string? _currentPage = null;
@@ -41,7 +41,7 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _isLoading = false;
 
-		private bool automaticSwitchToNextChapter = true;
+		private readonly bool automaticSwitchToNextChapter = true;
 
 		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService)
 		{
@@ -108,7 +108,7 @@ namespace ComicReader.ViewModels
 			CurrentPage = Pages[position];
 
 			int currentPosition = position + 1;
-			int maxPosition = Pages.Count;
+
 			Position = $"{currentPosition}/{Pages.Count}";
 
 			var saved = settingsService.GetSaveChapterPosition(Chapter);

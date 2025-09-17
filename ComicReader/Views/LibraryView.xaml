@@ -42,7 +42,7 @@
 								<ffimageloading:CachedImage
 									Margin="4,4,0,0"
 									HeightRequest="250"
-									Source="{Binding CoverUrl, Converter={StaticResource CachedImageConverter}}">
+									Source="{Binding CoverUrlImageSource}">
 									<ffimageloading:CachedImage.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding MangeSelected}" />
 									</ffimageloading:CachedImage.GestureRecognizers>

@@ -6,8 +6,10 @@
 	xmlns:converters="clr-namespace:ComicReader.Converter"
 	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 	xmlns:i="clr-namespace:ComicReader.Views.Models"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="UpdatesView"
+	x:DataType="viewModel:UpdateViewModel"
 	FlyoutItem.IsVisible="False"
 	Shell.NavBarIsVisible="False">
 	<Page.Resources>
@@ -39,34 +41,23 @@
 		<VerticalStackLayout
 			Grid.Row="1"
 			Grid.Column="0"
-			HorizontalOptions="CenterAndExpand"
-			IsVisible="{Binding HasChapters, Converter={StaticResource InvertedBoolConverter}}"
-			VerticalOptions="CenterAndExpand">
+			IsVisible="{Binding HasChapters, Converter={StaticResource InvertedBoolConverter}}">
 			<Label
 				FontAttributes="Bold"
 				FontSize="48"
 				Text="∑(ಠ_ಠ)" />
-			<Label
-				HorizontalOptions="CenterAndExpand"
-				Text="Keine Änderungen"
-				VerticalOptions="CenterAndExpand" />
+			<Label Text="Keine Änderungen" />
 		</VerticalStackLayout>
 		<CollectionView
 			Grid.Row="1"
 			Grid.Column="0"
 			Margin="0,0,8,0"
-			HorizontalOptions="StartAndExpand"
 			IsVisible="{Binding HasChapters}"
 			ItemsSource="{Binding NewChapters}"
-			SelectionMode="None"
-			VerticalOptions="FillAndExpand">
+			SelectionMode="None">
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="i:MangaChapterViewModel">
-					<StackLayout
-						Margin="8"
-						HorizontalOptions="StartAndExpand"
-						Orientation="Horizontal"
-						VerticalOptions="StartAndExpand">
+					<StackLayout Margin="8" Orientation="Horizontal">
 						<ffimageloading:CachedImage
 							Grid.Column="0"
 							Margin="0,0,8,0"
@@ -78,11 +69,9 @@
 								FontSize="14"
 								Text="{Binding Chapter.MangaName}" />
 							<Label
-								HorizontalOptions="StartAndExpand"
 								MaxLines="10"
 								MaximumWidthRequest="285"
-								Text="{Binding Chapter.Title}"
-								VerticalOptions="StartAndExpand" />
+								Text="{Binding Chapter.Title}" />
 							<Label
 								FontAttributes="Bold"
 								FontSize="14"

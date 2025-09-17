@@ -35,8 +35,7 @@
 				ItemsSource="{Binding Chapters}"
 				SelectedItem="{Binding SelectedItem}"
 				SelectionChangedCommand="{Binding ItemSelectedCommand}"
-				SelectionMode="Single"
-				VerticalOptions="StartAndExpand">
+				SelectionMode="Single">
 				<CollectionView.Header>
 					<Grid>
 						<Grid.RowDefinitions>
@@ -124,10 +123,8 @@
 								Margin="8,0,0,0"
 								Padding="0"
 								HeightRequest="40"
-								HorizontalOptions="FillAndExpand"
 								IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
-								Orientation="Horizontal"
-								VerticalOptions="FillAndExpand">
+								Orientation="Horizontal">
 								<CollectionView ItemsSource="{Binding Genres}">
 									<CollectionView.ItemsLayout>
 										<LinearItemsLayout Orientation="Horizontal" />

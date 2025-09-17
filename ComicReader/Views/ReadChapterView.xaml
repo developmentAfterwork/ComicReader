@@ -8,8 +8,10 @@
 	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
 	xmlns:pin="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="The Gamer"
+	x:DataType="viewModel:ReadChapterViewModel"
 	Shell.NavBarIsVisible="True"
 	Shell.TabBarIsVisible="False">
 	<ContentPage.Resources>
@@ -20,11 +22,7 @@
 	</ContentPage.Resources>
 	<Shell.TitleView>
 		<StackLayout Orientation="Horizontal">
-			<StackLayout
-				Padding="4"
-				HorizontalOptions="EndAndExpand"
-				Orientation="Horizontal"
-				VerticalOptions="CenterAndExpand">
+			<StackLayout Padding="4" Orientation="Horizontal">
 				<Label
 					Text="Swiping"
 					TextColor="{AppThemeBinding Light={StaticResource White},
@@ -45,7 +43,6 @@
 			x:Name="pagesCarusel"
 			Grid.Row="0"
 			Grid.Column="0"
-			HorizontalOptions="FillAndExpand"
 			IsSwipeEnabled="{Binding AllowSwipe}"
 			IsVisible="{Binding AllowSwipe}"
 			ItemsSource="{Binding Pages}"

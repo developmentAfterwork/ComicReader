@@ -33,7 +33,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 			var l = new List<IManga>();
 
-			if (data.Result == "ok") {
+			if (data?.Result == "ok") {
 				foreach (var m in data.Data) {
 					try {
 						List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
@@ -41,7 +41,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 						var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
 						var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
-						string coverFileName = coverResultData.Data.Attributes.FileName;
+						string coverFileName = coverResultData?.Data.Attributes.FileName ?? string.Empty;
 						string coverUrl = $"https://uploads.mangadex.org/covers/{m.Id}/{coverFileName}";
 						string homeUrl = $"https://mangadex.org/title/{m.Id}";
 
@@ -67,7 +67,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 				var l = new List<IManga>();
 
-				if (data.Result == "ok") {
+				if (data?.Result == "ok") {
 					foreach (var m in data.Data) {
 						try {
 							List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
@@ -75,7 +75,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 							var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
 							var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
-							string coverFileName = coverResultData.Data.Attributes.FileName;
+							string coverFileName = coverResultData?.Data.Attributes.FileName ?? string.Empty;
 							string coverUrl = $"https://uploads.mangadex.org/covers/{m.Id}/{coverFileName}";
 							string homeUrl = $"https://mangadex.org/title/{m.Id}";
 

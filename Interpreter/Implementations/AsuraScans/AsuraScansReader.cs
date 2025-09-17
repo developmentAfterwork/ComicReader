@@ -83,10 +83,10 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		private async Task<AsuraScansManga> ParseManga(string? aOuter, string? a)
 		{
-			var mUrl = $"{HomeUrl}{htmlHelper.GetAttribute(aOuter, "href")}";
-			var title = htmlHelper.ElementsByClass(a, "block")[2];
-			var coverImg = htmlHelper.ElementsByTypeOuter(a, "img");
-			var cover = htmlHelper.GetAttribute(coverImg.FirstOrDefault(), "src");
+			var mUrl = $"{HomeUrl}{htmlHelper.GetAttribute(aOuter ?? string.Empty, "href")}";
+			var title = htmlHelper.ElementsByClass(a ?? string.Empty, "block")[2];
+			var coverImg = htmlHelper.ElementsByTypeOuter(a ?? string.Empty, "img");
+			var cover = htmlHelper.GetAttribute(coverImg.FirstOrDefault() ?? string.Empty, "src");
 
 			var autor = "unknown";
 			var status = "completed";

@@ -25,7 +25,7 @@
 
 		var tcs = new TaskCompletionSource<string>();
 
-		await MainThread.InvokeOnMainThreadAsync(async () => {
+		await MainThread.InvokeOnMainThreadAsync(() => {
 			_webView.Source = "about:blank";
 		});
 
@@ -62,7 +62,7 @@
 
 		_webView.Navigated += handler;
 
-		await MainThread.InvokeOnMainThreadAsync(async () => {
+		await MainThread.InvokeOnMainThreadAsync(() => {
 			_webView.Source = url;
 		});
 

@@ -4,8 +4,10 @@
 	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 	xmlns:queue="clr-namespace:ComicReader.Services.Queue"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="DownloadsView"
+	x:DataType="viewModel:DownloadsViewModel"
 	FlyoutItem.IsVisible="False"
 	Shell.NavBarIsVisible="False">
 	<Page.Resources>
@@ -45,17 +47,11 @@
 			Grid.Column="0"
 			Grid.ColumnSpan="2"
 			Margin="0,0,8,0"
-			HorizontalOptions="StartAndExpand"
 			ItemsSource="{Binding ChaptersToDownload}"
-			SelectionMode="None"
-			VerticalOptions="FillAndExpand">
+			SelectionMode="None">
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="queue:ChapterPageSources">
-					<StackLayout
-						Margin="8"
-						HorizontalOptions="StartAndExpand"
-						Orientation="Horizontal"
-						VerticalOptions="StartAndExpand">
+					<StackLayout Margin="8" Orientation="Horizontal">
 						<Border
 							Margin="0,0,4,0"
 							BackgroundColor="Orange"
@@ -70,11 +66,9 @@
 								FontSize="14"
 								Text="{Binding MangaName}" />
 							<Label
-								HorizontalOptions="StartAndExpand"
 								MaxLines="10"
 								MaximumWidthRequest="285"
-								Text="{Binding Title}"
-								VerticalOptions="StartAndExpand" />
+								Text="{Binding Title}" />
 						</StackLayout>
 					</StackLayout>
 				</DataTemplate>
@@ -84,17 +78,12 @@
 			Grid.Row="1"
 			Grid.Column="0"
 			Grid.ColumnSpan="2"
-			HorizontalOptions="CenterAndExpand"
-			IsVisible="{Binding HasNoEntries}"
-			VerticalOptions="CenterAndExpand">
+			IsVisible="{Binding HasNoEntries}">
 			<Label
 				FontAttributes="Bold"
 				FontSize="48"
 				Text="∑(ಠ_ಠ)" />
-			<Label
-				HorizontalOptions="CenterAndExpand"
-				Text="Keine Downloads"
-				VerticalOptions="CenterAndExpand" />
+			<Label Text="Keine Downloads" />
 		</VerticalStackLayout>
 	</Grid>
 </ContentPage>

@@ -49,7 +49,7 @@ namespace ComicReader.ViewModels
 							if (toGo.Any()) {
 								m.Add(model);
 							}
-						} catch (Exception ex) { }
+						} catch { }
 					} else {
 						m.Add(model);
 					}

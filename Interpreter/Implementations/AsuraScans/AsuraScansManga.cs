@@ -69,11 +69,11 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 				var response = await _requestHelper.DoGetRequest(HomeUrl, 3, true);
 				var allChaptersHtml = _htmlHelper.ElementsByClass(response, "scrollbar-thumb-themecolor");
 
-				var allAHtmlOuter = _htmlHelper.ElementsByTypeOuter(allChaptersHtml[0], "a");
+				var allAHtmlOuter = _htmlHelper.ElementsByTypeOuter(allChaptersHtml[0], "a") ?? new List<string?>();
 				var allAHtml = _htmlHelper.ElementsByType(allChaptersHtml[0], "a");
 
 				for (int i = allAHtmlOuter.Count - 1; i > 0; i--) {
-					var url = $"https://asuracomic.net/series/{_htmlHelper.GetAttribute(allAHtmlOuter[i], "href")}";
+					var url = $"https://asuracomic.net/series/{_htmlHelper.GetAttribute(allAHtmlOuter[i] ?? string.Empty, "href")}";
 					var h3s = _htmlHelper.ElementsByType(allAHtml[i], "h3");
 					var last = "-";
 
