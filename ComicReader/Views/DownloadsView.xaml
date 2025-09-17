@@ -22,30 +22,40 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="80" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		<Button
-			Grid.Row="0"
-			Margin="8"
-			Command="{Binding StartQueueCommand}"
-			HorizontalOptions="Start"
-			IsEnabled="{Binding IsDownloading, Converter={StaticResource InvertedBoolConverter}}"
-			Text="Start"
-			WidthRequest="70" />
-		<ActivityIndicator
-			Grid.Row="0"
+		<HorizontalStackLayout Grid.Row="0" Grid.Column="0">
+			<Button
+				Margin="8"
+				Command="{Binding StartQueueCommand}"
+				HorizontalOptions="Start"
+				IsEnabled="{Binding IsDownloading, Converter={StaticResource InvertedBoolConverter}}"
+				Text="Start"
+				WidthRequest="70" />
+			<ActivityIndicator
+				Margin="8"
+				HorizontalOptions="Start"
+				IsEnabled="{Binding IsDownloading}"
+				IsRunning="{Binding IsDownloading}"
+				IsVisible="{Binding IsDownloading}"
+				Color="Orange" />
+		</HorizontalStackLayout>
+		<VerticalStackLayout
+			Grid.Row="1"
 			Grid.Column="1"
-			Margin="8"
-			HorizontalOptions="Start"
-			IsEnabled="{Binding IsDownloading}"
-			IsRunning="{Binding IsDownloading}"
-			IsVisible="{Binding IsDownloading}"
-			Color="Orange" />
+			IsVisible="{Binding HasNoEntries}">
+			<Label
+				FontAttributes="Bold"
+				FontSize="48"
+				Text="∑(ಠ_ಠ)" />
+			<Label Text="Keine Downloads" />
+		</VerticalStackLayout>
 		<CollectionView
 			Grid.Row="1"
 			Grid.Column="0"
-			Grid.ColumnSpan="2"
+			Grid.ColumnSpan="3"
 			Margin="0,0,8,0"
 			ItemsSource="{Binding ChaptersToDownload}"
 			SelectionMode="None">
@@ -74,16 +84,5 @@
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
-		<VerticalStackLayout
-			Grid.Row="1"
-			Grid.Column="0"
-			Grid.ColumnSpan="2"
-			IsVisible="{Binding HasNoEntries}">
-			<Label
-				FontAttributes="Bold"
-				FontSize="48"
-				Text="∑(ಠ_ಠ)" />
-			<Label Text="Keine Downloads" />
-		</VerticalStackLayout>
 	</Grid>
 </ContentPage>
