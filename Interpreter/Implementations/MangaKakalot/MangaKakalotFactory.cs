@@ -9,18 +9,20 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 	{
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
+		private readonly INotification notification;
 
 		public string SourceKey => MangaKakalotManga.SourceKey;
 
-		public MangaKakalotFactory(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaKakalotFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
+			this.notification = notification;
 		}
 
 		public IReader CreateReader()
 		{
-			return new MangaKakalotReader(requestHelper, htmlHelper);
+			return new MangaKakalotReader(requestHelper, htmlHelper, notification);
 		}
 
 		public IChapter GetOriginChapter(SaveableChapter saveableChapter)

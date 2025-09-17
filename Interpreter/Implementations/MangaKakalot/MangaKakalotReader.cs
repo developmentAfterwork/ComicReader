@@ -9,6 +9,7 @@ namespace ComicReader.Interpreter.Implementations
 	{
 		private IRequest RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
+		public INotification Notification { get; }
 
 		public string Title => "MangaKakalot";
 
@@ -22,10 +23,11 @@ namespace ComicReader.Interpreter.Implementations
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 
-		public MangaKakalotReader(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaKakalotReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
+			Notification = notification;
 		}
 
 		public async Task<List<IManga>> Search(string keyWords)
@@ -38,7 +40,8 @@ namespace ComicReader.Interpreter.Implementations
 				var mangas = GetMangasFromResponse(response);
 
 				return mangas;
-			} catch {
+			} catch (Exception ex) {
+				await Notification.ShowError($"Error", ex.Message);
 				return new();
 			}
 		}
@@ -98,14 +101,16 @@ namespace ComicReader.Interpreter.Implementations
 				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
 				l.AddRange(mangas);
 			} catch (Exception ex) {
-
+				await Notification.ShowError($"Error", ex.Message);
 			}
 
 			try {
 				url = "https://www.mangakakalot.gg/manga-list/latest-manga";
 				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
 				l.AddRange(mangas);
-			} catch { }
+			} catch (Exception ex) {
+				await Notification.ShowError($"Error", ex.Message);
+			}
 
 			return l;
 		}

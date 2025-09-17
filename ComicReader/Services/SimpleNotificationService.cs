@@ -1,8 +1,9 @@
-﻿using Plugin.LocalNotification;
+﻿using Interpreter.Interface;
+using Plugin.LocalNotification;
 
 namespace ComicReader.Services
 {
-	public class SimpleNotificationService
+	public class SimpleNotificationService : INotification
 	{
 		public static string ChannelId => "comicreader_public_channel";
 

@@ -9,18 +9,20 @@ namespace ComicReader.Interpreter.Implementations.MangaKatana
 	{
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
+		private readonly INotification notification;
 
 		public string SourceKey => MangaKatanaManga.SourceKey;
 
-		public MangaKatanaFactory(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaKatanaFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
+			this.notification = notification;
 		}
 
 		public IReader CreateReader()
 		{
-			return new MangaKatanaReader(requestHelper, htmlHelper);
+			return new MangaKatanaReader(requestHelper, htmlHelper, notification);
 		}
 
 		public IChapter GetOriginChapter(SaveableChapter saveableChapter)

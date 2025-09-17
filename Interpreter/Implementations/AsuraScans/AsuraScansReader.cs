@@ -8,6 +8,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 	{
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
+		private readonly INotification notification;
 
 		public string Title => "AsuraScans";
 
@@ -17,10 +18,11 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		public bool ShowReader { get; set; } = true;
 
-		public AsuraScansReader(IRequest requestHelper, HtmlHelper htmlHelper)
+		public AsuraScansReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
+			this.notification = notification;
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
@@ -43,7 +45,9 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 						} catch { }
 					}
 				}
-			} catch { }
+			} catch (Exception ex) {
+				await notification.ShowError($"Error", ex.Message);
+			}
 
 			return l;
 		}
@@ -69,7 +73,9 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 							} catch { }
 						}
 					}
-				} catch { }
+				} catch (Exception ex) {
+					await notification.ShowError($"Error", ex.Message);
+				}
 			}
 
 			return l;
@@ -101,7 +107,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
-			return new AsuraScansManga(title, mUrl, cover, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper);
+			return new AsuraScansManga(title, mUrl, cover, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper, notification);
 		}
 
 		private string FixDesc(string desc)

@@ -9,6 +9,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 	{
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
+		private readonly INotification _notification;
 
 		public string Title => "MangaDex";
 
@@ -18,10 +19,11 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public bool ShowReader { get; set; } = true;
 
-		public MangaDexReader(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaDexReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
+			_notification = notification;
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
@@ -48,7 +50,9 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 							l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper));
 						} catch (Exception) { }
-					} catch (Exception) { }
+					} catch (Exception ex) {
+						await _notification.ShowError($"Error", ex.Message);
+					}
 				}
 			}
 
@@ -80,12 +84,15 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 								l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper));
 							} catch (Exception) { }
-						} catch (Exception) { }
+						} catch (Exception ex) {
+							await _notification.ShowError($"Error", ex.Message);
+						}
 					}
 				}
 
 				return l;
-			} catch {
+			} catch (Exception ex) {
+				await _notification.ShowError($"Error", ex.Message);
 				return new();
 			}
 		}

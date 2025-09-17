@@ -14,10 +14,10 @@ namespace Interpreter.Tests.Implementations.MangaKatana
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaKatanaReader(new RequestHelper(), new());
+			_reader = new MangaKatanaReader(new RequestHelper(), new(), new NotificationDummy());
 
 			_factory = new Factory();
-			_factory.Register(new MangaKatanaFactory(new RequestHelper(), new()));
+			_factory.Register(new MangaKatanaFactory(new RequestHelper(), new(), new NotificationDummy()));
 		}
 
 		[Test]

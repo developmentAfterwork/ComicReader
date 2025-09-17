@@ -6,10 +6,11 @@ namespace ComicReader.Reader
 {
 	public class MangaKatanaReader : IReader
 	{
-		public MangaKatanaReader(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaKatanaReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
+			Notification = notification;
 		}
 
 		public string Title => "MangaKatana";
@@ -22,6 +23,7 @@ namespace ComicReader.Reader
 
 		private IRequest RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
+		public INotification Notification { get; }
 
 		public async Task<List<IManga>> Search(string keyWords)
 		{
@@ -33,7 +35,8 @@ namespace ComicReader.Reader
 				var mangas = GetMangasFromResponse(response);
 
 				return mangas;
-			} catch {
+			} catch (Exception ex) {
+				await Notification.ShowError($"Error", ex.Message);
 				return new();
 			}
 		}

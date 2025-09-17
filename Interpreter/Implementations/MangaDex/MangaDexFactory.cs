@@ -9,18 +9,20 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 	{
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
+		private readonly INotification _notification;
 
 		public string SourceKey => "MangaDex";
 
-		public MangaDexFactory(IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaDexFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
+			_notification = notification;
 		}
 
 		public IReader CreateReader()
 		{
-			return new MangaDexReader(_requestHelper, _htmlHelper);
+			return new MangaDexReader(_requestHelper, _htmlHelper, _notification);
 		}
 
 		public IChapter GetOriginChapter(SaveableChapter saveableChapter)

@@ -7,6 +7,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 	{
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
+		private readonly INotification _notification;
 
 		public string? ID { get; }
 
@@ -41,7 +42,8 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			List<string> genres,
 			string source,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper)
+			HtmlHelper htmlHelper,
+			INotification notification)
 		{
 			Name = name;
 			HomeUrl = homeUrl;
@@ -49,6 +51,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
+			_notification = notification;
 
 			Autor = autor;
 			Status = status;
@@ -80,9 +83,11 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 						last = _htmlHelper.ElementsByType(allAHtml[i], "h3")[0];
 					}
 
-					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _requestHelper, _htmlHelper));
+					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _requestHelper, _htmlHelper, _notification));
 				}
-			} catch { }
+			} catch (Exception ex) {
+				await _notification.ShowError($"Error", ex.Message);
+			}
 
 			return chapters;
 		}

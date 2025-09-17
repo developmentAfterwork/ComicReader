@@ -84,6 +84,7 @@ namespace ComicReader
 			builder.Services.AddSingleton<AsuraScansFactory>();
 			builder.Services.AddSingleton<PopupService>();
 			builder.Services.AddSingleton<IRequest, RequestHelper>();
+			builder.Services.AddSingleton<INotification, SimpleNotificationService>();
 		}
 
 		private static void AddViewModels(MauiAppBuilder builder)

@@ -11,7 +11,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 {
 	public class AsureScansChapter : BaseChapter, IChapter
 	{
-		public AsureScansChapter(string? id, string source, string mangaName, string title, string homeUrl, string lastUpdate, IRequest requestHelper, HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper) { }
+		public AsureScansChapter(string? id, string source, string mangaName, string title, string homeUrl, string lastUpdate, IRequest requestHelper, HtmlHelper htmlHelper, INotification notification) : base(id, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper) { }
 
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
