@@ -1,12 +1,13 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Reader;
+using Interpreter.Interface;
 using Newtonsoft.Json;
 
 namespace ComicReader.Interpreter.Implementations.MangaDex
 {
 	public class MangaDexReader : IReader
 	{
-		private readonly RequestHelper _requestHelper;
+		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 
 		public string Title => "MangaDex";
@@ -17,7 +18,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public bool ShowReader { get; set; } = true;
 
-		public MangaDexReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaDexReader(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;

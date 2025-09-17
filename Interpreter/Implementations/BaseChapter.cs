@@ -1,11 +1,12 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Services;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations
 {
 	public abstract class BaseChapter : IChapter
 	{
-		protected readonly RequestHelper RequestHelper;
+		protected readonly IRequest RequestHelper;
 		protected readonly HtmlHelper HtmlHelper;
 
 		public string? ID { get; } = null;
@@ -38,7 +39,7 @@ namespace ComicReader.Interpreter.Implementations
 			string lastUpdate,
 			string mangaName,
 			string source,
-			RequestHelper requestHelper,
+			IRequest requestHelper,
 			HtmlHelper htmlHelper)
 		{
 			ID = id;

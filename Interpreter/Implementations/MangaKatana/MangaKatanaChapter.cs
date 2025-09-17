@@ -1,5 +1,6 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter.Implementations;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter
 {
@@ -11,7 +12,7 @@ namespace ComicReader.Interpreter
 			string lastUpdate,
 			string mangaName,
 			string source,
-			RequestHelper requestHelper,
+			IRequest requestHelper,
 			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
 		{ }
 

@@ -1,8 +1,9 @@
 ﻿using ComicReader.Services;
+using Interpreter.Interface;
 
 namespace ComicReader.Helper
 {
-	public class RequestHelper
+	public class RequestHelper : IRequest
 	{
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 

@@ -5,13 +5,13 @@ using ComicReader.Interpreter.Implementations.AsuraScans;
 using ComicReader.Interpreter.Implementations.MangaDex;
 using ComicReader.Interpreter.Implementations.MangaKakalot;
 using ComicReader.Interpreter.Implementations.MangaKatana;
-using ComicReader.Interpreter.Implementations.NHentai;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
 using ComicReader.ViewModels;
 using ComicReader.Views;
 using CommunityToolkit.Maui;
 using FFImageLoading.Maui;
+using Interpreter.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
@@ -81,9 +81,9 @@ namespace ComicReader
 			builder.Services.AddSingleton<MangaKakalotFactory>();
 			builder.Services.AddSingleton<MangaKatanaFactory>();
 			builder.Services.AddSingleton<MangaDexFactory>();
-			builder.Services.AddSingleton<NHentaiFactory>();
 			builder.Services.AddSingleton<AsuraScansFactory>();
 			builder.Services.AddSingleton<PopupService>();
+			builder.Services.AddSingleton<IRequest, RequestHelper>();
 		}
 
 		private static void AddViewModels(MauiAppBuilder builder)

@@ -1,17 +1,18 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter.Interface;
 using ComicReader.Reader;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.MangaKakalot
 {
 	public class MangaKakalotFactory : IFactory
 	{
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
 		public string SourceKey => MangaKakalotManga.SourceKey;
 
-		public MangaKakalotFactory(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaKakalotFactory(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;

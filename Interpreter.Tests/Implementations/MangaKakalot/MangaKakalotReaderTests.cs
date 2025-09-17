@@ -1,4 +1,5 @@
-﻿using ComicReader.Interpreter;
+﻿using ComicReader.Helper;
+using ComicReader.Interpreter;
 using ComicReader.Interpreter.Implementations;
 using ComicReader.Interpreter.Implementations.MangaKakalot;
 
@@ -13,10 +14,10 @@ namespace Interpreter.Tests.Implementations.MangaKakalot
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaKakalotReader(new(), new());
+			_reader = new MangaKakalotReader(new RequestHelper(), new());
 
 			_factory = new Factory();
-			_factory.Register(new MangaKakalotFactory(new(), new()));
+			_factory.Register(new MangaKakalotFactory(new RequestHelper(), new()));
 		}
 
 		[Test]

@@ -1,4 +1,5 @@
-﻿using ComicReader.Interpreter;
+﻿using ComicReader.Helper;
+using ComicReader.Interpreter;
 using ComicReader.Interpreter.Implementations.MangaDex;
 
 namespace Interpreter.Tests.Implementations.MangaDex
@@ -12,10 +13,10 @@ namespace Interpreter.Tests.Implementations.MangaDex
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaDexReader(new(), new());
+			_reader = new MangaDexReader(new RequestHelper(), new());
 
 			_factory = new Factory();
-			_factory.Register(new MangaDexFactory(new(), new()));
+			_factory.Register(new MangaDexFactory(new RequestHelper(), new()));
 		}
 
 		[Test]

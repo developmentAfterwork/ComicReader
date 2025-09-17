@@ -1,11 +1,12 @@
 ﻿using ComicReader.Helper;
+using Interpreter.Interface;
 using Newtonsoft.Json;
 
 namespace ComicReader.Interpreter.Implementations.MangaDex
 {
 	public class MangaDexManga : IManga
 	{
-		private readonly RequestHelper _requestHelper;
+		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 
 		public string ID { get; }
@@ -30,7 +31,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public Dictionary<string, string>? RequestHeaders => null;
 
-		public MangaDexManga(string? id, string source, string name, string homeUrl, string coverUrl, string autor, string status, string languageFlagUrl, string description, List<string> genres, RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaDexManga(string? id, string source, string name, string homeUrl, string coverUrl, string autor, string status, string languageFlagUrl, string description, List<string> genres, IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			ID = id ?? throw new Exception("ID is null");
 			Source = source;

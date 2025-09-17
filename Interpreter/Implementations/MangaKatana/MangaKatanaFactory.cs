@@ -1,17 +1,18 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter.Interface;
 using ComicReader.Reader;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.MangaKatana
 {
 	public class MangaKatanaFactory : IFactory
 	{
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
 		public string SourceKey => MangaKatanaManga.SourceKey;
 
-		public MangaKatanaFactory(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaKatanaFactory(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;

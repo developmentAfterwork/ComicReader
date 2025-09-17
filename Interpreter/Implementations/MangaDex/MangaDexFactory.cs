@@ -1,17 +1,18 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter.Interface;
 using ComicReader.Reader;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.MangaDex
 {
 	public class MangaDexFactory : IFactory
 	{
-		private readonly RequestHelper _requestHelper;
+		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 
 		public string SourceKey => "MangaDex";
 
-		public MangaDexFactory(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaDexFactory(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;

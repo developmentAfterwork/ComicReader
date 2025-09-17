@@ -1,11 +1,12 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Reader;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.AsuraScans
 {
 	public class AsuraScansReader : IReader
 	{
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
 		public string Title => "AsuraScans";
@@ -16,7 +17,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		public bool ShowReader { get; set; } = true;
 
-		public AsuraScansReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public AsuraScansReader(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;

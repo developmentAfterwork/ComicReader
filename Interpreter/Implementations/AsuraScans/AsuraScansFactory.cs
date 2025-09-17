@@ -1,17 +1,18 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter.Interface;
 using ComicReader.Reader;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.AsuraScans
 {
 	public class AsuraScansFactory : IFactory
 	{
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
 		public string SourceKey => "AsuraScans";
 
-		public AsuraScansFactory(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public AsuraScansFactory(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;

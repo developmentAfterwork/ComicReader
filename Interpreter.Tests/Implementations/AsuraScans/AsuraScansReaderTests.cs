@@ -1,4 +1,5 @@
-﻿using ComicReader.Interpreter;
+﻿using ComicReader.Helper;
+using ComicReader.Interpreter;
 using ComicReader.Interpreter.Implementations.AsuraScans;
 
 namespace Interpreter.Tests.Implementations.AsuraScans
@@ -12,10 +13,10 @@ namespace Interpreter.Tests.Implementations.AsuraScans
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new AsuraScansReader(new(), new());
+			_reader = new AsuraScansReader(new RequestHelper(), new());
 
 			_factory = new Factory();
-			_factory.Register(new AsuraScansFactory(new(), new()));
+			_factory.Register(new AsuraScansFactory(new RequestHelper(), new()));
 		}
 
 		[Test]

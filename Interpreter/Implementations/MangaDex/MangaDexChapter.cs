@@ -1,4 +1,5 @@
 ﻿using ComicReader.Helper;
+using Interpreter.Interface;
 using Newtonsoft.Json;
 
 namespace ComicReader.Interpreter.Implementations.MangaDex
@@ -12,7 +13,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			string lastUpdate,
 			string mangaName,
 			string source,
-			RequestHelper requestHelper,
+			IRequest requestHelper,
 			HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
 		{ }
 

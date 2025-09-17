@@ -1,4 +1,5 @@
-﻿using ComicReader.Interpreter;
+﻿using ComicReader.Helper;
+using ComicReader.Interpreter;
 using ComicReader.Interpreter.Implementations.MangaKatana;
 using ComicReader.Reader;
 
@@ -13,10 +14,10 @@ namespace Interpreter.Tests.Implementations.MangaKatana
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaKatanaReader(new(), new());
+			_reader = new MangaKatanaReader(new RequestHelper(), new());
 
 			_factory = new Factory();
-			_factory.Register(new MangaKatanaFactory(new(), new()));
+			_factory.Register(new MangaKatanaFactory(new RequestHelper(), new()));
 		}
 
 		[Test]

@@ -1,4 +1,5 @@
 ﻿using ComicReader.Helper;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter
 {
@@ -6,7 +7,7 @@ namespace ComicReader.Interpreter
 	{
 		public static readonly string SourceKey = "MangaKatana";
 
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 
 		public string? ID { get; }
@@ -40,7 +41,7 @@ namespace ComicReader.Interpreter
 			string languageFlagUrl,
 			string description,
 			List<string> genres,
-			RequestHelper requestHelper,
+			IRequest requestHelper,
 			HtmlHelper htmlHelper)
 		{
 			Name = name;

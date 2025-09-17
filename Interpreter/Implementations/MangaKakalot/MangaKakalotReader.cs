@@ -1,11 +1,13 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Reader;
+using Interpreter.Interface;
+using System.Collections.Generic;
 
 namespace ComicReader.Interpreter.Implementations
 {
 	public class MangaKakalotReader : IReader
 	{
-		private RequestHelper RequestHelper { get; }
+		private IRequest RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
 
 		public string Title => "MangaKakalot";
@@ -20,7 +22,7 @@ namespace ComicReader.Interpreter.Implementations
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 
-		public MangaKakalotReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaKakalotReader(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
@@ -110,7 +112,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private async Task<List<IManga>> GetMangasFromResponseUpdate(string url)
 		{
-			var response = await RequestHelper.DoGetRequest(url, 3, RequestHeaders);
+			var response = await RequestHelper.DoGetRequest(url, 1, RequestHeaders);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");

@@ -1,10 +1,11 @@
 ﻿using ComicReader.Helper;
+using Interpreter.Interface;
 
 namespace ComicReader.Interpreter.Implementations.AsuraScans
 {
 	public class AsuraScansManga : IManga
 	{
-		private readonly RequestHelper _requestHelper;
+		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 
 		public string? ID { get; }
@@ -39,7 +40,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			string description,
 			List<string> genres,
 			string source,
-			RequestHelper requestHelper,
+			IRequest requestHelper,
 			HtmlHelper htmlHelper)
 		{
 			Name = name;

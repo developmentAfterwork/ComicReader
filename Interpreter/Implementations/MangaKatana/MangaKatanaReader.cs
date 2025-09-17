@@ -1,11 +1,12 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter;
+using Interpreter.Interface;
 
 namespace ComicReader.Reader
 {
 	public class MangaKatanaReader : IReader
 	{
-		public MangaKatanaReader(RequestHelper requestHelper, HtmlHelper htmlHelper)
+		public MangaKatanaReader(IRequest requestHelper, HtmlHelper htmlHelper)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
@@ -19,7 +20,7 @@ namespace ComicReader.Reader
 
 		public bool ShowReader { get; set; } = true;
 
-		private RequestHelper RequestHelper { get; }
+		private IRequest RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
 
 		public async Task<List<IManga>> Search(string keyWords)
