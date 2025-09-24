@@ -13,10 +13,10 @@ namespace Interpreter.Tests.Implementations.AsuraScans
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new AsuraScansReader(new RequestHelper(), new(), new NotificationDummy());
+			_reader = new AsuraScansReader(new Request(), new(), new NotificationDummy());
 
 			_factory = new Factory();
-			_factory.Register(new AsuraScansFactory(new RequestHelper(), new(), new NotificationDummy()));
+			_factory.Register(new AsuraScansFactory(new Request(), new(), new NotificationDummy()));
 		}
 
 		[Test]
