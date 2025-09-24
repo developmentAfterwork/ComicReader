@@ -119,8 +119,8 @@ namespace ComicReader.Interpreter.Implementations
 		{
 			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
 
-			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
-			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");
+			var bookListHtml = HtmlHelper.ElementsByClass(response, "comic-list").First();
+			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-comic-item-wrap");
 
 			List<IManga> mangas = new List<IManga>();
 
