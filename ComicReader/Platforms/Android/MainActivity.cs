@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using AndroidX.Browser.CustomTabs;
 using Plugin.LocalNotification;
 
 namespace ComicReader
@@ -15,8 +14,8 @@ namespace ComicReader
 			base.OnPostCreate(savedInstanceState);
 
 #pragma warning disable CA1416
-			if (!Android.OS.Environment.IsExternalStorageManager) {
-				Platform.CurrentActivity?.StartActivityForResult(new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission), 1);
+			if (!global::Android.OS.Environment.IsExternalStorageManager) {
+				Platform.CurrentActivity?.StartActivityForResult(new Intent(global::Android.Provider.Settings.ActionManageAllFilesAccessPermission), 1);
 			}
 
 			if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false) {
