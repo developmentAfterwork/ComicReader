@@ -1,6 +1,7 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Reader;
 using Interpreter.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace ComicReader.Interpreter.Implementations
@@ -98,24 +99,59 @@ namespace ComicReader.Interpreter.Implementations
 
 			string url = "https://www.mangakakalot.gg/manga-list/new-manga";
 			try {
-				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
+				List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateComic(url); });
 				l.AddRange(mangas);
-			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+			} catch {
+				try {
+					List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateTruyen(url); });
+					l.AddRange(mangas);
+				} catch (Exception ex) {
+					await Notification.ShowError($"Error", ex.Message);
+				}
 			}
 
+			url = "https://www.mangakakalot.gg/manga-list/latest-manga";
 			try {
-				url = "https://www.mangakakalot.gg/manga-list/latest-manga";
-				List<IManga> mangas = await GetMangasFromResponseUpdate(url).ConfigureAwait(false);
+				List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateComic(url); });
 				l.AddRange(mangas);
-			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+			} catch {
+				try {
+					List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateTruyen(url); });
+					l.AddRange(mangas);
+				} catch (Exception ex) {
+					await Notification.ShowError($"Error", ex.Message);
+				}
 			}
 
 			return l;
 		}
 
-		private async Task<List<IManga>> GetMangasFromResponseUpdate(string url)
+		private async Task<List<IManga>> TryGetList(Func<Task<List<IManga>>> manga)
+		{
+			List<IManga> mangas = new();
+
+			mangas.AddRange(await manga());
+
+			return mangas;
+		}
+
+		private async Task<List<IManga>> GetMangasFromResponseUpdateTruyen(string url)
+		{
+			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
+
+			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
+			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");
+
+			List<IManga> mangas = new List<IManga>();
+
+			foreach (var r in allMangaHtmls) {
+				mangas.Add(ParseManga(r));
+			}
+
+			return mangas;
+		}
+
+		private async Task<List<IManga>> GetMangasFromResponseUpdateComic(string url)
 		{
 			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
 
