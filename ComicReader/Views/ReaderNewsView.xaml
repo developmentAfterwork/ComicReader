@@ -27,49 +27,46 @@
 			Color="Orange" />
 		<CollectionView
 			Margin="8,0,8,0"
-			HorizontalOptions="StartAndExpand"
 			IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsSource="{Binding LoadResult}"
 			SelectedItem="{Binding SelectedItem}"
 			SelectionChangedCommand="{Binding ItemSelectedCommand}"
-			SelectionMode="Single"
-			VerticalOptions="FillAndExpand">
+			SelectionMode="Single">
+			<CollectionView.ItemsLayout>
+				<LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+			</CollectionView.ItemsLayout>
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="models:IMangaModel">
-					<StackLayout
-						Margin="8"
-						HorizontalOptions="StartAndExpand"
-						Orientation="Horizontal"
-						VerticalOptions="StartAndExpand">
+					<Grid ColumnSpacing="8" RowSpacing="8">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="100" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 						<ffimageloading:CachedImage
-							Margin="0,0,8,0"
+							Grid.Column="0"
 							Aspect="AspectFill"
 							HeightRequest="150"
 							Source="{Binding SourcCoverUrlSource}"
 							WidthRequest="100" />
-						<StackLayout Orientation="Vertical">
+						<VerticalStackLayout Grid.Column="1" Spacing="4">
 							<Label
 								FontAttributes="Bold"
 								FontSize="14"
+								LineBreakMode="WordWrap"
+								MaxLines="1"
 								Text="{Binding Name}" />
 							<Label
 								FontAttributes="Italic"
-								HorizontalOptions="StartAndExpand"
+								LineBreakMode="WordWrap"
 								MaxLines="1"
-								MaximumWidthRequest="285"
-								Text="{Binding Source}"
-								VerticalOptions="Start" />
+								Text="{Binding Source}" />
 							<Label
 								FontSize="12"
-								HorizontalOptions="StartAndExpand"
-								LineBreakMode="TailTruncation"
+								LineBreakMode="WordWrap"
 								MaxLines="6"
-								MaximumHeightRequest="100"
-								MaximumWidthRequest="255"
-								Text="{Binding Description}"
-								VerticalOptions="StartAndExpand" />
-						</StackLayout>
-					</StackLayout>
+								Text="{Binding Description}" />
+						</VerticalStackLayout>
+					</Grid>
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
