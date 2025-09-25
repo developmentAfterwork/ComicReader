@@ -13,20 +13,20 @@ namespace ComicReader.Services
 			_webViewRequest = webViewRequest;
 		}
 
-		public async Task<string> DoGetRequest(string url, int retries, bool withFallback, Dictionary<string, string>? headers = null)
+		public async Task<string> DoGetRequest(string url, int retries, bool withFallback, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
 			if (withFallback) {
 				string html = string.Empty;
 
 				try {
-					html = await _request.DoGetRequest(url, retries, false, headers);
+					html = await _request.DoGetRequest(url, retries, false, header, cancellationToken);
 				} catch {
 					html = await _webViewRequest.GetHtmlAsync(url);
 				}
 
 				return html;
 			} else {
-				return await _request.DoGetRequest(url, retries, false, headers);
+				return await _request.DoGetRequest(url, retries, false, header, cancellationToken);
 			}
 		}
 

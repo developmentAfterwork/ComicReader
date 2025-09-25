@@ -1,5 +1,6 @@
 ﻿using ComicReader.Services;
 using Interpreter.Interface;
+using System.Threading;
 
 namespace ComicReader.Helper
 {
@@ -15,57 +16,52 @@ namespace ComicReader.Helper
 			_httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ComicReader", "1.0.0"));
 		}
 
-		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null)
+		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			if (withFallback) {
-				throw new NotSupportedException();
-			}
+			if (withFallback)
+				throw new NotSupportedException("Fallback handling not implemented");
 
 			for (int i = 0; i < repeatCount; i++) {
 				try {
-					if (header is not null) {
-						_httpClient.DefaultRequestHeaders.Clear();
-						foreach (var pair in header) {
-							_httpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
-						}
+					using var request = new HttpRequestMessage(HttpMethod.Get, url);
+					if (header != null) {
+						foreach (var pair in header)
+							request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
 					}
 
-					using (var response = await _httpClient.GetAsync(url)) {
-						var text = await response.Content.ReadAsStringAsync();
+					using var response = await _httpClient.SendAsync(request, cancellationToken ?? CancellationToken.None);
+					response.EnsureSuccessStatusCode();
 
-						if (String.IsNullOrEmpty(text)) {
-							throw new Exception("Response is empty");
-						}
+					var text = await response.Content.ReadAsStringAsync(cancellationToken ?? CancellationToken.None);
+					if (string.IsNullOrEmpty(text))
+						throw new HttpRequestException("Response is empty");
 
-						return text;
-					}
-				} catch {
-					await Task.Delay(500);
+					return text;
+				} catch (Exception ex) when (i < repeatCount - 1) {
+					await Task.Delay(500, cancellationToken ?? CancellationToken.None);
 				}
 			}
 
-			throw new NotImplementedException();
+			throw new HttpRequestException($"Request to {url} failed after {repeatCount} retries.");
 		}
 
-		public async Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null)
+		public async Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
 			if (url == "") { return; }
 
 			for (int i = 0; i < repeatCount; i++) {
 				try {
+					using var request = new HttpRequestMessage(HttpMethod.Get, url);
+					if (header != null)
+						foreach (var pair in header)
+							request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
 
-					if (header is not null) {
-						_httpClient.DefaultRequestHeaders.Clear();
-						foreach (var pair in header) {
-							_httpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
-						}
-					}
+					using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+					response.EnsureSuccessStatusCode();
 
-					using (var stream = await _httpClient.GetStreamAsync(url)) {
-						var content = await stream.ToArrayAsync(CancellationToken.None);
-						await fileSaverService.SaveFile(path, content);
-						return;
-					}
+					await using var stream = await response.Content.ReadAsStreamAsync();
+					var content = await stream.ToArrayAsync(cancellationToken ?? CancellationToken.None);
+					await fileSaverService.SaveFile(path, content);
 				} catch {
 					await Task.Delay(500);
 				}

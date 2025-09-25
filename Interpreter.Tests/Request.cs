@@ -7,9 +7,9 @@ namespace Interpreter.Tests
 	{
 		private RequestHelper helper = new RequestHelper();
 
-		public Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null)
+		public Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			return helper.DoGetRequest(url, repeatCount, false, header);
+			return helper.DoGetRequest(url, repeatCount, false, header, cancellationToken);
 		}
 
 		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null)
