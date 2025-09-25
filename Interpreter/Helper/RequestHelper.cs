@@ -59,16 +59,18 @@ namespace ComicReader.Helper
 					using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 					response.EnsureSuccessStatusCode();
 
-					await using var stream = await response.Content.ReadAsStreamAsync();
+					await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken ?? CancellationToken.None);
 					var content = await stream.ToArrayAsync(cancellationToken ?? CancellationToken.None);
 					await fileSaverService.SaveFile(path, content);
+
+					return;
 				} catch {
 					await Task.Delay(500);
 				}
 			}
 		}
 
-		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null)
+		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
 			if (url == "") {
 				return await Task.FromResult<MemoryStream?>(null);
@@ -76,22 +78,20 @@ namespace ComicReader.Helper
 
 			for (int i = 0; i < 3; i++) {
 				try {
+					using var request = new HttpRequestMessage(HttpMethod.Get, url);
+					if (header != null)
+						foreach (var pair in header)
+							request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
 
-					if (header is not null) {
-						_httpClient.DefaultRequestHeaders.Clear();
-						foreach (var pair in header) {
-							_httpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
-						}
-					}
+					using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+					response.EnsureSuccessStatusCode();
 
-					CancellationToken token = new CancellationToken();
-					using (var stream = await _httpClient.GetStreamAsync(url, token).ConfigureAwait(false)) {
-						var memorySteam = new MemoryStream();
-						stream.CopyTo(memorySteam);
-						memorySteam.Position = 0;
+					await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken ?? CancellationToken.None);
+					var memoryStream = new MemoryStream();
+					await stream.CopyToAsync(memoryStream, cancellationToken ?? CancellationToken.None);
+					memoryStream.Position = 0;
 
-						return memorySteam;
-					}
+					return memoryStream;
 				} catch {
 					await Task.Delay(500);
 				}
