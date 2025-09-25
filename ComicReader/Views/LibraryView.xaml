@@ -29,9 +29,14 @@
 				<BindableLayout.ItemTemplate>
 					<DataTemplate x:DataType="viewModel:MangaViewModel">
 						<Border
+							Margin="8,4,4,4"
+							Padding="8"
 							HeightRequest="250"
-							Stroke="Transparent"
-							WidthRequest="200">
+							Stroke="LightGray"
+							WidthRequest="184">
+							<Border.StrokeShape>
+								<RoundRectangle CornerRadius="12" />
+							</Border.StrokeShape>
 							<StackLayout>
 								<Label
 									FontAttributes="Bold"
@@ -39,10 +44,7 @@
 									HorizontalOptions="Center"
 									MaxLines="1"
 									Text="{Binding Title}" />
-								<ffimageloading:CachedImage
-									Margin="4,4,0,0"
-									HeightRequest="250"
-									Source="{Binding CoverUrlImageSource}">
+								<ffimageloading:CachedImage HeightRequest="250" Source="{Binding CoverUrlImageSource}">
 									<ffimageloading:CachedImage.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding MangeSelected}" />
 									</ffimageloading:CachedImage.GestureRecognizers>

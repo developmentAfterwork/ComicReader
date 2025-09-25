@@ -70,33 +70,41 @@
 								</CollectionView.ItemsLayout>
 								<CollectionView.ItemTemplate>
 									<DataTemplate x:DataType="models:IMangaModel">
-										<StackLayout
-											Margin="8"
-											Orientation="Horizontal"
-											WidthRequest="300">
-											<ffimageloading:CachedImage
-												Margin="0,0,8,0"
-												Aspect="AspectFill"
-												HeightRequest="150"
-												Source="{Binding SourcCoverUrlSource}"
-												WidthRequest="100" />
-											<StackLayout Orientation="Vertical">
-												<Label
-													FontAttributes="Bold"
-													FontSize="14"
-													LineBreakMode="TailTruncation"
-													MaxLines="1"
-													MaximumWidthRequest="190"
-													Text="{Binding Name}" />
-												<Label
-													FontSize="12"
-													LineBreakMode="TailTruncation"
-													MaxLines="7"
-													MaximumHeightRequest="120"
-													MaximumWidthRequest="190"
-													Text="{Binding Description}" />
+										<Border
+											Margin="0,0,8,12"
+											Padding="8"
+											Stroke="LightGrey">
+											<Border.StrokeShape>
+												<RoundRectangle CornerRadius="12" />
+											</Border.StrokeShape>
+											<StackLayout
+												Margin="8"
+												Orientation="Horizontal"
+												WidthRequest="300">
+												<ffimageloading:CachedImage
+													Margin="0,0,8,0"
+													Aspect="AspectFill"
+													HeightRequest="150"
+													Source="{Binding SourcCoverUrlSource}"
+													WidthRequest="100" />
+												<StackLayout Orientation="Vertical">
+													<Label
+														FontAttributes="Bold"
+														FontSize="14"
+														LineBreakMode="TailTruncation"
+														MaxLines="1"
+														MaximumWidthRequest="190"
+														Text="{Binding Name}" />
+													<Label
+														FontSize="12"
+														LineBreakMode="TailTruncation"
+														MaxLines="7"
+														MaximumHeightRequest="120"
+														MaximumWidthRequest="190"
+														Text="{Binding Description}" />
+												</StackLayout>
 											</StackLayout>
-										</StackLayout>
+										</Border>
 									</DataTemplate>
 								</CollectionView.ItemTemplate>
 							</CollectionView>

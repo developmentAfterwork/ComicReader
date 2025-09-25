@@ -26,47 +26,50 @@
 			VerticalOptions="Center"
 			Color="Orange" />
 		<CollectionView
-			Margin="8,0,8,0"
+			Margin="8,8,8,0"
 			IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsSource="{Binding LoadResult}"
 			SelectedItem="{Binding SelectedItem}"
 			SelectionChangedCommand="{Binding ItemSelectedCommand}"
 			SelectionMode="Single">
-			<CollectionView.ItemsLayout>
-				<LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
-			</CollectionView.ItemsLayout>
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="models:IMangaModel">
-					<Grid ColumnSpacing="8" RowSpacing="8">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="100" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<ffimageloading:CachedImage
-							Grid.Column="0"
-							Aspect="AspectFill"
-							HeightRequest="150"
-							Source="{Binding SourcCoverUrlSource}"
-							WidthRequest="100" />
-						<VerticalStackLayout Grid.Column="1" Spacing="4">
-							<Label
-								FontAttributes="Bold"
-								FontSize="14"
-								LineBreakMode="WordWrap"
-								MaxLines="1"
-								Text="{Binding Name}" />
-							<Label
-								FontAttributes="Italic"
-								LineBreakMode="WordWrap"
-								MaxLines="1"
-								Text="{Binding Source}" />
-							<Label
-								FontSize="12"
-								LineBreakMode="WordWrap"
-								MaxLines="6"
-								Text="{Binding Description}" />
-						</VerticalStackLayout>
-					</Grid>
+					<Border
+						Margin="0,0,0,12"
+						Padding="8"
+						Stroke="LightGrey">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="12" />
+						</Border.StrokeShape>
+						<Grid ColumnSpacing="8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="100" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<ffimageloading:CachedImage
+								Grid.Column="0"
+								Aspect="AspectFill"
+								HeightRequest="150"
+								Source="{Binding SourcCoverUrlSource}"
+								WidthRequest="100" />
+							<VerticalStackLayout Grid.Column="1" Spacing="4">
+								<Label
+									FontAttributes="Bold"
+									FontSize="14"
+									LineBreakMode="WordWrap"
+									Text="{Binding Name}" />
+								<Label
+									FontAttributes="Italic"
+									LineBreakMode="WordWrap"
+									Text="{Binding Source}" />
+								<Label
+									FontSize="12"
+									LineBreakMode="WordWrap"
+									MaxLines="6"
+									Text="{Binding Description}" />
+							</VerticalStackLayout>
+						</Grid>
+					</Border>
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
