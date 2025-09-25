@@ -37,7 +37,7 @@ namespace ComicReader.Helper
 						throw new HttpRequestException("Response is empty");
 
 					return text;
-				} catch (Exception ex) when (i < repeatCount - 1) {
+				} catch (Exception) when (i < repeatCount - 1) {
 					await Task.Delay(500, cancellationToken ?? CancellationToken.None);
 				}
 			}

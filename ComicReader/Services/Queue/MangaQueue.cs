@@ -102,6 +102,19 @@ namespace ComicReader.Services.Queue
 			await SaveQueue();
 		}
 
+		public async Task RemoveChapter(IChapter chapter)
+		{
+			if (!_wasInit) {
+				await Init();
+			}
+
+			var key = $"{chapter.Source}{chapter.MangaName}{chapter.Title}";
+			if (_chaptersToDownload.ContainsKey(key)) {
+				_chaptersToDownload.Remove(key);
+			}
+			await SaveQueue();
+		}
+
 		public async Task RemoveEntry(ChapterPageSources source)
 		{
 			if (!_wasInit) {

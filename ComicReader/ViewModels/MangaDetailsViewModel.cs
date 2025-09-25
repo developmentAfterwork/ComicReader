@@ -208,8 +208,17 @@ namespace ComicReader.ViewModels
 
 			try {
 				settingsService.RemoveManga(manga);
-
 				fileSaverService.DeleteManga(manga);
+
+				var chapters = await manga.GetBooks();
+
+				int i = 0;
+				foreach (var chapter in chapters) {
+					await simpleNotificationService.ShowProgress("Remove chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
+					await mangaQueue.RemoveChapter(chapter);
+				}
+				simpleNotificationService.Close();
+
 				await navigation.CloseCurrent();
 			} catch (Exception ex) {
 				await simpleNotificationService.ShowError($"Error", $"{manga.Name} - {ex.Message}");
