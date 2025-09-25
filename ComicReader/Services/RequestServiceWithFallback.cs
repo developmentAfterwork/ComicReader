@@ -30,9 +30,9 @@ namespace ComicReader.Services
 			}
 		}
 
-		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null)
+		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			return _request.DownloadFile(url, path, repeatCount, header);
+			return _request.DownloadFile(url, path, repeatCount, header, cancellationToken);
 		}
 	}
 }

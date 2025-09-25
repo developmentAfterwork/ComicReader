@@ -12,9 +12,9 @@ namespace Interpreter.Tests
 			return helper.DoGetRequest(url, repeatCount, false, header, cancellationToken);
 		}
 
-		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null)
+		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			return helper.DownloadFile(url, path, repeatCount, header);
+			return helper.DownloadFile(url, path, repeatCount, header, cancellationToken);
 		}
 
 		public Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null)
