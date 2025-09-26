@@ -16,6 +16,7 @@ namespace ComicReader.ViewModels
 		private readonly SettingsService settingsService;
 		private readonly FileSaverService fileSaverService;
 		private readonly Factory factory;
+		private readonly BackgroundService backgroundService;
 
 		[ObservableProperty]
 		private ObservableCollection<ChapterPageSources> _ChaptersToDownload = new ObservableCollection<ChapterPageSources>();
@@ -28,12 +29,13 @@ namespace ComicReader.ViewModels
 
 		public ICommand StartQueueCommand { get; set; }
 
-		public DownloadsViewModel(MangaQueue mangaQueue, SettingsService settingsService, FileSaverService fileSaverService, Factory factory)
+		public DownloadsViewModel(MangaQueue mangaQueue, SettingsService settingsService, FileSaverService fileSaverService, Factory factory, BackgroundService backgroundService)
 		{
 			this.mangaQueue = mangaQueue;
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
 			this.factory = factory;
+			this.backgroundService = backgroundService;
 			this.mangaQueue.Start += OnStart;
 			this.mangaQueue.End += OnEnd;
 			this.mangaQueue.ChapterFinished += OnChapterFinished;
@@ -92,7 +94,9 @@ namespace ComicReader.ViewModels
 
 		private void OnStartQueueCommand()
 		{
-			mangaQueue.StartDownload();
+			var id = Guid.NewGuid().ToString();
+			backgroundService.Register(id, (t) => mangaQueue.Download());
+			backgroundService.Start(id, "Download all chapters");
 		}
 
 		public async Task OnAppearing()

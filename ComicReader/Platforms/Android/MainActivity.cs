@@ -24,6 +24,15 @@ namespace ComicReader
 #pragma warning restore CA1416
 
 			DeviceDisplay.Current.KeepScreenOn = true;
+
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
+				var channel = new NotificationChannel("comic_channel", "Comic Updates", NotificationImportance.Low) {
+					Description = "Benachrichtigungen für Comic-Update-Service"
+				};
+
+				var manager = (NotificationManager?)GetSystemService(NotificationService);
+				manager?.CreateNotificationChannel(channel);
+			}
 		}
 	}
 }

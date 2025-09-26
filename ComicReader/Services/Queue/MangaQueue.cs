@@ -161,6 +161,13 @@ namespace ComicReader.Services.Queue
 			t.Start();
 		}
 
+		public Task Download()
+		{
+			Start?.Invoke(this, EventArgs.Empty);
+
+			return DownloadAllChapters();
+		}
+
 		private async Task DownloadAllChapters()
 		{
 			try {
@@ -187,12 +194,16 @@ namespace ComicReader.Services.Queue
 							}
 						}
 
+						simpleNotificationService.Close(SimpleNotificationService.ProgressId + 1);
+
 						await RemoveEntry(chapter.Value);
 						ChapterFinished?.Invoke(this, chapter.Value);
 					} catch (Exception) {
 						Error?.Invoke(this, chapter.Value);
 					}
 				}
+
+				simpleNotificationService.Close();
 			} catch (Exception) { }
 
 			End?.Invoke(this, EventArgs.Empty);
