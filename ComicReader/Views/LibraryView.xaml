@@ -18,42 +18,40 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 	<Grid>
-		<ScrollView>
-			<FlexLayout
-				BindableLayout.ItemsSource="{Binding BookmarkedMangas}"
-				Direction="Row"
-				HorizontalOptions="Center"
-				JustifyContent="Start"
-				VerticalOptions="Start"
-				Wrap="Wrap">
-				<BindableLayout.ItemTemplate>
-					<DataTemplate x:DataType="viewModel:MangaViewModel">
-						<Border
-							Margin="8,4,4,4"
-							Padding="8"
-							HeightRequest="250"
-							Stroke="LightGray"
-							WidthRequest="184">
-							<Border.StrokeShape>
-								<RoundRectangle CornerRadius="12" />
-							</Border.StrokeShape>
-							<StackLayout>
-								<Label
-									FontAttributes="Bold"
-									FontSize="12"
-									HorizontalOptions="Center"
-									MaxLines="1"
-									Text="{Binding Title}" />
-								<ffimageloading:CachedImage HeightRequest="250" Source="{Binding CoverUrlImageSource}">
-									<ffimageloading:CachedImage.GestureRecognizers>
-										<TapGestureRecognizer Command="{Binding MangeSelected}" />
-									</ffimageloading:CachedImage.GestureRecognizers>
-								</ffimageloading:CachedImage>
-							</StackLayout>
-						</Border>
-					</DataTemplate>
-				</BindableLayout.ItemTemplate>
-			</FlexLayout>
-		</ScrollView>
+		<CollectionView
+			Margin="4"
+			ItemsLayout="VerticalGrid, 2"
+			ItemsSource="{Binding BookmarkedMangas}"
+			SelectionMode="None">
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="viewModel:MangaViewModel">
+					<Border
+						Margin="4"
+						Padding="8"
+						HeightRequest="250"
+						Stroke="LightGray"
+						StrokeShape="RoundRectangle 12"
+						StrokeThickness="1">
+						<VerticalStackLayout>
+							<Label
+								Margin="4"
+								FontAttributes="Bold"
+								FontSize="12"
+								HorizontalOptions="Center"
+								MaxLines="1"
+								Text="{Binding Title}" />
+							<ffimageloading:CachedImage
+								Aspect="AspectFill"
+								HeightRequest="220"
+								Source="{Binding CoverUrlImageSource}">
+								<ffimageloading:CachedImage.GestureRecognizers>
+									<TapGestureRecognizer Command="{Binding MangeSelected}" />
+								</ffimageloading:CachedImage.GestureRecognizers>
+							</ffimageloading:CachedImage>
+						</VerticalStackLayout>
+					</Border>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
 	</Grid>
 </ContentPage>
