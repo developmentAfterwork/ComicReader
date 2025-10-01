@@ -14,6 +14,9 @@ namespace ComicReader.ViewModels
 		private readonly Factory factory;
 
 		[ObservableProperty]
+		private bool _isBusy = false;
+
+		[ObservableProperty]
 		private ObservableCollection<MangaViewModel> _BookmarkedMangas = new ObservableCollection<MangaViewModel>();
 
 		public LibraryViewModel(SettingsService settingsService, InMemoryDatabase inMemoryDatabase, Navigation navigation, Factory factory)
@@ -26,6 +29,8 @@ namespace ComicReader.ViewModels
 
 		public async Task OnAppearing()
 		{
+			IsBusy = true;
+
 			List<string> bookmarkedUniqIds = new();
 
 			BookmarkedMangas.ForEach(b => b.Selected -= OnMangeSelected);
@@ -59,6 +64,8 @@ namespace ComicReader.ViewModels
 			}
 
 			BookmarkedMangas = m;
+
+			IsBusy = false;
 		}
 
 		private async void OnMangeSelected(object? sender, IManga e)

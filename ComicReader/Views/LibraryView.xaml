@@ -8,6 +8,7 @@
 	xmlns:inter="clr-namespace:ComicReader.Interpreter;assembly=Interpreter"
 	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
 	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="LibraryView"
 	x:DataType="viewModel:LibraryViewModel"
 	FlyoutItem.IsVisible="False"
@@ -15,11 +16,19 @@
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<converters:CachedImageConverter x:Key="CachedImageConverter" />
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 		</ResourceDictionary>
 	</ContentPage.Resources>
-	<Grid>
+	<Grid ColumnDefinitions="*" RowDefinitions="*">
+		<ActivityIndicator
+			HeightRequest="75"
+			IsEnabled="{Binding IsBusy}"
+			IsRunning="{Binding IsBusy}"
+			IsVisible="{Binding IsBusy}"
+			Color="Orange" />
 		<CollectionView
 			Margin="4"
+			IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsLayout="VerticalGrid, 2"
 			ItemsSource="{Binding BookmarkedMangas}"
 			SelectionMode="None">
