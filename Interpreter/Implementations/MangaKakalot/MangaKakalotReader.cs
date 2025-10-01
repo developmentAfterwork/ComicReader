@@ -3,6 +3,9 @@ using ComicReader.Reader;
 using Interpreter.Interface;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ComicReader.Interpreter.Implementations
 {
@@ -38,7 +41,7 @@ namespace ComicReader.Interpreter.Implementations
 				var url = $"https://mangakakalot.gg/search/story/{text}";
 				var response = await RequestHelper.DoGetRequest(url, 3, true, RequestHeaders);
 
-				var mangas = GetMangasFromResponse(response);
+				var mangas = await GetMangasFromResponse(response);
 
 				return mangas;
 			} catch (Exception ex) {
@@ -47,7 +50,7 @@ namespace ComicReader.Interpreter.Implementations
 			}
 		}
 
-		private List<IManga> GetMangasFromResponse(string response)
+		private async Task<List<IManga>> GetMangasFromResponse(string response)
 		{
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "panel_story_list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "story_item");
@@ -55,13 +58,13 @@ namespace ComicReader.Interpreter.Implementations
 			List<IManga> mangas = new List<IManga>();
 
 			foreach (var r in allMangaHtmls) {
-				mangas.Add(ParseManga(r));
+				mangas.Add(await ParseManga(r));
 			}
 
 			return mangas;
 		}
 
-		private IManga ParseManga(string mangaToParse)
+		private async Task<IManga> ParseManga(string mangaToParse)
 		{
 			var prevImage = HtmlHelper.ElementByType(mangaToParse, "a");
 
@@ -81,16 +84,38 @@ namespace ComicReader.Interpreter.Implementations
 
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 			var desc = (HtmlHelper.ElementsByType(mangaToParse, "p").FirstOrDefault() ?? "...").TrimStart();
+			if (desc == "...") {
+				try {
+					var response = await RequestHelper.DoGetRequest(homeUrl, 3, true, RequestHeaders);
+					var cont = HtmlHelper.ElementById(response, "contentBox");
+					desc = cont;
+				} catch (Exception ex) {
+					await Notification.ShowError($"Error", ex.Message);
+				}
+			}
+
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
-			desc = FixDescription(desc);
-			title = FixDescription(title);
+			desc = HtmlToPlainText_Regex(desc).Replace($"{title} summary:", "").Trim();
+			title = HtmlToPlainText_Regex(title);
 			return new MangaKakalotManga(title, homeUrl, prevImageUrl, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
 		}
 
-		private string FixDescription(string desc)
+		private static string HtmlToPlainText_Regex(string html)
 		{
-			return desc.Replace("<br>", "").Replace("<b>", "").Replace("</b>", "").Replace("<i>", "").Replace("</i>", "").Replace("&quot;", "").Replace("&#8230;", "").Replace("&#8220;", "").Replace("&#8217;", "").Replace("&#8221;", "").Replace("&#8213;", "").Replace("&#333;;", "");
+			if (string.IsNullOrWhiteSpace(html)) return string.Empty;
+
+			// Ersetze <br> und </p> durch neue Zeile, sonst alle Tags entfernen
+			var withBreaks = Regex.Replace(html, @"<(br|br\s*/|/p|/div|/li)\s*>", "\n", RegexOptions.IgnoreCase);
+			var noTags = Regex.Replace(withBreaks, "<.*?>", string.Empty);
+			var decoded = WebUtility.HtmlDecode(noTags);
+
+			// whitespace normalisieren
+			decoded = Regex.Replace(decoded, @"\r\n|\r|\n", "\n");
+			decoded = Regex.Replace(decoded, @"[ \t]+", " ");
+			decoded = Regex.Replace(decoded, @"\n\s*\n+", "\n\n");
+
+			return decoded.Trim();
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
@@ -145,7 +170,7 @@ namespace ComicReader.Interpreter.Implementations
 			List<IManga> mangas = new List<IManga>();
 
 			foreach (var r in allMangaHtmls) {
-				mangas.Add(ParseManga(r));
+				mangas.Add(await ParseManga(r));
 			}
 
 			return mangas;
@@ -161,7 +186,7 @@ namespace ComicReader.Interpreter.Implementations
 			List<IManga> mangas = new List<IManga>();
 
 			foreach (var r in allMangaHtmls) {
-				mangas.Add(ParseManga(r));
+				mangas.Add(await ParseManga(r));
 			}
 
 			return mangas;
