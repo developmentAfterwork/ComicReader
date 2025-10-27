@@ -85,8 +85,9 @@ namespace ComicReader.Interpreter.Implementations
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 			var desc = (HtmlHelper.ElementsByType(mangaToParse, "p").FirstOrDefault() ?? "...").TrimStart();
 			if (desc == "...") {
+				string response;
 				try {
-					var response = await RequestHelper.DoGetRequest(homeUrl, 3, true, RequestHeaders);
+					response = await RequestHelper.DoGetRequest(homeUrl, 3, true, RequestHeaders);
 					var cont = HtmlHelper.ElementById(response, "contentBox");
 					desc = cont;
 				} catch (Exception ex) {

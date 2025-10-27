@@ -62,26 +62,30 @@ namespace ComicReader.Interpreter.Implementations
 
 		public async Task<List<IChapter>> GetBooks()
 		{
-			var response = await requestHelper.DoGetRequest(HomeUrl, 3, true);
+			try {
+				var response = await requestHelper.DoGetRequest(HomeUrl, 3, true);
 
-			var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").FirstOrDefault();
+				var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").FirstOrDefault();
 
-			if (chaptersHtml is null) {
-				return GetAlternative(response);
+				if (chaptersHtml is null) {
+					return GetAlternative(response);
+				}
+
+				var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "a-h");
+
+				var chapters = new List<IChapter>();
+				for (int i = 0; i < allChapterHtmls.Count; i++) {
+					var chapterHtml = allChapterHtmls[i];
+
+					chapters.Add(ParseChapter(chapterHtml));
+				}
+
+				chapters.Reverse();
+
+				return chapters;
+			} catch {
+				return new List<IChapter>();
 			}
-
-			var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "a-h");
-
-			var chapters = new List<IChapter>();
-			for (int i = 0; i < allChapterHtmls.Count; i++) {
-				var chapterHtml = allChapterHtmls[i];
-
-				chapters.Add(ParseChapter(chapterHtml));
-			}
-
-			chapters.Reverse();
-
-			return chapters;
 		}
 
 		private MangaKakalotChapter ParseChapter(string html)

@@ -27,7 +27,7 @@ namespace Interpreter.Tests.Implementations.AsuraScans
 			Assert.That(mangas, Is.Not.Null);
 			Assert.That(mangas.Count, Is.GreaterThan(0));
 
-			var manga = mangas.First();
+			var manga = mangas.First(m => m.GetBooks().Result.Any());
 			var chapters = manga.GetBooks().Result;
 
 			Assert.That(chapters, Is.Not.Null);
@@ -48,7 +48,7 @@ namespace Interpreter.Tests.Implementations.AsuraScans
 			Assert.That(mangas, Is.Not.Null);
 			Assert.That(mangas.Count, Is.GreaterThan(0));
 
-			var manga = mangas.First();
+			var manga = mangas.First(m => m.GetBooks().Result.Any());
 			var chapters = manga.GetBooks().Result;
 
 			Assert.That(chapters, Is.Not.Null);

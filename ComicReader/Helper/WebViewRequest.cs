@@ -38,6 +38,10 @@
 
 		EventHandler<WebNavigatedEventArgs>? handler = null;
 		handler = async (s, e) => {
+			if (!e.Url.Contains(url)) {
+				return;
+			}
+
 			_webView.Navigated -= handler;
 
 			try {
@@ -64,6 +68,12 @@
 
 		await MainThread.InvokeOnMainThreadAsync(() => {
 			_webView.Source = url;
+		});
+
+		int timeoutInSeconds = 150;
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds));
+		await using var reg = cts.Token.Register(() => {
+			tcs.TrySetException(new TimeoutException($"Timeout after {timeoutInSeconds} seconds"));
 		});
 
 		return await tcs.Task;
