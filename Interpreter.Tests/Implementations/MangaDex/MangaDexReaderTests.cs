@@ -13,10 +13,10 @@ namespace Interpreter.Tests.Implementations.MangaDex
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaDexReader(new Request(), new(), new NotificationDummy());
+			_reader = new MangaDexReader(new Request(), new(), new NotificationDummy(), TimeSpan.FromSeconds(30));
 
 			_factory = new Factory();
-			_factory.Register(new MangaDexFactory(new Request(), new(), new NotificationDummy()));
+			_factory.Register(new MangaDexFactory(new Request(), new(), new NotificationDummy(), new RequestTimeout()));
 		}
 
 		[Test]

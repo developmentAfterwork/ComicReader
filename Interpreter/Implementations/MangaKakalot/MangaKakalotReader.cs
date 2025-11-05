@@ -1,16 +1,15 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Reader;
 using Interpreter.Interface;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ComicReader.Interpreter.Implementations
 {
 	public class MangaKakalotReader : IReader
 	{
+		private readonly TimeSpan _timeout;
+
 		private IRequest RequestHelper { get; }
 		private HtmlHelper HtmlHelper { get; }
 		public INotification Notification { get; }
@@ -27,11 +26,12 @@ namespace ComicReader.Interpreter.Implementations
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 
-		public MangaKakalotReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		public MangaKakalotReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, TimeSpan timeout)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
 			Notification = notification;
+			_timeout = timeout;
 		}
 
 		public async Task<List<IManga>> Search(string keyWords)
@@ -39,7 +39,7 @@ namespace ComicReader.Interpreter.Implementations
 			try {
 				var text = keyWords.Replace(" ", "_");
 				var url = $"https://mangakakalot.gg/search/story/{text}";
-				var response = await RequestHelper.DoGetRequest(url, 3, true, RequestHeaders);
+				var response = await RequestHelper.DoGetRequest(url, 3, true, _timeout, RequestHeaders);
 
 				var mangas = await GetMangasFromResponse(response);
 
@@ -87,7 +87,7 @@ namespace ComicReader.Interpreter.Implementations
 			if (desc == "...") {
 				string response;
 				try {
-					response = await RequestHelper.DoGetRequest(homeUrl, 3, true, RequestHeaders);
+					response = await RequestHelper.DoGetRequest(homeUrl, 3, true, _timeout, RequestHeaders);
 					var cont = HtmlHelper.ElementById(response, "contentBox");
 					desc = cont;
 				} catch (Exception ex) {
@@ -99,7 +99,7 @@ namespace ComicReader.Interpreter.Implementations
 
 			desc = HtmlToPlainText_Regex(desc).Replace($"{title} summary:", "").Trim();
 			title = HtmlToPlainText_Regex(title);
-			return new MangaKakalotManga(title, homeUrl, prevImageUrl, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
+			return new MangaKakalotManga(title, homeUrl, prevImageUrl, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper, _timeout);
 		}
 
 		private static string HtmlToPlainText_Regex(string html)
@@ -163,7 +163,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private async Task<List<IManga>> GetMangasFromResponseUpdateTruyen(string url)
 		{
-			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
+			var response = await RequestHelper.DoGetRequest(url, 1, true, _timeout, RequestHeaders);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "truyen-list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-truyen-item-wrap");
@@ -179,7 +179,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private async Task<List<IManga>> GetMangasFromResponseUpdateComic(string url)
 		{
-			var response = await RequestHelper.DoGetRequest(url, 1, true, RequestHeaders);
+			var response = await RequestHelper.DoGetRequest(url, 1, true, _timeout, RequestHeaders);
 
 			var bookListHtml = HtmlHelper.ElementsByClass(response, "comic-list").First();
 			var allMangaHtmls = HtmlHelper.ElementsByClass(bookListHtml, "list-comic-item-wrap");

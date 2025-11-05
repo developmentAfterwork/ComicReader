@@ -10,19 +10,21 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 		private readonly INotification _notification;
+		private readonly IRequestTimeout timeout;
 
 		public string SourceKey => "MangaDex";
 
-		public MangaDexFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		public MangaDexFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, IRequestTimeout timeout)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
 			_notification = notification;
+			this.timeout = timeout;
 		}
 
 		public IReader CreateReader()
 		{
-			return new MangaDexReader(_requestHelper, _htmlHelper, _notification);
+			return new MangaDexReader(_requestHelper, _htmlHelper, _notification, timeout.Timeout);
 		}
 
 		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
@@ -34,6 +36,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 				saveableChapter.LastUpdate,
 				saveableChapter.MangaName,
 				saveableChapter.Source,
+				timeout.Timeout,
 				_requestHelper,
 				_htmlHelper
 			);
@@ -53,7 +56,8 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 				saveManga.Description,
 				saveManga.Genres,
 				_requestHelper,
-				_htmlHelper
+				_htmlHelper,
+				timeout.Timeout
 			);
 		}
 	}

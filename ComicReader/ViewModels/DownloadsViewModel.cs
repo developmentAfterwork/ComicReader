@@ -95,7 +95,7 @@ namespace ComicReader.ViewModels
 		private void OnStartQueueCommand()
 		{
 			var id = Guid.NewGuid().ToString();
-			backgroundService.Register(id, (t) => mangaQueue.Download());
+			backgroundService.Register(id, (t) => mangaQueue.Download(settingsService.GetRequestTimeout()));
 			backgroundService.Start(id, "Download all chapters");
 		}
 

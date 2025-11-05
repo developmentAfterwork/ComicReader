@@ -153,22 +153,22 @@ namespace ComicReader.Services.Queue
 			}
 		}
 
-		public void StartDownload()
+		public void StartDownload(TimeSpan timeout)
 		{
 			Start?.Invoke(this, EventArgs.Empty);
 
-			var t = new Thread(async () => { await DownloadAllChapters(); });
+			var t = new Thread(async () => { await DownloadAllChapters(timeout); });
 			t.Start();
 		}
 
-		public Task Download()
+		public Task Download(TimeSpan timeout)
 		{
 			Start?.Invoke(this, EventArgs.Empty);
 
-			return DownloadAllChapters();
+			return DownloadAllChapters(timeout);
 		}
 
-		private async Task DownloadAllChapters()
+		private async Task DownloadAllChapters(TimeSpan timeout)
 		{
 			try {
 				var copy = _chaptersToDownload.ToDictionary(c => c.Key, c => c.Value);
@@ -184,12 +184,12 @@ namespace ComicReader.Services.Queue
 							await simpleNotificationService.ShowProgress(SimpleNotificationService.ProgressId + 1, chapter.Value.MangaName, $"{++currentPage}/{chapter.Value.UrlToLocalFileMapper.Count}", currentPage, chapter.Value.UrlToLocalFileMapper.Count);
 							try {
 								if (!fileSaverService.FileExists(urlPair.Value)) {
-									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, chapter.Value.RequestHeaders);
+									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, timeout, chapter.Value.RequestHeaders);
 								}
 							} catch (Exception) {
 								await Task.Delay(500);
 								if (!fileSaverService.FileExists(urlPair.Value)) {
-									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, chapter.Value.RequestHeaders);
+									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, timeout, chapter.Value.RequestHeaders);
 								}
 							}
 						}

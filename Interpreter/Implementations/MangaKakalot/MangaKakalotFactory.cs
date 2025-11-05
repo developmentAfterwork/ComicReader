@@ -10,19 +10,21 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 		private readonly INotification notification;
+		private readonly IRequestTimeout timeout;
 
 		public string SourceKey => MangaKakalotManga.SourceKey;
 
-		public MangaKakalotFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		public MangaKakalotFactory(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, IRequestTimeout timeout)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
 			this.notification = notification;
+			this.timeout = timeout;
 		}
 
 		public IReader CreateReader()
 		{
-			return new MangaKakalotReader(requestHelper, htmlHelper, notification);
+			return new MangaKakalotReader(requestHelper, htmlHelper, notification, timeout.Timeout);
 		}
 
 		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
@@ -33,6 +35,7 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 				saveableChapter.LastUpdate,
 				saveableChapter.MangaName,
 				saveableChapter.Source,
+				timeout.Timeout,
 				requestHelper,
 				htmlHelper);
 		}
@@ -49,7 +52,8 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 				saveManga.Description,
 				saveManga.Genres,
 				requestHelper,
-				htmlHelper
+				htmlHelper,
+				timeout.Timeout
 			);
 		}
 	}

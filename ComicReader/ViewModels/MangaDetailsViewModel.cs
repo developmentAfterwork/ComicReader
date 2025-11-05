@@ -178,7 +178,7 @@ namespace ComicReader.ViewModels
 
 				string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
 				if (!File.Exists(pathWithFile)) {
-					await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, manga.RequestHeaders);
+					await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, settingsService.GetRequestTimeout(), manga.RequestHeaders);
 				}
 
 				if (settingsService.GetAutoAddChaptersToQueue()) {

@@ -8,6 +8,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 	{
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
+		private readonly TimeSpan _timeout;
 
 		public string ID { get; }
 
@@ -31,7 +32,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public Dictionary<string, string>? RequestHeaders => null;
 
-		public MangaDexManga(string? id, string source, string name, string homeUrl, string coverUrl, string autor, string status, string languageFlagUrl, string description, List<string> genres, IRequest requestHelper, HtmlHelper htmlHelper)
+		public MangaDexManga(string? id, string source, string name, string homeUrl, string coverUrl, string autor, string status, string languageFlagUrl, string description, List<string> genres, IRequest requestHelper, HtmlHelper htmlHelper, TimeSpan timeout)
 		{
 			ID = id ?? throw new Exception("ID is null");
 			Source = source;
@@ -45,6 +46,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			Genres = genres;
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
+			_timeout = timeout;
 		}
 
 		public async Task<List<IChapter>> GetBooks()
@@ -57,7 +59,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			try {
 				do {
 					var url = $"https://api.mangadex.org/chapter?manga={ID}&limit=20&offset={offset}";
-					var chaptersResult = await _requestHelper.DoGetRequest(url, 3, false).ConfigureAwait(false);
+					var chaptersResult = await _requestHelper.DoGetRequest(url, 3, false, _timeout).ConfigureAwait(false);
 					var data = JsonConvert.DeserializeObject<MangaDexResult<List<ChapterResult>>>(chaptersResult);
 
 					if (data != null && data.Result == "ok") {
@@ -66,7 +68,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 						foreach (var d in data.Data.Where(d => d.Attributes.TranslatedLanguage == "en")) {
 							var updatedAt = DateTimeOffset.TryParse(d.Attributes.UpdatedAt, out DateTimeOffset date);
-							var c = new MangaDexChapter(d.Id, $"{d.Attributes.Volume} - {d.Attributes.Chapter}", HomeUrl, updatedAt ? date.ToString("yyyy-mm-dd HH:mm:ss") : d.Attributes.UpdatedAt, Name, Source, _requestHelper, _htmlHelper);
+							var c = new MangaDexChapter(d.Id, $"{d.Attributes.Volume} - {d.Attributes.Chapter}", HomeUrl, updatedAt ? date.ToString("yyyy-mm-dd HH:mm:ss") : d.Attributes.UpdatedAt, Name, Source, _timeout, _requestHelper, _htmlHelper);
 
 							chapters.Add(c);
 						}

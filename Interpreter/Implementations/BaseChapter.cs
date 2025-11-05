@@ -6,6 +6,7 @@ namespace ComicReader.Interpreter.Implementations
 {
 	public abstract class BaseChapter : IChapter
 	{
+		protected readonly TimeSpan Timeout;
 		protected readonly IRequest RequestHelper;
 		protected readonly HtmlHelper HtmlHelper;
 
@@ -39,6 +40,7 @@ namespace ComicReader.Interpreter.Implementations
 			string lastUpdate,
 			string mangaName,
 			string source,
+			TimeSpan timeout,
 			IRequest requestHelper,
 			HtmlHelper htmlHelper)
 		{
@@ -48,7 +50,7 @@ namespace ComicReader.Interpreter.Implementations
 			LastUpdate = lastUpdate;
 			MangaName = mangaName;
 			Source = source;
-
+			Timeout = timeout;
 			this.RequestHelper = requestHelper;
 			this.HtmlHelper = htmlHelper;
 		}
@@ -85,7 +87,7 @@ namespace ComicReader.Interpreter.Implementations
 			foreach (var pair in UrlToLocalFileMapper) {
 				if (!File.Exists(pair.Value)) {
 					var pathWithFile = UrlToLocalFileMapper[pair.Key];
-					await RequestHelper.DownloadFile(pair.Key, pathWithFile, 3, RequestHeaders);
+					await RequestHelper.DownloadFile(pair.Key, pathWithFile, 3, Timeout, RequestHeaders);
 				}
 			}
 		}

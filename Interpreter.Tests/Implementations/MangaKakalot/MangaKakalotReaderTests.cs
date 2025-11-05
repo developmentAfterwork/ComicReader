@@ -14,10 +14,10 @@ namespace Interpreter.Tests.Implementations.MangaKakalot
 		[SetUp]
 		public void SetUp()
 		{
-			_reader = new MangaKakalotReader(new Request(), new(), new NotificationDummy());
+			_reader = new MangaKakalotReader(new Request(), new(), new NotificationDummy(), TimeSpan.FromSeconds(30));
 
 			_factory = new Factory();
-			_factory.Register(new MangaKakalotFactory(new Request(), new(), new NotificationDummy()));
+			_factory.Register(new MangaKakalotFactory(new Request(), new(), new NotificationDummy(), new RequestTimeout()));
 		}
 
 		[Test]

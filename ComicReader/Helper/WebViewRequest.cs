@@ -19,7 +19,7 @@
 		};
 	}
 
-	public async Task<string> GetHtmlAsync(string url)
+	public async Task<string> GetHtmlAsync(string url, TimeSpan timeout)
 	{
 		await _semaphore.WaitAsync();
 
@@ -70,10 +70,9 @@
 			_webView.Source = url;
 		});
 
-		int timeoutInSeconds = 150;
-		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds));
+		using var cts = new CancellationTokenSource(timeout);
 		await using var reg = cts.Token.Register(() => {
-			tcs.TrySetException(new TimeoutException($"Timeout after {timeoutInSeconds} seconds"));
+			tcs.TrySetException(new TimeoutException($"Timeout after {timeout.TotalSeconds} seconds"));
 		});
 
 		return await tcs.Task;

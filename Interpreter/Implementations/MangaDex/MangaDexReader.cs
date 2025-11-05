@@ -10,6 +10,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 		private readonly INotification _notification;
+		private readonly TimeSpan _timeout;
 
 		public string Title => "MangaDex";
 
@@ -19,16 +20,17 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public bool ShowReader { get; set; } = true;
 
-		public MangaDexReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		public MangaDexReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, TimeSpan timeout)
 		{
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
 			_notification = notification;
+			_timeout = timeout;
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
 		{
-			var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&order[latestUploadedChapter]=desc", 3, false);
+			var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&order[latestUploadedChapter]=desc", 3, false, _timeout);
 			var data = JsonConvert.DeserializeObject<MangaDexResult<List<SearchResultManga>>>(result);
 
 			var l = new List<IManga>();
@@ -38,7 +40,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 					try {
 						List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 						var coverId = m.Relationships.FirstOrDefault(r => r.Type == "cover_art")?.Id;
-						var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
+						var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false, _timeout).ConfigureAwait(false);
 						var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
 						string coverFileName = coverResultData?.Data.Attributes.FileName ?? string.Empty;
@@ -48,7 +50,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 						try {
 							var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 
-							l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper));
+							l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper, _timeout));
 						} catch (Exception) { }
 					} catch (Exception ex) {
 						await _notification.ShowError($"Error", ex.Message);
@@ -62,7 +64,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 		public async Task<List<IManga>> Search(string keyWords)
 		{
 			try {
-				var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&title=" + keyWords, 3, false);
+				var result = await _requestHelper.DoGetRequest("https://api.mangadex.org/manga?limit=20&title=" + keyWords, 3, false, _timeout);
 				var data = JsonConvert.DeserializeObject<MangaDexResult<List<SearchResultManga>>>(result);
 
 				var l = new List<IManga>();
@@ -72,7 +74,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 						try {
 							List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 							var coverId = m.Relationships.FirstOrDefault(r => r.Type == "cover_art")?.Id;
-							var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false).ConfigureAwait(false);
+							var coverResult = await _requestHelper.DoGetRequest($"https://api.mangadex.org/cover/{coverId}", 3, false, _timeout).ConfigureAwait(false);
 							var coverResultData = JsonConvert.DeserializeObject<MangaDexCoverResult>(coverResult);
 
 							string coverFileName = coverResultData?.Data.Attributes.FileName ?? string.Empty;
@@ -82,7 +84,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 							try {
 								var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 
-								l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper));
+								l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper, _timeout));
 							} catch (Exception) { }
 						} catch (Exception ex) {
 							await _notification.ShowError($"Error", ex.Message);

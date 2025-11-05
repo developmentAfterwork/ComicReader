@@ -147,5 +147,10 @@ namespace ComicReader.Services
 		{
 			Preferences.Set(PreDownloadImagesKey, value);
 		}
+
+		public TimeSpan GetRequestTimeout()
+		{
+			return TimeSpan.FromSeconds(30);
+		}
 	}
 }

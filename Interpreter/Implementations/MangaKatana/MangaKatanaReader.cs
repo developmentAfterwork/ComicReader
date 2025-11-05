@@ -6,11 +6,14 @@ namespace ComicReader.Reader
 {
 	public class MangaKatanaReader : IReader
 	{
-		public MangaKatanaReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		private readonly TimeSpan timeout;
+
+		public MangaKatanaReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, TimeSpan timeout)
 		{
 			RequestHelper = requestHelper;
 			HtmlHelper = htmlHelper;
 			Notification = notification;
+			this.timeout = timeout;
 		}
 
 		public string Title => "MangaKatana";
@@ -30,7 +33,7 @@ namespace ComicReader.Reader
 			try {
 				var text = keyWords.Replace(" ", "+");
 				var url = $"https://mangakatana.com/?search={text}&search_by=bo";
-				var response = await RequestHelper.DoGetRequest(url, 3, true);
+				var response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
 
 				var mangas = GetMangasFromResponse(response);
 
@@ -75,7 +78,7 @@ namespace ComicReader.Reader
 
 			desc = FixDescription(desc);
 
-			return new MangaKatanaManga(title, homeUrl, preViewImage, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper);
+			return new MangaKatanaManga(title, homeUrl, preViewImage, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper, timeout);
 		}
 
 		private string FixDescription(string desc)
@@ -88,7 +91,7 @@ namespace ComicReader.Reader
 			List<IManga> l = new List<IManga>();
 
 			string url = "https://mangakatana.com/new-manga";
-			var response = await RequestHelper.DoGetRequest(url, 3, true);
+			var response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
 
 			try {
 				l.AddRange(GetMangasFromResponse(response));
@@ -97,7 +100,7 @@ namespace ComicReader.Reader
 			}
 
 			url = "https://mangakatana.com/latest";
-			response = await RequestHelper.DoGetRequest(url, 3, true);
+			response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
 			try {
 				l.AddRange(GetMangasFromResponse(response));
 			} catch (Exception ex) {

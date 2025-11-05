@@ -7,14 +7,14 @@ namespace Interpreter.Tests
 	{
 		private RequestHelper helper = new RequestHelper();
 
-		public Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
+		public Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			return helper.DoGetRequest(url, repeatCount, false, header, cancellationToken);
+			return helper.DoGetRequest(url, repeatCount, false, timeout, header, cancellationToken);
 		}
 
-		public Task DownloadFile(string url, string path, int repeatCount, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
+		public Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
-			return helper.DownloadFile(url, path, repeatCount, header, cancellationToken);
+			return helper.DownloadFile(url, path, repeatCount, timeout, header, cancellationToken);
 		}
 
 		public Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null)

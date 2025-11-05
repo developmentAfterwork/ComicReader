@@ -11,7 +11,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
-			var response = await RequestHelper.DoGetRequest(HomeUrl, 6, true);
+			var response = await RequestHelper.DoGetRequest(HomeUrl, 6, true, Timeout);
 
 			var div = HtmlHelper.ElementsByClass(response, "container-chapter-reader").First();
 			var allImgs = HtmlHelper.ElementsByTypeOuter(div, "img");
@@ -30,8 +30,9 @@ namespace ComicReader.Interpreter.Implementations
 			string lastUpdate,
 			string mangaName,
 			string source,
+			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper)
 		{ }
 	}
 }

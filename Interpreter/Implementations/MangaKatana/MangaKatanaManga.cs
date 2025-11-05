@@ -9,6 +9,7 @@ namespace ComicReader.Interpreter
 
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
+		private readonly TimeSpan timeout;
 
 		public string? ID { get; }
 
@@ -42,7 +43,8 @@ namespace ComicReader.Interpreter
 			string description,
 			List<string> genres,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper)
+			HtmlHelper htmlHelper,
+			TimeSpan timeout)
 		{
 			Name = name;
 			HomeUrl = homeUrl;
@@ -50,7 +52,7 @@ namespace ComicReader.Interpreter
 
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
-
+			this.timeout = timeout;
 			Autor = autor;
 			Status = status;
 			LanguageFlagUrl = languageFlagUrl;
@@ -60,7 +62,7 @@ namespace ComicReader.Interpreter
 
 		public async Task<List<IChapter>> GetBooks()
 		{
-			var response = await requestHelper.DoGetRequest(HomeUrl, 3, true);
+			var response = await requestHelper.DoGetRequest(HomeUrl, 3, true, timeout);
 			var chaptersHtml = htmlHelper.ElementsByClass(response, "chapters").First();
 			var allChapterHtmls = htmlHelper.ElementsByClass(chaptersHtml, "chapter");
 			var allChapterUpdateTimes = htmlHelper.ElementsByClass(chaptersHtml, "update_time");
@@ -82,7 +84,7 @@ namespace ComicReader.Interpreter
 			var url = htmlHelper.GetAttribute(chapterHtml, "href");
 			var title = htmlHelper.ElementByType(chapterHtml, "a");
 
-			return new MangaKatanaChapter(title, url, updateTime, Name, Source, requestHelper, htmlHelper);
+			return new MangaKatanaChapter(title, url, updateTime, Name, Source, timeout, requestHelper, htmlHelper);
 		}
 	}
 }

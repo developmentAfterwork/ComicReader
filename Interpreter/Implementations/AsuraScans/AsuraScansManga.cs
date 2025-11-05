@@ -8,6 +8,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 		private readonly IRequest _requestHelper;
 		private readonly HtmlHelper _htmlHelper;
 		private readonly INotification _notification;
+		private readonly TimeSpan _timeout;
 
 		public string? ID { get; }
 
@@ -43,7 +44,8 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			string source,
 			IRequest requestHelper,
 			HtmlHelper htmlHelper,
-			INotification notification)
+			INotification notification,
+			TimeSpan timeout)
 		{
 			Name = name;
 			HomeUrl = homeUrl;
@@ -52,6 +54,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			_requestHelper = requestHelper;
 			_htmlHelper = htmlHelper;
 			_notification = notification;
+			_timeout = timeout;
 
 			Autor = autor;
 			Status = status;
@@ -66,7 +69,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			List<IChapter> chapters = new List<IChapter>();
 
 			try {
-				var response = await _requestHelper.DoGetRequest(HomeUrl, 3, true);
+				var response = await _requestHelper.DoGetRequest(HomeUrl, 3, true, _timeout);
 				var allChaptersHtml = _htmlHelper.ElementsByClass(response, "scrollbar-thumb-themecolor");
 
 				var allAHtmlOuter = _htmlHelper.ElementsByTypeOuter(allChaptersHtml[0], "a") ?? new List<string?>();
@@ -83,7 +86,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 						last = _htmlHelper.ElementsByType(allAHtml[i], "h3")[0];
 					}
 
-					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _requestHelper, _htmlHelper, _notification));
+					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _timeout, _requestHelper, _htmlHelper, _notification));
 				}
 			} catch (Exception ex) {
 				await _notification.ShowError($"Error", ex.Message);

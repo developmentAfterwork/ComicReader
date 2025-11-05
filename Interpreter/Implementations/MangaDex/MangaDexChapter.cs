@@ -13,14 +13,15 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			string lastUpdate,
 			string mangaName,
 			string source,
+			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper)
 		{ }
 
 		public override async Task<List<string>> ImplGetPageUrls()
 		{
 			var url = $"https://api.mangadex.org/at-home/server/{ID}?forcePort443=true";
-			var result = await RequestHelper.DoGetRequest(url, 3, false).ConfigureAwait(false);
+			var result = await RequestHelper.DoGetRequest(url, 3, false, Timeout).ConfigureAwait(false);
 			var data = JsonConvert.DeserializeObject<MangaDexPagesResult>(result);
 
 			List<string> pageUrls = new List<string>();

@@ -9,6 +9,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
 		private readonly INotification notification;
+		private readonly TimeSpan timeout;
 
 		public string Title => "AsuraScans";
 
@@ -18,11 +19,12 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		public bool ShowReader { get; set; } = true;
 
-		public AsuraScansReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification)
+		public AsuraScansReader(IRequest requestHelper, HtmlHelper htmlHelper, INotification notification, TimeSpan timeout)
 		{
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
 			this.notification = notification;
+			this.timeout = timeout;
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
@@ -31,7 +33,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			try {
 				var url = $"https://asuracomic.net/series?order=update";
-				var response = await requestHelper.DoGetRequest(url, 3, true);
+				var response = await requestHelper.DoGetRequest(url, 3, true, timeout);
 
 				var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
 				if (seriesList.Any()) {
@@ -59,7 +61,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			for (int i = 1; i <= 2; i++) {
 				try {
 					var url = $"https://asuracomic.net/series?page={i}&name={keyWords.Replace(" ", "%20")}";
-					var response = await requestHelper.DoGetRequest(url, 3, true);
+					var response = await requestHelper.DoGetRequest(url, 3, true, timeout);
 
 					var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
 					if (seriesList.Any()) {
@@ -92,7 +94,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			var status = "completed";
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 
-			var response = await requestHelper.DoGetRequest(mUrl, 3, true);
+			var response = await requestHelper.DoGetRequest(mUrl, 3, true, timeout);
 			var spans = htmlHelper.ElementsByClass(response, "text-sm");
 			var next = 0;
 			for (int i = 0; i < spans.Count; i++) {
@@ -107,7 +109,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
-			return new AsuraScansManga(title, mUrl, cover, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper, notification);
+			return new AsuraScansManga(title, mUrl, cover, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper, notification, timeout);
 		}
 
 		private string FixDesc(string desc)

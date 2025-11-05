@@ -9,6 +9,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		private readonly IRequest requestHelper;
 		private readonly HtmlHelper htmlHelper;
+		private readonly TimeSpan timeout;
 
 		public string? ID { get; }
 
@@ -44,7 +45,8 @@ namespace ComicReader.Interpreter.Implementations
 			string description,
 			List<string> genres,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper)
+			HtmlHelper htmlHelper,
+			TimeSpan timeout)
 		{
 			Name = name;
 			HomeUrl = homeUrl;
@@ -52,6 +54,7 @@ namespace ComicReader.Interpreter.Implementations
 
 			this.requestHelper = requestHelper;
 			this.htmlHelper = htmlHelper;
+			this.timeout = timeout;
 
 			Autor = autor;
 			Status = status;
@@ -63,7 +66,7 @@ namespace ComicReader.Interpreter.Implementations
 		public async Task<List<IChapter>> GetBooks()
 		{
 			try {
-				var response = await requestHelper.DoGetRequest(HomeUrl, 3, true);
+				var response = await requestHelper.DoGetRequest(HomeUrl, 3, true, timeout);
 
 				var chaptersHtml = htmlHelper.ElementsByClass(response, "row-content-chapter").FirstOrDefault();
 
@@ -94,7 +97,7 @@ namespace ComicReader.Interpreter.Implementations
 			var time = htmlHelper.ElementsByClass(html, "chapter-time").First();
 			var title = htmlHelper.ElementsByClass(html, "chapter-name").First();
 
-			return new MangaKakalotChapter(title, url, time, Name, Source, requestHelper, htmlHelper);
+			return new MangaKakalotChapter(title, url, time, Name, Source, timeout, requestHelper, htmlHelper);
 		}
 
 		private List<IChapter> GetAlternative(string? response)
@@ -114,7 +117,7 @@ namespace ComicReader.Interpreter.Implementations
 				var url = htmlHelper.GetAttribute(a, "href");
 				var title = htmlHelper.ElementByType(chapterHtml, "a");
 
-				chapters.Add(new MangaKakalotChapter(title, url, "...", Name, Source, requestHelper, htmlHelper));
+				chapters.Add(new MangaKakalotChapter(title, url, "...", Name, Source, timeout, requestHelper, htmlHelper));
 			}
 
 			chapters.Reverse();

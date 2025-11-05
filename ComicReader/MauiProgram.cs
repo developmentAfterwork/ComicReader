@@ -88,6 +88,7 @@ namespace ComicReader
 			builder.Services.AddSingleton<INotification, SimpleNotificationService>();
 			builder.Services.AddSingleton<WebViewRequest>();
 			builder.Services.AddSingleton<BackgroundService>();
+			builder.Services.AddTransient<IRequestTimeout, RequestTimeout>();
 		}
 
 		private static void AddViewModels(MauiAppBuilder builder)
