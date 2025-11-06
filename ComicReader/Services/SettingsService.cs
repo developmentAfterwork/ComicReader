@@ -2,10 +2,8 @@
 using ComicReader.Interpreter;
 using Newtonsoft.Json;
 
-namespace ComicReader.Services
-{
-	public class SettingsService
-	{
+namespace ComicReader.Services {
+	public class SettingsService {
 		private const string BookmarkMangasKey = "BookmarkMangas";
 		private const string HideEmptyMangaKey = "HideEmptyManga";
 		private const string DeleteChaptersAfterReadingKey = "DeleteChaptersAfterReading";
@@ -14,8 +12,7 @@ namespace ComicReader.Services
 
 		public SettingsService() { }
 
-		public void BookmarkManga(IManga manga)
-		{
+		public void BookmarkManga(IManga manga) {
 			var allJson = Preferences.Get(BookmarkMangasKey, "[]");
 			var mangaNames = JsonConvert.DeserializeObject<List<string>>(allJson);
 
@@ -27,8 +24,7 @@ namespace ComicReader.Services
 			}
 		}
 
-		public void RemoveManga(IManga manga)
-		{
+		public void RemoveManga(IManga manga) {
 			var allJson = Preferences.Get(BookmarkMangasKey, "[]");
 			var mangaNames = JsonConvert.DeserializeObject<List<string>>(allJson);
 
@@ -40,8 +36,7 @@ namespace ComicReader.Services
 			}
 		}
 
-		public void BookmarkManga(string id)
-		{
+		public void BookmarkManga(string id) {
 			var allJson = Preferences.Get(BookmarkMangasKey, "[]");
 			var mangaNames = JsonConvert.DeserializeObject<List<string>>(allJson);
 
@@ -53,103 +48,84 @@ namespace ComicReader.Services
 			}
 		}
 
-		public List<string> GetBookmarkedMangaUniqIdentifiers()
-		{
+		public List<string> GetBookmarkedMangaUniqIdentifiers() {
 			var allJson = Preferences.Get(BookmarkMangasKey, "[]");
 			var mangaNames = JsonConvert.DeserializeObject<List<string>>(allJson);
 
 			return mangaNames ?? new();
 		}
 
-		public string GetKey(IChapter chapter)
-		{
+		public string GetKey(IChapter chapter) {
 			return $"{chapter.MangaName}{chapter.Title}{chapter.Source}";
 		}
 
-		public string GetKeyPosition(IChapter chapter)
-		{
+		public string GetKeyPosition(IChapter chapter) {
 			return $"{GetKey(chapter)}_position";
 		}
 
-		public string GetKeyReaded(IChapter chapter)
-		{
+		public string GetKeyReaded(IChapter chapter) {
 			return $"{GetKey(chapter)}_readed";
 		}
 
-		public int GetSaveChapterPosition(IChapter chapter)
-		{
+		public int GetSaveChapterPosition(IChapter chapter) {
 			var value = Preferences.Get(GetKeyPosition(chapter), 0);
 
 			return value;
 		}
 
-		public void SetSaveChapterPosition(IChapter chapter, int position)
-		{
+		public void SetSaveChapterPosition(IChapter chapter, int position) {
 			Preferences.Set(GetKeyPosition(chapter), position);
 		}
 
-		public void SetSaveChapterPosition(string chapterKey, int position)
-		{
+		public void SetSaveChapterPosition(string chapterKey, int position) {
 			Preferences.Set(chapterKey, position);
 		}
 
-		public void SetChapterAsReaded(IChapter chapter)
-		{
+		public void SetChapterAsReaded(IChapter chapter) {
 			Preferences.Set(GetKeyReaded(chapter), true);
 		}
 
-		public void SetChapterAsReaded(string chapterKey, bool value)
-		{
+		public void SetChapterAsReaded(string chapterKey, bool value) {
 			Preferences.Set(chapterKey, value);
 		}
 
-		public bool GetChapterReaded(IChapter chapter)
-		{
+		public bool GetChapterReaded(IChapter chapter) {
 			return Preferences.Get(GetKeyReaded(chapter), false);
 		}
 
-		public bool GetHideEmptyManga()
-		{
+		public bool GetHideEmptyManga() {
 			return Preferences.Get(HideEmptyMangaKey, false);
 		}
 
-		public void SetHideEmptyManga(bool value)
-		{
+		public void SetHideEmptyManga(bool value) {
 			Preferences.Set(HideEmptyMangaKey, value);
 		}
 
-		public bool GetDeleteChaptersAfterReading()
-		{
+		public bool GetDeleteChaptersAfterReading() {
 			return Preferences.Get(DeleteChaptersAfterReadingKey, false);
 		}
 
-		public void SetDeleteChaptersAfterReading(bool value)
-		{
+		public void SetDeleteChaptersAfterReading(bool value) {
 			Preferences.Set(DeleteChaptersAfterReadingKey, value);
 		}
 
-		public bool GetAutoAddChaptersToQueue()
-		{
+		public bool GetAutoAddChaptersToQueue() {
 			return Preferences.Get(AutoAddChaptersToQueueKey, false);
 		}
 
-		public void SetAutoAddChaptersToQueue(bool value)
-		{
+		public void SetAutoAddChaptersToQueue(bool value) {
 			Preferences.Set(AutoAddChaptersToQueueKey, value);
 		}
 
-		public bool GetPreDownloadImages()
-		{
+		public bool GetPreDownloadImages() {
 			return Preferences.Get(PreDownloadImagesKey, false);
 		}
 
-		public void SetPreDownloadImages(bool value)
-		{
+		public void SetPreDownloadImages(bool value) {
 			Preferences.Set(PreDownloadImagesKey, value);
 		}
 
-		public TimeSpan GetRequestTimeout()
-		{
+		public TimeSpan GetRequestTimeout() {
 			return TimeSpan.FromSeconds(30);
 		}
 	}
