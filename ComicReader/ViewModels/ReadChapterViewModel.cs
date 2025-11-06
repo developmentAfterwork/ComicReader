@@ -9,10 +9,8 @@ using FFImageLoading.Helpers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels
-{
-	public partial class ReadChapterViewModel : ObservableObject
-	{
+namespace ComicReader.ViewModels {
+	public partial class ReadChapterViewModel : ObservableObject {
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
@@ -25,6 +23,9 @@ namespace ComicReader.ViewModels
 		private IChapter _Chapter = new SaveableChapter();
 
 		public ICommand Changed = new RelayCommand(() => { });
+
+		[ObservableProperty]
+		private ICommand _OpenInBrowser;
 
 		[ObservableProperty]
 		private string _position = "0/0";
@@ -43,22 +44,25 @@ namespace ComicReader.ViewModels
 
 		private readonly bool automaticSwitchToNextChapter = true;
 
-		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService)
-		{
+		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService) {
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.settingsService = settingsService;
 			this.factory = factory;
 			this.fileSaverService = fileSaverService;
+
+			OpenInBrowser = new RelayCommand(() => {
+				var chapter = Chapter;
+				Browser.OpenAsync(chapter.HomeUrl, BrowserLaunchMode.SystemPreferred);
+			});
+
 			StaticClassHolder<Singleton<InMemoryDatabase>>.Value = new Singleton<InMemoryDatabase>(inMemoryDatabase);
 		}
 
-		public void OnAppearing()
-		{
+		public void OnAppearing() {
 			_ = InitChapter(inMemoryDatabase.Get<IChapter>("selectedChapter"));
 		}
 
-		private async Task InitChapter(IChapter chapter)
-		{
+		private async Task InitChapter(IChapter chapter) {
 			IsLoading = true;
 
 			try {
@@ -103,8 +107,7 @@ namespace ComicReader.ViewModels
 			}
 		}
 
-		public async Task Scrolled(int position)
-		{
+		public async Task Scrolled(int position) {
 			CurrentPage = Pages[position];
 
 			int currentPosition = position + 1;
@@ -124,13 +127,11 @@ namespace ComicReader.ViewModels
 			}
 		}
 
-		private bool IsReadedToEnd(int currentPosition)
-		{
+		private bool IsReadedToEnd(int currentPosition) {
 			return currentPosition >= Pages.Count && currentPosition >= Chapter.UrlToLocalFileMapper.Count && Chapter.UrlToLocalFileMapper.Count > 0;
 		}
 
-		private async Task SelectNextChapter()
-		{
+		private async Task SelectNextChapter() {
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 			var chapters = await manga.GetBooks();
 			var currentIndex = chapters.IndexOf(Chapter);
@@ -145,8 +146,7 @@ namespace ComicReader.ViewModels
 			}
 		}
 
-		internal void OnDisappearing()
-		{
+		internal void OnDisappearing() {
 			var predownloadFiles = settingsService.GetPreDownloadImages();
 
 			if (!predownloadFiles) {
