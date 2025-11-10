@@ -1,23 +1,28 @@
-﻿using ComicReader.Interpreter;
+﻿using ComicReader.Helper;
+using ComicReader.Interpreter;
 using ComicReader.Services;
+using ComicReader.Services.Queue;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels
-{
-	public partial class SettingsViewModel : ObservableObject
-	{
+namespace ComicReader.ViewModels {
+	public partial class SettingsViewModel : ObservableObject {
 		private readonly SettingsService settingsService;
 		private readonly FileSaverService fileSaverService;
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly Factory factory;
+		private readonly MangaQueue mangaQueue;
 
 		public ICommand WriteSettings { get; set; }
 
 		public ICommand ReadSettings { get; set; }
+
+		public ICommand RefreshAll { get; set; }
+
+		public ICommand DownloadAllChapters { get; set; }
 
 		[ObservableProperty]
 		private bool _HideEmptyManga = true;
@@ -31,15 +36,17 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _PredownloadImages = false;
 
-		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory)
-		{
+		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue) {
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
 			this.simpleNotificationService = simpleNotificationService;
 			this.factory = factory;
+			this.mangaQueue = mangaQueue;
 
 			WriteSettings = new AsyncRelayCommand(OnWriteSettings);
 			ReadSettings = new AsyncRelayCommand(OnReadSettings);
+			RefreshAll = new AsyncRelayCommand(OnRefreshAll);
+			DownloadAllChapters = new AsyncRelayCommand(OnDownloadAllChapters);
 
 			HideEmptyManga = settingsService.GetHideEmptyManga();
 			DeleteMangaAfterReaded = settingsService.GetDeleteChaptersAfterReading();
@@ -47,8 +54,7 @@ namespace ComicReader.ViewModels
 			PredownloadImages = settingsService.GetPreDownloadImages();
 		}
 
-		private async Task OnWriteSettings()
-		{
+		private async Task OnWriteSettings() {
 			var bookmarkedMangasIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 			Dictionary<string, int> positionsDict = new Dictionary<string, int>();
 			Dictionary<string, bool> readedDict = new Dictionary<string, bool>();
@@ -81,8 +87,7 @@ namespace ComicReader.ViewModels
 			await fileSaverService.SaveFile(path, content);
 		}
 
-		private async Task OnReadSettings()
-		{
+		private async Task OnReadSettings() {
 			string path = fileSaverService.GetSecurePathToDocuments("backup.json");
 			var backupExists = fileSaverService.FileExists(path);
 
@@ -110,8 +115,35 @@ namespace ComicReader.ViewModels
 			}
 		}
 
-		internal void OnDisappearing()
-		{
+		private async Task OnRefreshAll() {
+			var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
+
+			foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
+				IManga? manga = null;
+				try {
+					manga = await factory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+					await manga.Refresh(factory, fileSaverService, simpleNotificationService).ConfigureAwait(false);
+				} catch (Exception ex) {
+					await simpleNotificationService.ShowError($"Error", $"{manga?.Name} - {ex.Message}");
+				}
+			}
+		}
+
+		private async Task OnDownloadAllChapters() {
+			var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
+
+			foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
+				IManga? manga = null;
+				try {
+					manga = await factory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+					await mangaQueue.AddMissingChaptersFromManga(manga, simpleNotificationService);
+				} catch (Exception ex) {
+					await simpleNotificationService.ShowError($"Error", $"{manga?.Name} - {ex.Message}");
+				}
+			}
+		}
+
+		internal void OnDisappearing() {
 			settingsService.SetHideEmptyManga(HideEmptyManga);
 			settingsService.SetDeleteChaptersAfterReading(DeleteMangaAfterReaded);
 			settingsService.SetAutoAddChaptersToQueue(AutoAddChaptersToQueue);

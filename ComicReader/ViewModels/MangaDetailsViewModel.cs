@@ -199,10 +199,10 @@ namespace ComicReader.ViewModels {
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 
 			try {
+				var chapters = await manga.GetBooks();
+
 				settingsService.RemoveManga(manga);
 				fileSaverService.DeleteManga(manga);
-
-				var chapters = await manga.GetBooks();
 
 				int i = 0;
 				foreach (var chapter in chapters) {
@@ -230,28 +230,7 @@ namespace ComicReader.ViewModels {
 
 			IsSearching = true;
 
-			var allChapters = await manga.GetBooks();
-
-			foreach (var chapter in allChapters) {
-				try {
-					if (fileSaverService.FileExists(chapter)) {
-						IChapter chapterObj = chapter;
-						if (chapter is SaveableChapter) {
-							var allPageUrls = await chapter.GetPageUrls(false, factory);
-							var mappedUrls = chapter.UrlToLocalFileMapper;
-
-							// check that all images are downloaded
-							var allImagesExists = mappedUrls.Values.All(f => File.Exists(f));
-							if (!allImagesExists) {
-								await fileSaverService.DeleteImagesFromChapter(chapterObj, factory);
-								fileSaverService.DeleteChapterFile(chapterObj);
-							}
-						}
-					}
-				} catch (Exception ex) {
-					await simpleNotificationService.ShowError($"Error", $"{chapter.Title} - {ex.Message}");
-				}
-			}
+			await manga.Refresh(factory, fileSaverService, simpleNotificationService);
 
 			IManga reloadedManga = await factory.GetMangaFromBookmarkId(manga.GetUniqIdentifier());
 			inMemoryDatabase.Set<IManga>("selectedManga", reloadedManga);

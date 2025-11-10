@@ -1,10 +1,8 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Services;
 
-namespace ComicReader.Interpreter
-{
-	public class SaveableChapter : IChapter
-	{
+namespace ComicReader.Interpreter {
+	public class SaveableChapter : IChapter {
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 
 		public string? ID { get; set; } = null;
@@ -25,13 +23,11 @@ namespace ComicReader.Interpreter
 
 		public Dictionary<string, string>? RequestHeaders { get; set; } = null;
 
-		public SaveableChapter()
-		{
+		public SaveableChapter() {
 
 		}
 
-		public SaveableChapter(IChapter chapter)
-		{
+		public SaveableChapter(IChapter chapter) {
 			ID = chapter.ID;
 			MangaName = chapter.MangaName;
 			Title = chapter.Title;
@@ -42,13 +38,11 @@ namespace ComicReader.Interpreter
 			RequestHeaders = chapter.RequestHeaders;
 		}
 
-		public async Task Save()
-		{
+		public async Task Save() {
 			await fileSaverService.SaveFile(this);
 		}
 
-		public async Task<List<string>> GetPageUrls(bool preDownloadChapters, Factory factory)
-		{
+		public async Task<List<string>> GetPageUrls(bool preDownloadChapters, Factory factory) {
 			try {
 				var chapter = await fileSaverService.LoadMangaChapterFile(Source, MangaName, Title);
 

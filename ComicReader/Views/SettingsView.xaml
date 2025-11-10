@@ -17,6 +17,8 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -148,6 +150,46 @@
 				Grid.Column="1"
 				HorizontalOptions="End"
 				IsToggled="{Binding PredownloadImages}" />
+		</Grid>
+		<Grid
+			Grid.Row="7"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Refresh all"
+				VerticalOptions="Center" />
+			<Button
+				Grid.Column="1"
+				Command="{Binding RefreshAll}"
+				Text="Do" />
+		</Grid>
+		<Grid
+			Grid.Row="8"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Download all missing chapters"
+				VerticalOptions="Center" />
+			<Button
+				Grid.Column="1"
+				Command="{Binding DownloadAllChapters}"
+				Text="Do" />
 		</Grid>
 	</Grid>
 </ContentPage>
