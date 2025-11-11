@@ -5,10 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels
-{
-	public partial class MangaViewModel : ObservableObject
-	{
+namespace ComicReader.ViewModels {
+	public partial class MangaViewModel : ObservableObject {
 		private readonly IManga manga;
 
 		[ObservableProperty]
@@ -16,6 +14,9 @@ namespace ComicReader.ViewModels
 
 		[ObservableProperty]
 		private ImageSource _CoverUrlImageSource = default!;
+
+		[ObservableProperty]
+		private bool _IsLoadingImage = true;
 
 		[ObservableProperty]
 		private string _Title = string.Empty;
@@ -28,30 +29,32 @@ namespace ComicReader.ViewModels
 
 		public event EventHandler<IManga>? StartToDownload;
 
-		public MangaViewModel(IManga manga)
-		{
+		public MangaViewModel(IManga manga) {
 			CoverUrl = manga.CoverUrl;
 			this.manga = manga;
 			this.Title = manga.Name;
 
-			string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
-			if (File.Exists(pathWithFile)) {
-				CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
-			} else {
-				var mem = (new RequestHelper()).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders).Result;
-				if (mem != null) {
-					CoverUrlImageSource = ImageSource.FromStream(() => mem);
+			_ = Task.Run(async () => {
+				await Task.Delay(500);
+
+				string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
+				if (File.Exists(pathWithFile)) {
+					CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
+				} else {
+					var mem = await (new RequestHelper()).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
+					if (mem != null) {
+						CoverUrlImageSource = ImageSource.FromStream(() => mem);
+					}
 				}
-			}
+				IsLoadingImage = false;
+			});
 		}
 
-		private void OnMangeSelected()
-		{
+		private void OnMangeSelected() {
 			Selected?.Invoke(this, manga);
 		}
 
-		private void OnDownloadManga()
-		{
+		private void OnDownloadManga() {
 			StartToDownload?.Invoke(this, manga);
 		}
 	}

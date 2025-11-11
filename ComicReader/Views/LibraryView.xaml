@@ -52,11 +52,19 @@
 							<ffimageloading:CachedImage
 								Aspect="AspectFill"
 								HeightRequest="220"
+								IsVisible="{Binding IsLoadingImage, Converter={StaticResource InvertedBoolConverter}}"
 								Source="{Binding CoverUrlImageSource}">
 								<ffimageloading:CachedImage.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding MangeSelected}" />
 								</ffimageloading:CachedImage.GestureRecognizers>
 							</ffimageloading:CachedImage>
+							<ActivityIndicator
+								Margin="48,8,48,8"
+								HeightRequest="220"
+								IsEnabled="{Binding IsLoadingImage}"
+								IsRunning="{Binding IsLoadingImage}"
+								IsVisible="{Binding IsLoadingImage}"
+								Color="Orange" />
 						</VerticalStackLayout>
 					</Border>
 				</DataTemplate>
