@@ -36,6 +36,9 @@ namespace ComicReader.ViewModels {
 		[ObservableProperty]
 		private bool _PredownloadImages = false;
 
+		[ObservableProperty]
+		private int _Timeout = 30;
+
 		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue) {
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
@@ -52,6 +55,7 @@ namespace ComicReader.ViewModels {
 			DeleteMangaAfterReaded = settingsService.GetDeleteChaptersAfterReading();
 			AutoAddChaptersToQueue = settingsService.GetAutoAddChaptersToQueue();
 			PredownloadImages = settingsService.GetPreDownloadImages();
+			Timeout = (int)settingsService.GetRequestTimeout().TotalSeconds;
 		}
 
 		private async Task OnWriteSettings() {
@@ -148,6 +152,7 @@ namespace ComicReader.ViewModels {
 			settingsService.SetDeleteChaptersAfterReading(DeleteMangaAfterReaded);
 			settingsService.SetAutoAddChaptersToQueue(AutoAddChaptersToQueue);
 			settingsService.SetPreDownloadImages(PredownloadImages);
+			settingsService.SetRequestTimeout(TimeSpan.FromSeconds(Timeout));
 		}
 	}
 }

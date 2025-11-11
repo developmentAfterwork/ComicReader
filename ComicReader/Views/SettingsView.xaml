@@ -19,6 +19,7 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -190,6 +191,36 @@
 				Grid.Column="1"
 				Command="{Binding DownloadAllChapters}"
 				Text="Do" />
+		</Grid>
+		<Grid
+			Grid.Row="9"
+			Grid.Column="0"
+			Margin="8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="auto" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Row="0"
+				Text="Request Timeout"
+				VerticalOptions="Center" />
+			<Label
+				Grid.Row="0"
+				Grid.Column="1"
+				Margin="0,0,16,0"
+				Text="{Binding Timeout}"
+				VerticalOptions="Center" />
+			<Slider
+				Grid.Row="1"
+				Grid.ColumnSpan="2"
+				Maximum="120"
+				Minimum="5"
+				VerticalOptions="Center"
+				Value="{Binding Timeout}" />
 		</Grid>
 	</Grid>
 </ContentPage>

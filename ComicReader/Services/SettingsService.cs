@@ -9,6 +9,7 @@ namespace ComicReader.Services {
 		private const string DeleteChaptersAfterReadingKey = "DeleteChaptersAfterReading";
 		private const string AutoAddChaptersToQueueKey = "AutoAddChaptersToQueue";
 		private const string PreDownloadImagesKey = "PreDownloadImages";
+		private const string RequestTimeoutKey = "RequestTimeout";
 
 		public SettingsService() { }
 
@@ -126,7 +127,13 @@ namespace ComicReader.Services {
 		}
 
 		public TimeSpan GetRequestTimeout() {
-			return TimeSpan.FromSeconds(30);
+			int timeoutInSeconds = Preferences.Get(RequestTimeoutKey, 30);
+			return TimeSpan.FromSeconds(timeoutInSeconds);
+		}
+
+		internal void SetRequestTimeout(TimeSpan timeSpan) {
+			int timeoutInSeconds = (int)timeSpan.TotalSeconds;
+			Preferences.Set(RequestTimeoutKey, timeoutInSeconds);
 		}
 	}
 }
