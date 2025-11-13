@@ -4,6 +4,7 @@ using ComicReader.Interpreter;
 using ComicReader.Reader;
 using ComicReader.Services;
 using ComicReader.Services.Queue;
+using ComicReader.ViewModels.Model;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,7 +26,7 @@ namespace ComicReader.ViewModels {
 		private readonly PopupService popupService;
 
 		[ObservableProperty]
-		private ObservableCollection<IChapter> _Chapters = new ObservableCollection<IChapter>();
+		private ObservableCollection<IChapterModel> _Chapters = new ObservableCollection<IChapterModel>();
 
 		[ObservableProperty]
 		private ObservableCollection<string> _Genres = new ObservableCollection<string>();
@@ -34,7 +35,7 @@ namespace ComicReader.ViewModels {
 		private ICommand _ItemSelectedCommand;
 
 		[ObservableProperty]
-		private IChapter? _SelectedItem;
+		private IChapterModel? _SelectedItem;
 
 		[ObservableProperty]
 		private bool _IsSearching = true;
@@ -109,7 +110,7 @@ namespace ComicReader.ViewModels {
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 
 			if (_lastManga != null && manga == _lastManga) {
-				var cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c)).ToList();
+				var cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c.Chapter)).ToList();
 				Chapters.Clear();
 				Chapters.AddRange(cToShow);
 
@@ -134,7 +135,13 @@ namespace ComicReader.ViewModels {
 
 			var chaptersToShow = chaptersList.Where(c => !settingsService.GetChapterReaded(c)).ToList();
 			Chapters.Clear();
-			Chapters.AddRange(chaptersToShow);
+
+			List<IChapterModel> chapterModels = new List<IChapterModel>();
+			foreach (var chapter in chaptersToShow) {
+				var m = await IChapterModel.Create(chapter, fileSaverService);
+				chapterModels.Add(m);
+			}
+			Chapters.AddRange(chapterModels);
 
 			Genres.Clear();
 			Genres.AddRange(manga.Genres);
@@ -154,7 +161,7 @@ namespace ComicReader.ViewModels {
 
 		public async Task ChapterSelected(object? chapterObj) {
 			if (SelectedItem != null) {
-				inMemoryDatabase.Set<IChapter>("selectedChapter", SelectedItem);
+				inMemoryDatabase.Set<IChapter>("selectedChapter", SelectedItem.Chapter);
 				SelectedItem = null;
 
 				await navigation.GoToReadChapter();

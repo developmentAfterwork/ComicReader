@@ -6,6 +6,7 @@
 	xmlns:converters="clr-namespace:ComicReader.Converter"
 	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 	xmlns:inter="clr-namespace:ComicReader.Interpreter;assembly=Interpreter"
+	xmlns:models="clr-namespace:ComicReader.ViewModels.Model"
 	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
 	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
 	Title="Details"
@@ -173,9 +174,11 @@
 				</Grid>
 			</CollectionView.Header>
 			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="inter:IChapter">
-					<StackLayout Orientation="Vertical">
+				<DataTemplate x:DataType="models:IChapterModel">
+					<Grid ColumnDefinitions="*,auto" RowDefinitions="*,*">
 						<Label
+							Grid.Row="0"
+							Grid.ColumnSpan="2"
 							Margin="0,12,0,2"
 							FontAttributes="Bold"
 							FontSize="14"
@@ -183,12 +186,21 @@
 							MaxLines="1"
 							Text="{Binding Title}" />
 						<Label
+							Grid.Row="1"
 							Margin="0,2,0,12"
 							FontSize="12"
 							LineBreakMode="TailTruncation"
 							MaxLines="1"
 							Text="{Binding LastUpdate}" />
-					</StackLayout>
+						<Label
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin="0,2,0,12"
+							FontSize="12"
+							LineBreakMode="TailTruncation"
+							MaxLines="1"
+							Text="{Binding DownloadedPages}" />
+					</Grid>
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
