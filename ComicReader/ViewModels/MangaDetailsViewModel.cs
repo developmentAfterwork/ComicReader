@@ -112,7 +112,13 @@ namespace ComicReader.ViewModels {
 			if (_lastManga != null && manga == _lastManga) {
 				var cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c.Chapter)).ToList();
 				Chapters.Clear();
-				Chapters.AddRange(cToShow);
+
+				List<IChapterModel> cModels = new List<IChapterModel>();
+				foreach (var chapter in cToShow) {
+					var m = await IChapterModel.Create(chapter.Chapter, fileSaverService);
+					cModels.Add(m);
+				}
+				Chapters.AddRange(cModels);
 
 				IsSearching = false;
 				return;
