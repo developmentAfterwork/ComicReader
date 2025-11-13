@@ -17,31 +17,34 @@ namespace ComicReader.ViewModels.Model {
 		public IChapterModel(IChapter chapter) {
 			Title = chapter.Title;
 			LastUpdate = chapter.LastUpdate;
-			DownloadedPages = "0/0";
+			DownloadedPages = "";
 			Chapter = chapter;
 		}
 
-		public static async Task<IChapterModel> Create(IChapter chapter, FileSaverService fileSaverService) {
-			string pages;
-			if (fileSaverService.FileExists(chapter)) {
-				var sc = await fileSaverService.LoadMangaChapterFile(chapter.Source, chapter.MangaName, chapter.Title);
-				var m = sc.UrlToLocalFileMapper;
+		public static async Task<IChapterModel> Create(IChapter chapter, FileSaverService fileSaverService, bool showDownloadPages) {
+			var c = new IChapterModel(chapter);
 
-				var max = m.Count;
-				var current = 0;
-				foreach (var page in m) {
-					if (fileSaverService.FileExists(page.Value)) {
-						current++;
+			if (showDownloadPages) {
+				string pages;
+				if (fileSaverService.FileExists(chapter)) {
+					var sc = await fileSaverService.LoadMangaChapterFile(chapter.Source, chapter.MangaName, chapter.Title);
+					var m = sc.UrlToLocalFileMapper;
+
+					var max = m.Count;
+					var current = 0;
+					foreach (var page in m) {
+						if (fileSaverService.FileExists(page.Value)) {
+							current++;
+						}
 					}
+
+					pages = $"{current}/{max}";
+				} else {
+					pages = "???";
 				}
 
-				pages = $"{current}/{max}";
-			} else {
-				pages = "???";
+				c.DownloadedPages = pages;
 			}
-
-			var c = new IChapterModel(chapter);
-			c.DownloadedPages = pages;
 
 			return c;
 		}

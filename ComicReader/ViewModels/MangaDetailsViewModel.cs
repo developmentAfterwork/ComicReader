@@ -108,6 +108,7 @@ namespace ComicReader.ViewModels {
 
 		private async Task Init() {
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
+			bool showDownloadPages = settingsService.GetShowDownloadedPagesNumbers();
 
 			if (_lastManga != null && manga == _lastManga) {
 				var cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c.Chapter)).ToList();
@@ -115,7 +116,7 @@ namespace ComicReader.ViewModels {
 
 				List<IChapterModel> cModels = new List<IChapterModel>();
 				foreach (var chapter in cToShow) {
-					var m = await IChapterModel.Create(chapter.Chapter, fileSaverService);
+					var m = await IChapterModel.Create(chapter.Chapter, fileSaverService, showDownloadPages);
 					cModels.Add(m);
 				}
 				Chapters.AddRange(cModels);
@@ -144,7 +145,7 @@ namespace ComicReader.ViewModels {
 
 			List<IChapterModel> chapterModels = new List<IChapterModel>();
 			foreach (var chapter in chaptersToShow) {
-				var m = await IChapterModel.Create(chapter, fileSaverService);
+				var m = await IChapterModel.Create(chapter, fileSaverService, showDownloadPages);
 				chapterModels.Add(m);
 			}
 			Chapters.AddRange(chapterModels);

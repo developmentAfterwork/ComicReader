@@ -10,6 +10,7 @@ namespace ComicReader.Services {
 		private const string AutoAddChaptersToQueueKey = "AutoAddChaptersToQueue";
 		private const string PreDownloadImagesKey = "PreDownloadImages";
 		private const string RequestTimeoutKey = "RequestTimeout";
+		private const string ShowDownloadedPagesNumbersKey = "ShowDownloadedPagesNumbers";
 
 		public SettingsService() { }
 
@@ -134,6 +135,14 @@ namespace ComicReader.Services {
 		internal void SetRequestTimeout(TimeSpan timeSpan) {
 			int timeoutInSeconds = (int)timeSpan.TotalSeconds;
 			Preferences.Set(RequestTimeoutKey, timeoutInSeconds);
+		}
+
+		public bool GetShowDownloadedPagesNumbers() {
+			return Preferences.Get(ShowDownloadedPagesNumbersKey, true);
+		}
+
+		public void SetShowDownloadedPagesNumbers(bool value) {
+			Preferences.Set(ShowDownloadedPagesNumbersKey, value);
 		}
 	}
 }

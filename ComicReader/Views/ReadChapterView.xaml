@@ -27,7 +27,10 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<StackLayout Grid.Column="1" Orientation="Horizontal">
-				<Button Command="{Binding OpenInBrowser}" Text="🌍" />
+				<Button
+					BackgroundColor="Transparent"
+					Command="{Binding OpenInBrowser}"
+					Text="🌍" />
 				<StackLayout Padding="4" Orientation="Horizontal">
 					<Label
 						Text="Swiping"

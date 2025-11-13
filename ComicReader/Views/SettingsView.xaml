@@ -20,6 +20,7 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -221,6 +222,26 @@
 				Minimum="5"
 				VerticalOptions="Center"
 				Value="{Binding Timeout}" />
+		</Grid>
+		<Grid
+			Grid.Row="10"
+			Grid.Column="0"
+			Margin="8,-8,8,8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Show how many pages are downloaded"
+				VerticalOptions="Center" />
+			<Switch
+				Grid.Column="1"
+				HorizontalOptions="End"
+				IsToggled="{Binding ShowDownloadedPagesCount}" />
 		</Grid>
 	</Grid>
 </ContentPage>
