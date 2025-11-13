@@ -2,22 +2,18 @@
 using Interpreter.Interface;
 using System.Threading;
 
-namespace ComicReader.Helper
-{
-	public class RequestHelper : IRequest
-	{
+namespace ComicReader.Helper {
+	public class RequestHelper : IRequest {
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 
 		private HttpClient _httpClient = new HttpClient();
 
-		public RequestHelper()
-		{
-			_httpClient.Timeout = TimeSpan.FromSeconds(30);
+		public RequestHelper(TimeSpan timeout) {
+			_httpClient.Timeout = timeout;
 			_httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ComicReader", "1.0.0"));
 		}
 
-		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
-		{
+		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
 			if (withFallback)
 				throw new NotSupportedException("Fallback handling not implemented");
 
@@ -52,8 +48,7 @@ namespace ComicReader.Helper
 			throw new HttpRequestException($"Request to {url} failed after {repeatCount} retries.");
 		}
 
-		public async Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
-		{
+		public async Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
 			if (url == "") { return; }
 
 			using var timeoutCts = new CancellationTokenSource(timeout);
@@ -68,7 +63,6 @@ namespace ComicReader.Helper
 						foreach (var pair in header)
 							request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
 
-					_httpClient.Timeout = timeout;
 					using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, linkedCts.Token);
 					response.EnsureSuccessStatusCode();
 
@@ -79,14 +73,13 @@ namespace ComicReader.Helper
 					return;
 				} catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested) {
 					throw new TimeoutException($"Request to {url} timed out after {timeout.TotalSeconds:F1} seconds.");
-				} catch {
+				} catch (Exception ex) {
 					await Task.Delay(500, linkedCts.Token);
 				}
 			}
 		}
 
-		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
-		{
+		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
 			if (url == "") {
 				return await Task.FromResult<MemoryStream?>(null);
 			}

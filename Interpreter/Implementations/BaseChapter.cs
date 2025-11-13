@@ -2,10 +2,8 @@
 using ComicReader.Services;
 using Interpreter.Interface;
 
-namespace ComicReader.Interpreter.Implementations
-{
-	public abstract class BaseChapter : IChapter
-	{
+namespace ComicReader.Interpreter.Implementations {
+	public abstract class BaseChapter : IChapter {
 		protected readonly TimeSpan Timeout;
 		protected readonly IRequest RequestHelper;
 		protected readonly HtmlHelper HtmlHelper;
@@ -26,8 +24,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public virtual Dictionary<string, string>? RequestHeaders { get; } = null;
 
-		public async Task<List<string>> GetPageUrls(bool preDownloadChapters, Factory factory)
-		{
+		public async Task<List<string>> GetPageUrls(bool preDownloadChapters, Factory factory) {
 			return await ProcessPageUrls(preDownloadChapters, factory).ConfigureAwait(false);
 		}
 
@@ -42,8 +39,7 @@ namespace ComicReader.Interpreter.Implementations
 			string source,
 			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper)
-		{
+			HtmlHelper htmlHelper) {
 			ID = id;
 			Title = title;
 			HomeUrl = homeUrl;
@@ -55,10 +51,9 @@ namespace ComicReader.Interpreter.Implementations
 			this.HtmlHelper = htmlHelper;
 		}
 
-		private async Task<List<string>> ProcessPageUrls(bool preDownloadChapters, Factory factory)
-		{
+		private async Task<List<string>> ProcessPageUrls(bool preDownloadChapters, Factory factory) {
 			var pages = await ImplGetPageUrls();
-			FillMapper(pages, preDownloadChapters);
+			FillMapper(pages, true);
 			if (preDownloadChapters) {
 				await PreDownloadChapters();
 			}
@@ -66,8 +61,7 @@ namespace ComicReader.Interpreter.Implementations
 			return pages;
 		}
 
-		private void FillMapper(List<string> urls, bool createFolderIfMissing = true)
-		{
+		private void FillMapper(List<string> urls, bool createFolderIfMissing = true) {
 			foreach (var url in urls) {
 				if (!UrlToLocalFileMapper.ContainsKey(url)) {
 					var path = FileSaverService.GetChapterImageFolder(this, createFolderIfMissing);
@@ -82,8 +76,7 @@ namespace ComicReader.Interpreter.Implementations
 			}
 		}
 
-		private async Task PreDownloadChapters()
-		{
+		private async Task PreDownloadChapters() {
 			foreach (var pair in UrlToLocalFileMapper) {
 				if (!File.Exists(pair.Value)) {
 					var pathWithFile = UrlToLocalFileMapper[pair.Key];

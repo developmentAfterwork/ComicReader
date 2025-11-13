@@ -22,12 +22,9 @@ using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
 using PopupService = ComicReader.Services.PopupService;
 
-namespace ComicReader
-{
-	public static class MauiProgram
-	{
-		public static MauiApp CreateMauiApp()
-		{
+namespace ComicReader {
+	public static class MauiProgram {
+		public static MauiApp CreateMauiApp() {
 			AddUnhandledExceptionHandler();
 			AddUnobservedTaskExceptionHandler();
 
@@ -67,9 +64,8 @@ namespace ComicReader
 			return builder.Build();
 		}
 
-		private static void AddServices(MauiAppBuilder builder)
-		{
-			builder.Services.AddSingleton<RequestHelper>();
+		private static void AddServices(MauiAppBuilder builder) {
+			builder.Services.AddSingleton<RequestHelper>(x => new RequestHelper(x.GetRequiredService<SettingsService>().GetRequestTimeout()));
 			builder.Services.AddSingleton<HtmlHelper>();
 			builder.Services.AddSingleton<Navigation>();
 			builder.Services.AddSingleton<InMemoryDatabase>();
@@ -83,7 +79,6 @@ namespace ComicReader
 			builder.Services.AddSingleton<MangaDexFactory>();
 			builder.Services.AddSingleton<AsuraScansFactory>();
 			builder.Services.AddSingleton<PopupService>();
-			builder.Services.AddSingleton<RequestHelper>();
 			builder.Services.AddSingleton<IRequest, RequestServiceWithFallback>();
 			builder.Services.AddSingleton<INotification, SimpleNotificationService>();
 			builder.Services.AddSingleton<WebViewRequest>();
@@ -91,8 +86,7 @@ namespace ComicReader
 			builder.Services.AddTransient<IRequestTimeout, RequestTimeout>();
 		}
 
-		private static void AddViewModels(MauiAppBuilder builder)
-		{
+		private static void AddViewModels(MauiAppBuilder builder) {
 			builder.Services.AddTransient<BrowseViewModel>();
 			builder.Services.AddTransient<SearchResultViewModel>();
 			builder.Services.AddTransient<MangaDetailsViewModel>();
@@ -105,8 +99,7 @@ namespace ComicReader
 			builder.Services.AddTransient<AllReaderNewsViewModel>();
 		}
 
-		private static void AddViews(MauiAppBuilder builder)
-		{
+		private static void AddViews(MauiAppBuilder builder) {
 			builder.Services.AddTransient<BrowseView>();
 			builder.Services.AddTransient<DownloadsView>();
 			builder.Services.AddTransient<LibraryView>();
@@ -119,14 +112,12 @@ namespace ComicReader
 			builder.Services.AddTransient<AllReaderNewsView>();
 		}
 
-		private static void AddUnhandledExceptionHandler()
-		{
+		private static void AddUnhandledExceptionHandler() {
 			AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 		}
 
-		private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
+		private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
 			var fileService = new FileSaverService();
 			var text = JsonConvert.SerializeObject(e.ExceptionObject);
 
@@ -136,14 +127,12 @@ namespace ComicReader
 			await fileService.SaveFile(path, text);
 		}
 
-		private static void AddUnobservedTaskExceptionHandler()
-		{
+		private static void AddUnobservedTaskExceptionHandler() {
 			TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 			TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
-		private static async void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-		{
+		private static async void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) {
 			var fileService = new FileSaverService();
 			var text = JsonConvert.SerializeObject(e.Exception);
 

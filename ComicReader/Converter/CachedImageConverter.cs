@@ -3,15 +3,12 @@ using ComicReader.Interpreter;
 using ComicReader.Services;
 using System.Globalization;
 
-namespace ComicReader.Converter
-{
-	public class CachedImageConverter : IValueConverter
-	{
-		RequestHelper requestHelper = new RequestHelper();
+namespace ComicReader.Converter {
+	public class CachedImageConverter : IValueConverter {
+		RequestHelper requestHelper = new RequestHelper(TimeSpan.FromSeconds(30));
 		FileSaverService fileSaverService = new FileSaverService();
 
-		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-		{
+		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
 			if (value != null && value.GetType() == typeof(string)) {
 				return ConvertUrlToFile(value as string, parameter as string);
 			}
@@ -19,8 +16,7 @@ namespace ComicReader.Converter
 			return value;
 		}
 
-		public string? ConvertUrlToFile(string? value, string? parameter)
-		{
+		public string? ConvertUrlToFile(string? value, string? parameter) {
 			if (value != null && value.GetType() == typeof(string)) {
 				if (parameter == null) {
 					string? url = value as string;
@@ -58,8 +54,7 @@ namespace ComicReader.Converter
 			return value;
 		}
 
-		public static string CheckAndGetPathFromUrl(string url)
-		{
+		public static string CheckAndGetPathFromUrl(string url) {
 			var path = url.Replace("https://", "");
 			var pathSplit = path.Split('/').ToList();
 
@@ -73,8 +68,7 @@ namespace ComicReader.Converter
 			return pathWithFile;
 		}
 
-		public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-		{
+		public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
 			return null;
 		}
 	}

@@ -143,7 +143,7 @@ namespace ComicReader.ViewModels {
 			if (File.Exists(pathWithFile)) {
 				CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
 			} else {
-				var mem = await (new RequestHelper()).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
+				var mem = await (new RequestHelper(TimeSpan.FromSeconds(30))).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
 				if (mem != null) {
 					CoverUrlImageSource = ImageSource.FromStream(() => mem);
 				}
