@@ -50,6 +50,9 @@ namespace ComicReader.Helper {
 
 		public async Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
 			if (url == "") { return; }
+			if (!path.StartsWith("/")) {
+				throw new Exception("Invalid path");
+			}
 
 			using var timeoutCts = new CancellationTokenSource(timeout);
 			using var linkedCts = cancellationToken is not null
@@ -77,6 +80,8 @@ namespace ComicReader.Helper {
 					await Task.Delay(500, linkedCts.Token);
 				}
 			}
+
+			throw new Exception("Download failed");
 		}
 
 		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {

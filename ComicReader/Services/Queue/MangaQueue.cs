@@ -79,7 +79,7 @@ namespace ComicReader.Services.Queue {
 				await simpleNotificationService.ShowProgress("Add missing chapters", $"{++current}/{chapters.Count}", current, chapters.Count);
 
 				var key = $"{chapter.Source}{chapter.MangaName}{chapter.Title}";
-				if (!fileSaverService.FileExists(chapter) && !_chaptersToDownload.ContainsKey(key)) {
+				if (!fileSaverService.FileExists(chapter)) {
 					await TryAddChapter(chapter, simpleNotificationService).ConfigureAwait(false);
 				}
 			}
