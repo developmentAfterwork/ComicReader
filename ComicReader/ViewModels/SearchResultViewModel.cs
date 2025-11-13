@@ -6,10 +6,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CsQuery.ExtensionMethods.Internal;
 using System.Collections.ObjectModel;
 
-namespace ComicReader.ViewModels
-{
-	public partial class SearchResultViewModel : ObservableObject
-	{
+namespace ComicReader.ViewModels {
+	public partial class SearchResultViewModel : ObservableObject {
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
 
@@ -21,14 +19,12 @@ namespace ComicReader.ViewModels
 
 		private string lastSearchWord = "";
 
-		public SearchResultViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation)
-		{
+		public SearchResultViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation) {
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
 		}
 
-		public void OnAppearing()
-		{
+		public void OnAppearing() {
 			string searchWords = inMemoryDatabase.Get<string>("searchText");
 			IsSearching = !(lastSearchWord == searchWords);
 
@@ -54,7 +50,7 @@ namespace ComicReader.ViewModels
 			_ = Task.Run(async () => {
 				foreach (IReader reader in activeReaders) {
 					await reader.Search(searchWords).ContinueWith(async a => {
-						List<IManga> r = a.Result;
+						List<IManga> r = await a;
 						List<IMangaModel> mList = new();
 						foreach (var manga in r) {
 							var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
@@ -68,11 +64,14 @@ namespace ComicReader.ViewModels
 						}
 					});
 				}
+
+				foreach (var item in SearchResultGroup) {
+					item.IsSearching = false;
+				}
 			});
 		}
 
-		public async Task MangaSelected(object? mangaObj)
-		{
+		public async Task MangaSelected(object? mangaObj) {
 			var model = mangaObj as IMangaModel;
 			if (model != null) {
 				inMemoryDatabase.Set<IManga>("selectedManga", model.Manga);

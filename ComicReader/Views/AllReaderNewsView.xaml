@@ -60,6 +60,7 @@
 							Margin="8,0,0,0"
 							Padding="0"
 							IsVisible="{Binding IsSearching, Converter={StaticResource InvertedBoolConverter}}"
+							MinimumHeightRequest="50"
 							Orientation="Horizontal">
 							<CollectionView
 								ItemsSource="{Binding Mangas}"
