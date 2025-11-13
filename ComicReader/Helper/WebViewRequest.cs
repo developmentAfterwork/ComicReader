@@ -1,10 +1,17 @@
 ﻿
+using System.Threading.Tasks;
+
 public class WebViewRequest {
+	private static class Settings {
+		public static bool AutoCancelWebRequest = false;
+	}
+
 	private readonly WebView _webView;
 	private readonly ContentPage _page;
 	private readonly SemaphoreSlim _semaphore = new(1, 1);
 	private readonly Button _done;
 	private readonly Button _cancel;
+	private readonly Button _autoCancel;
 
 	private TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
 	private string RequestUrl = "";
@@ -30,8 +37,19 @@ public class WebViewRequest {
 			VerticalOptions = LayoutOptions.Center
 		};
 
+		_autoCancel = new Button {
+			Text = "Auto cancel",
+			Margin = new Thickness(8, 8, 8, 8),
+			HorizontalOptions = LayoutOptions.Center,
+			VerticalOptions = LayoutOptions.Center
+		};
+
+		var hStack = new HorizontalStackLayout {
+			Children = { _cancel, _autoCancel }
+		};
+
 		var stack = new StackLayout {
-			Children = { _done, _cancel, _webView }
+			Children = { _done, hStack, _webView }
 		};
 
 		_page = new ContentPage {
@@ -44,16 +62,19 @@ public class WebViewRequest {
 	public async Task<string> GetHtmlAsync(string url, TimeSpan timeout) {
 		await _semaphore.WaitAsync();
 
+		_done.Clicked -= Done_Clicked;
+		_cancel.Clicked -= Cancel_Clicked;
+		_autoCancel.Clicked -= AutoCancel_Clicked;
+		_webView.Navigated -= OnNavigated;
+
 		RequestUrl = url;
 
 		tcs = new TaskCompletionSource<string>();
 
-		await MainThread.InvokeOnMainThreadAsync(() => {
+		MainThread.BeginInvokeOnMainThread(async () => {
 			_page.IsVisible = false;
 			_webView.Source = "about:blank";
-		});
 
-		await MainThread.InvokeOnMainThreadAsync(async () => {
 			var nav = Application.Current?.MainPage?.Navigation;
 			if (nav != null) {
 				await nav.PushModalAsync(_page);
@@ -62,19 +83,29 @@ public class WebViewRequest {
 
 		_done.Clicked += Done_Clicked;
 		_cancel.Clicked += Cancel_Clicked;
+		_autoCancel.Clicked += AutoCancel_Clicked;
 		_webView.Navigated += OnNavigated;
 
-		await MainThread.InvokeOnMainThreadAsync(() => {
+		MainThread.BeginInvokeOnMainThread(() => {
 			_webView.Source = url;
 		});
 
 		using var cts = new CancellationTokenSource(timeout);
-		await using var reg = cts.Token.Register(async () => {
-			await MainThread.InvokeOnMainThreadAsync(() => {
+		await using var reg = cts.Token.Register(() => {
+			MainThread.BeginInvokeOnMainThread(() => {
 				_webView.Navigated -= OnNavigated;
 				_page.IsVisible = true;
 			});
 		});
+
+		if (WebViewRequest.Settings.AutoCancelWebRequest) {
+			using var ctsCancel = new CancellationTokenSource(timeout + timeout);
+			await using var regCancel = ctsCancel.Token.Register(() => {
+				MainThread.BeginInvokeOnMainThread(async () => {
+					await Cancel();
+				});
+			});
+		}
 
 		return await tcs.Task;
 	}
@@ -91,6 +122,7 @@ public class WebViewRequest {
 
 			_done.Clicked -= Done_Clicked;
 			_cancel.Clicked -= Cancel_Clicked;
+			_autoCancel.Clicked -= AutoCancel_Clicked;
 			_webView.Navigated -= OnNavigated;
 
 			_ = ReadResult();
@@ -100,9 +132,15 @@ public class WebViewRequest {
 	private async void Done_Clicked(object? sender, EventArgs e) {
 		_done.Clicked -= Done_Clicked;
 		_cancel.Clicked -= Cancel_Clicked;
+		_autoCancel.Clicked -= AutoCancel_Clicked;
 		_webView.Navigated -= OnNavigated;
 
 		await ReadResult();
+	}
+
+	private async void AutoCancel_Clicked(object? sender, EventArgs e) {
+		WebViewRequest.Settings.AutoCancelWebRequest = true;
+		await Cancel();
 	}
 
 	private async Task ReadResult() {
@@ -128,6 +166,10 @@ public class WebViewRequest {
 	}
 
 	private async void Cancel_Clicked(object? sender, EventArgs e) {
+		await Cancel();
+	}
+
+	private async Task Cancel() {
 		try {
 			_done.Clicked -= Done_Clicked;
 			_cancel.Clicked -= Cancel_Clicked;
@@ -135,14 +177,18 @@ public class WebViewRequest {
 
 			var nav = Application.Current?.MainPage?.Navigation;
 			if (nav != null) {
-				await nav.PopModalAsync();
+				var cur = nav.ModalStack.LastOrDefault();
+				if (cur == _page)
+					await nav.PopModalAsync();
 			}
 
 			tcs.TrySetException(new Exception("Request failed"));
 		} catch (Exception ex) {
 			tcs.TrySetException(ex);
 		} finally {
-			_semaphore.Release();
+			try {
+				_semaphore.Release();
+			} catch { }
 		}
 	}
 }
