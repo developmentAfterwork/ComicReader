@@ -6,16 +6,19 @@ using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
 using FFImageLoading;
 using FFImageLoading.Helpers;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels {
-	public partial class ReadChapterViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class ReadChapterViewModel : ObservableObject
+	{
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
 		private readonly FileSaverService fileSaverService;
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 
 		[ObservableProperty]
 		private ObservableCollection<string> _pages = [];
@@ -45,7 +48,8 @@ namespace ComicReader.ViewModels {
 
 		private readonly bool automaticSwitchToNextChapter = true;
 
-		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService, RequestHelper requestHelper) {
+		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService, IRequest requestHelper)
+		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.settingsService = settingsService;
 			this.factory = factory;
@@ -60,11 +64,13 @@ namespace ComicReader.ViewModels {
 			StaticClassHolder<Singleton<InMemoryDatabase>>.Value = new Singleton<InMemoryDatabase>(inMemoryDatabase);
 		}
 
-		public void OnAppearing() {
+		public void OnAppearing()
+		{
 			_ = InitChapter(inMemoryDatabase.Get<IChapter>("selectedChapter"));
 		}
 
-		private async Task InitChapter(IChapter chapter) {
+		private async Task InitChapter(IChapter chapter)
+		{
 			IsLoading = true;
 
 			try {
@@ -93,7 +99,7 @@ namespace ComicReader.ViewModels {
 							}
 
 							try {
-								await requestHelper.DownloadFile(c.Key, c.Value, 3, requestTimeout, chapter.RequestHeaders, null);
+								await requestHelper.DownloadFile(c.Key, c.Value, 5, requestTimeout, chapter.RequestHeaders, null);
 							} catch { }
 						}
 
@@ -130,7 +136,8 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		public async Task Scrolled(int position) {
+		public async Task Scrolled(int position)
+		{
 			CurrentPage = Pages[position];
 
 			int currentPosition = position + 1;
@@ -150,11 +157,13 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		private bool IsReadedToEnd(int currentPosition) {
+		private bool IsReadedToEnd(int currentPosition)
+		{
 			return currentPosition >= Pages.Count && currentPosition >= Chapter.UrlToLocalFileMapper.Count && Chapter.UrlToLocalFileMapper.Count > 0;
 		}
 
-		private async Task SelectNextChapter() {
+		private async Task SelectNextChapter()
+		{
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 			var chapters = await manga.GetBooks();
 			var currentIndex = chapters.IndexOf(Chapter);
@@ -169,7 +178,8 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		internal void OnDisappearing() {
+		internal void OnDisappearing()
+		{
 			var predownloadFiles = settingsService.GetPreDownloadImages();
 
 			if (!predownloadFiles) {

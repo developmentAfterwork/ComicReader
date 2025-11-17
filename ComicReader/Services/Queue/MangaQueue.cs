@@ -1,11 +1,14 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter;
+using Interpreter.Interface;
 using Newtonsoft.Json;
 
-namespace ComicReader.Services.Queue {
-	public class MangaQueue {
+namespace ComicReader.Services.Queue
+{
+	public class MangaQueue
+	{
 		private readonly FileSaverService fileSaverService;
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly Factory factory;
 		private readonly SettingsService settingsService;
@@ -21,7 +24,8 @@ namespace ComicReader.Services.Queue {
 
 		private bool _wasInit = false;
 
-		public MangaQueue(FileSaverService fileSaverService, RequestHelper requestHelper, SimpleNotificationService simpleNotificationService, Factory factory, SettingsService settingsService) {
+		public MangaQueue(FileSaverService fileSaverService, IRequest requestHelper, SimpleNotificationService simpleNotificationService, Factory factory, SettingsService settingsService)
+		{
 			this.fileSaverService = fileSaverService;
 			this.requestHelper = requestHelper;
 			this.simpleNotificationService = simpleNotificationService;
@@ -29,12 +33,14 @@ namespace ComicReader.Services.Queue {
 			this.settingsService = settingsService;
 		}
 
-		public async Task Init() {
+		public async Task Init()
+		{
 			await LoadQueue();
 			_wasInit = true;
 		}
 
-		public async Task AddManga(IManga manga, SimpleNotificationService simpleNotificationService) {
+		public async Task AddManga(IManga manga, SimpleNotificationService simpleNotificationService)
+		{
 			if (!_wasInit) {
 				await Init().ConfigureAwait(false);
 			}
@@ -46,7 +52,8 @@ namespace ComicReader.Services.Queue {
 			}
 		}
 
-		private static async Task<List<IChapter>> GetChapters(IManga manga) {
+		private static async Task<List<IChapter>> GetChapters(IManga manga)
+		{
 			List<IChapter> c = new();
 
 			try {
@@ -56,7 +63,8 @@ namespace ComicReader.Services.Queue {
 			return c;
 		}
 
-		private async Task TryAddChapter(IChapter chapter, SimpleNotificationService simpleNotificationService) {
+		private async Task TryAddChapter(IChapter chapter, SimpleNotificationService simpleNotificationService)
+		{
 			try {
 				await AddChapter(chapter).ConfigureAwait(false);
 			} catch (Exception) {
@@ -69,7 +77,8 @@ namespace ComicReader.Services.Queue {
 			}
 		}
 
-		public async Task AddMissingChaptersFromManga(IManga manga, SimpleNotificationService simpleNotificationService) {
+		public async Task AddMissingChaptersFromManga(IManga manga, SimpleNotificationService simpleNotificationService)
+		{
 			if (!_wasInit) {
 				await Init().ConfigureAwait(false);
 			}
@@ -88,7 +97,8 @@ namespace ComicReader.Services.Queue {
 			}
 		}
 
-		public async Task AddChapter(IChapter chapter) {
+		public async Task AddChapter(IChapter chapter)
+		{
 			if (!_wasInit) {
 				await Init();
 			}
@@ -98,7 +108,8 @@ namespace ComicReader.Services.Queue {
 			await SaveQueue();
 		}
 
-		public async Task RemoveChapter(IChapter chapter) {
+		public async Task RemoveChapter(IChapter chapter)
+		{
 			if (!_wasInit) {
 				await Init();
 			}
@@ -110,7 +121,8 @@ namespace ComicReader.Services.Queue {
 			await SaveQueue();
 		}
 
-		public async Task RemoveEntry(ChapterPageSources source) {
+		public async Task RemoveEntry(ChapterPageSources source)
+		{
 			if (!_wasInit) {
 				await Init();
 			}
@@ -122,7 +134,8 @@ namespace ComicReader.Services.Queue {
 			await SaveQueue();
 		}
 
-		private async Task SaveQueue() {
+		private async Task SaveQueue()
+		{
 			var json = JsonConvert.SerializeObject(_chaptersToDownload);
 
 			var path = fileSaverService.GetSecurePathToDocuments("queue.json");
@@ -130,7 +143,8 @@ namespace ComicReader.Services.Queue {
 			await fileSaverService.SaveFile(path, json);
 		}
 
-		private async Task LoadQueue() {
+		private async Task LoadQueue()
+		{
 			var path = fileSaverService.GetSecurePathToDocuments("queue.json");
 
 			if (fileSaverService.FileExists(path)) {
@@ -145,20 +159,23 @@ namespace ComicReader.Services.Queue {
 			}
 		}
 
-		public void StartDownload(TimeSpan timeout) {
+		public void StartDownload(TimeSpan timeout)
+		{
 			Start?.Invoke(this, EventArgs.Empty);
 
 			var t = new Thread(async () => { await DownloadAllChapters(timeout); });
 			t.Start();
 		}
 
-		public Task Download(TimeSpan timeout) {
+		public Task Download(TimeSpan timeout)
+		{
 			Start?.Invoke(this, EventArgs.Empty);
 
 			return DownloadAllChapters(timeout);
 		}
 
-		private async Task DownloadAllChapters(TimeSpan timeout) {
+		private async Task DownloadAllChapters(TimeSpan timeout)
+		{
 			try {
 				var copy = _chaptersToDownload.ToDictionary(c => c.Key, c => c.Value);
 

@@ -2,18 +2,22 @@
 using Interpreter.Interface;
 using System.Threading;
 
-namespace ComicReader.Helper {
-	public class RequestHelper : IRequest {
+namespace ComicReader.Helper
+{
+	public class RequestHelper : IRequest
+	{
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 
 		private HttpClient _httpClient = new HttpClient();
 
-		public RequestHelper(TimeSpan timeout) {
+		public RequestHelper(TimeSpan timeout)
+		{
 			_httpClient.Timeout = timeout;
 			_httpClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ComicReader", "1.0.0"));
 		}
 
-		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
+		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
+		{
 			if (withFallback)
 				throw new NotSupportedException("Fallback handling not implemented");
 
@@ -48,7 +52,8 @@ namespace ComicReader.Helper {
 			throw new HttpRequestException($"Request to {url} failed after {repeatCount} retries.");
 		}
 
-		public async Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
+		public async Task DownloadFile(string url, string path, int repeatCount, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
+		{
 			if (url == "") { return; }
 			if (!path.StartsWith("/")) {
 				throw new Exception("Invalid path");
@@ -70,11 +75,12 @@ namespace ComicReader.Helper {
 					response.EnsureSuccessStatusCode();
 
 					await using var stream = await response.Content.ReadAsStreamAsync(linkedCts.Token);
-					var content = await stream.ToArrayAsync(linkedCts.Token);
-					await fileSaverService.SaveFile(path, content);
+					await using var outStream = fileSaverService.OpenWrite(path);
+					await stream.CopyToAsync(outStream, 81920, linkedCts.Token);
 
 					if (!fileSaverService.IsSizeGreaterZero(path)) {
 						fileSaverService.DeleteFile(path);
+
 						throw new Exception("Downloaded file size is zero");
 					}
 
@@ -89,7 +95,8 @@ namespace ComicReader.Helper {
 			throw new Exception("Download failed");
 		}
 
-		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null) {
+		public async Task<MemoryStream?> DoGetRequestStream(string url, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
+		{
 			if (url == "") {
 				return await Task.FromResult<MemoryStream?>(null);
 			}
