@@ -3,23 +3,19 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ComicReader.Services
-{
-	public class FileSaverService
-	{
+namespace ComicReader.Services {
+	public class FileSaverService {
 		private static string RootDirectoryImages { get; } = "/storage/emulated/0/pictures";
 
 		private static string RootDirectoryDocuments { get; } = "/storage/emulated/0/documents";
 
 		private static IReadOnlyList<string> PathAddOns = new List<string>() { "ComicReader", "Cache" };
 
-		private string GetMangaJsonPath(IManga manga)
-		{
+		private string GetMangaJsonPath(IManga manga) {
 			return GetMangaJsonPath(manga.Source, manga.Name);
 		}
 
-		private string GetMangaJsonPath(string source, string name)
-		{
+		private string GetMangaJsonPath(string source, string name) {
 			var start = FileSaverService.RootDirectoryDocuments;
 			List<string> addOns = GetAddonsForDocuments(source, name);
 
@@ -29,19 +25,16 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		private static List<string> GetAddonsForDocuments(string source, string mangaName)
-		{
+		private static List<string> GetAddonsForDocuments(string source, string mangaName) {
 			return FileSaverService.PathAddOns.Concat(new List<string>() { "Books", source, mangaName }).ToList();
 		}
 
 
-		private string GetChapterJsonPath(IChapter chapter)
-		{
+		private string GetChapterJsonPath(IChapter chapter) {
 			return FixPath(GetChapterJsonPath(chapter.Source, chapter.MangaName, chapter.Title));
 		}
 
-		private string GetChapterJsonPath(string source, string mangaName, string title)
-		{
+		private string GetChapterJsonPath(string source, string mangaName, string title) {
 			var start = FileSaverService.RootDirectoryDocuments;
 			List<string> addOns = GetAddonsForDocuments(source, mangaName);
 
@@ -54,8 +47,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		public static string GetChapterImageFolder(IChapter chapter, bool createFolderIfMissing = true)
-		{
+		public static string GetChapterImageFolder(IChapter chapter, bool createFolderIfMissing = true) {
 			var root = FileSaverService.RootDirectoryImages;
 
 			List<string> addon = GetAddonsForImages(chapter);
@@ -65,8 +57,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		private static List<string> GetAddonsForImages(IChapter chapter)
-		{
+		private static List<string> GetAddonsForImages(IChapter chapter) {
 			var bytes = UTF8Encoding.UTF8.GetBytes(chapter.Title);
 			var hashBytes = MD5.HashData(bytes);
 			var hashInt = BitConverter.ToInt32(hashBytes, 0);
@@ -75,31 +66,26 @@ namespace ComicReader.Services
 			return FileSaverService.PathAddOns.Concat(new List<string>() { "Books", chapter.Source, chapter.MangaName, hex }).ToList();
 		}
 
-		public async Task SaveFile(string filePath, byte[] content)
-		{
+		public async Task SaveFile(string filePath, byte[] content) {
 			var p = FixPath(filePath);
 			await File.WriteAllBytesAsync(p, content);
 		}
 
-		private static string FixPath(string path)
-		{
+		private static string FixPath(string path) {
 			return path.Replace("\"", "").Replace("'", "").Replace("[", "").Replace("]", "").Replace("|", "");
 		}
 
-		public async Task SaveFile(string filePath, string content)
-		{
+		public async Task SaveFile(string filePath, string content) {
 			var p = FixPath(filePath);
 			await File.WriteAllTextAsync(p, content);
 		}
 
-		public async Task<string> LoadFile(string filePath)
-		{
+		public async Task<string> LoadFile(string filePath) {
 			var p = FixPath(filePath);
 			return await File.ReadAllTextAsync(p);
 		}
 
-		public async Task SaveFile(IManga manga)
-		{
+		public async Task SaveFile(IManga manga) {
 			var jsonString = JsonConvert.SerializeObject(manga);
 
 			var path = GetMangaJsonPath(manga);
@@ -108,8 +94,7 @@ namespace ComicReader.Services
 			await SaveFile(p, jsonString);
 		}
 
-		public async Task SaveFile(IChapter chapter)
-		{
+		public async Task SaveFile(IChapter chapter) {
 			var jsonString = JsonConvert.SerializeObject(chapter);
 
 			var path = GetChapterJsonPath(chapter);
@@ -118,30 +103,26 @@ namespace ComicReader.Services
 			await SaveFile(p, jsonString);
 		}
 
-		public bool FileExists(IChapter chapter)
-		{
+		public bool FileExists(IChapter chapter) {
 			var path = GetChapterJsonPath(chapter);
 			var p = FixPath(path);
 
 			return File.Exists(p);
 		}
 
-		public void DeleteChapterFile(IChapter chapter)
-		{
+		public void DeleteChapterFile(IChapter chapter) {
 			var path = GetChapterJsonPath(chapter);
 			var p = FixPath(path);
 
 			File.Delete(p);
 		}
 
-		public void DeleteFile(string path)
-		{
+		public void DeleteFile(string path) {
 			var p = FixPath(path);
 			File.Delete(p);
 		}
 
-		public async Task DeleteImagesFromChapter(IChapter chapter, Factory factory)
-		{
+		public async Task DeleteImagesFromChapter(IChapter chapter, Factory factory) {
 			var urls = await chapter.GetPageUrls(false, factory);
 			foreach (var url in urls) {
 				var filePath = chapter.UrlToLocalFileMapper[url];
@@ -153,8 +134,7 @@ namespace ComicReader.Services
 			}
 		}
 
-		public async Task<IManga> LoadMangaFile(string source, string name)
-		{
+		public async Task<IManga> LoadMangaFile(string source, string name) {
 			var path = GetMangaJsonPath(source, name);
 			var p = FixPath(path);
 
@@ -163,8 +143,7 @@ namespace ComicReader.Services
 			return JsonConvert.DeserializeObject<SaveableManga>(content)!;
 		}
 
-		public async Task<SaveableChapter> LoadMangaChapterFile(string source, string mangeName, string chapter)
-		{
+		public async Task<SaveableChapter> LoadMangaChapterFile(string source, string mangeName, string chapter) {
 			var path = GetChapterJsonPath(source, mangeName, chapter);
 			var p = FixPath(path);
 
@@ -173,8 +152,7 @@ namespace ComicReader.Services
 			return JsonConvert.DeserializeObject<SaveableChapter>(content)!;
 		}
 
-		public static string CheckFolderExists(string start, List<string> addons, bool createFolderIfMissing = true)
-		{
+		public static string CheckFolderExists(string start, List<string> addons, bool createFolderIfMissing = true) {
 			var _sstart = FixPath(start);
 			if (!Directory.Exists(_sstart)) {
 				if (createFolderIfMissing) {
@@ -195,19 +173,16 @@ namespace ComicReader.Services
 			}
 		}
 
-		public static string GetFilename(string filename)
-		{
+		public static string GetFilename(string filename) {
 			//var invalidChars = "|\\?*<\":>+[]/'".ToArray();
 			return filename.Replace(":", "").Replace("+", "").Replace("?", "");
 		}
 
-		public bool FileExists(string value)
-		{
+		public bool FileExists(string value) {
 			return File.Exists(FixPath(value));
 		}
 
-		public string GetSecurePathToDocuments(string filename)
-		{
+		public string GetSecurePathToDocuments(string filename) {
 			var root = FileSaverService.RootDirectoryDocuments;
 			var addons = FileSaverService.PathAddOns.ToList();
 
@@ -217,8 +192,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		public string GetSecurePathToDocuments(string filename, List<string> addons)
-		{
+		public string GetSecurePathToDocuments(string filename, List<string> addons) {
 			var root = FileSaverService.RootDirectoryDocuments;
 			var combinedAddons = FileSaverService.PathAddOns.Concat(addons).ToList();
 
@@ -228,8 +202,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		public static string GetSecurePathToImages()
-		{
+		public static string GetSecurePathToImages() {
 			var root = FileSaverService.RootDirectoryImages;
 			var addons = FileSaverService.PathAddOns.ToList();
 
@@ -238,8 +211,7 @@ namespace ComicReader.Services
 			return FixPath(path);
 		}
 
-		public void DeleteManga(IManga manga)
-		{
+		public void DeleteManga(IManga manga) {
 			var jsonString = JsonConvert.SerializeObject(manga);
 
 			var path = GetMangaJsonPath(manga);
@@ -258,8 +230,7 @@ namespace ComicReader.Services
 			Directory.Delete(path, true);
 		}
 
-		public void DeleteAllEmptyFolders()
-		{
+		public void DeleteAllEmptyFolders() {
 			var imagesPath = Path.Combine(RootDirectoryImages, "ComicReader");
 			var docPath = Path.Combine(RootDirectoryDocuments, "ComicReader");
 
@@ -267,8 +238,7 @@ namespace ComicReader.Services
 			DeleteEmptyFolder(docPath);
 		}
 
-		private void DeleteEmptyFolder(string path)
-		{
+		private void DeleteEmptyFolder(string path) {
 			foreach (var folder in Directory.GetDirectories(path)) {
 				DeleteEmptyFolder(folder);
 			}
@@ -279,6 +249,25 @@ namespace ComicReader.Services
 			if (!folders.Any() && !files.Any()) {
 				Directory.Delete(path, false);
 			}
+		}
+
+		public void CheckFiles(List<string> filesToCheck) {
+			foreach (var f in filesToCheck) {
+				if (FileExists(f)) {
+					if (!IsSizeGreaterZero(f)) {
+						File.Delete(f);
+					}
+				}
+			}
+		}
+
+		public bool IsSizeGreaterZero(string file) {
+			if (!File.Exists(file)) {
+				return false;
+			}
+
+			FileInfo fileInfo = new FileInfo(file);
+			return fileInfo.Length > 0;
 		}
 	}
 }

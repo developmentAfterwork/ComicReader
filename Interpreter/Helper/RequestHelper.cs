@@ -73,6 +73,11 @@ namespace ComicReader.Helper {
 					var content = await stream.ToArrayAsync(linkedCts.Token);
 					await fileSaverService.SaveFile(path, content);
 
+					if (!fileSaverService.IsSizeGreaterZero(path)) {
+						fileSaverService.DeleteFile(path);
+						throw new Exception("Downloaded file size is zero");
+					}
+
 					return;
 				} catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested) {
 					throw new TimeoutException($"Request to {url} timed out after {timeout.TotalSeconds:F1} seconds.");

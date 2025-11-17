@@ -15,6 +15,7 @@ namespace ComicReader.ViewModels {
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
 		private readonly FileSaverService fileSaverService;
+		private readonly RequestHelper requestHelper;
 
 		[ObservableProperty]
 		private ObservableCollection<string> _pages = [];
@@ -44,11 +45,12 @@ namespace ComicReader.ViewModels {
 
 		private readonly bool automaticSwitchToNextChapter = true;
 
-		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService) {
+		public ReadChapterViewModel(InMemoryDatabase inMemoryDatabase, SettingsService settingsService, Factory factory, FileSaverService fileSaverService, RequestHelper requestHelper) {
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.settingsService = settingsService;
 			this.factory = factory;
 			this.fileSaverService = fileSaverService;
+			this.requestHelper = requestHelper;
 
 			OpenInBrowser = new RelayCommand(() => {
 				var chapter = Chapter;
@@ -81,6 +83,21 @@ namespace ComicReader.ViewModels {
 				List<string> pages = [];
 				await MainThread.InvokeOnMainThreadAsync(async () => {
 					var p = await chapter.GetPageUrls(predownloadFiles, factory);
+					fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
+					if (predownloadFiles) {
+						foreach (var c in chapter.UrlToLocalFileMapper) {
+							if (fileSaverService.FileExists(c.Value)) {
+								continue;
+							}
+
+							try {
+								await requestHelper.DownloadFile(c.Key, c.Value, 3, TimeSpan.FromSeconds(30), chapter.RequestHeaders, null);
+							} catch { }
+						}
+
+						fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
+					}
+
 					pages = p;
 				});
 
