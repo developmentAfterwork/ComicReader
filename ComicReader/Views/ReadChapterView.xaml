@@ -96,6 +96,7 @@
 				FontSize="12"
 				HorizontalOptions="Center"
 				Text="{Binding Position}"
+				TextColor="#B0FFFFFF"
 				VerticalOptions="Center" />
 		</Border>
 	</Grid>
