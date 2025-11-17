@@ -53,9 +53,10 @@ namespace ComicReader.Interpreter {
 			} catch {
 				var chapter = factory.GetOriginChapter(this);
 
-				Pages = await chapter.GetPageUrls(preDownloadChapters, factory);
-				UrlToLocalFileMapper = chapter.UrlToLocalFileMapper;
-				await chapter.Save(preDownloadChapters, factory);
+				var savedChapter = await chapter.Save(preDownloadChapters, factory);
+
+				UrlToLocalFileMapper = savedChapter.UrlToLocalFileMapper;
+				Pages = savedChapter.Pages;
 
 				return Pages;
 			}
