@@ -31,7 +31,9 @@ namespace ComicReader.Interpreter
 
 		public string Source => MangaKatanaManga.SourceKey;
 
-		public Dictionary<string, string>? RequestHeaders => null;
+		public Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
+			{ "referer", "https://mangakatana.com/" }
+		};
 
 		public MangaKatanaManga(
 			string name,

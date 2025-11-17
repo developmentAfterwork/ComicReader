@@ -28,12 +28,16 @@ namespace ComicReader.Reader
 		private HtmlHelper HtmlHelper { get; }
 		public INotification Notification { get; }
 
+		public Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
+			{ "referer", "https://mangakatana.com/" }
+		};
+
 		public async Task<List<IManga>> Search(string keyWords)
 		{
 			try {
 				var text = keyWords.Replace(" ", "+");
 				var url = $"https://mangakatana.com/?search={text}&search_by=bo";
-				var response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
+				var response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
 
 				var mangas = GetMangasFromResponse(response);
 
@@ -91,7 +95,7 @@ namespace ComicReader.Reader
 			List<IManga> l = new List<IManga>();
 
 			string url = "https://mangakatana.com/new-manga";
-			var response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
+			var response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
 
 			try {
 				l.AddRange(GetMangasFromResponse(response));
@@ -100,7 +104,7 @@ namespace ComicReader.Reader
 			}
 
 			url = "https://mangakatana.com/latest";
-			response = await RequestHelper.DoGetRequest(url, 3, true, timeout);
+			response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
 			try {
 				l.AddRange(GetMangasFromResponse(response));
 			} catch (Exception ex) {
