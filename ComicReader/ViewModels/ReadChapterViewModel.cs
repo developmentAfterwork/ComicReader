@@ -78,7 +78,11 @@ namespace ComicReader.ViewModels {
 				var imageService = ServiceHelper.GetService<IImageService>();
 				imageService.Initialize(ffConfig);
 
-				var pages = await chapter.GetPageUrls(predownloadFiles, factory);
+				List<string> pages = [];
+				await MainThread.InvokeOnMainThreadAsync(async () => {
+					var p = await chapter.GetPageUrls(predownloadFiles, factory);
+					pages = p;
+				});
 
 				inMemoryDatabase.Set<IChapter>("selectedChapter", chapter);
 				inMemoryDatabase.Set<IChapter>("ichapterParameter", chapter);
