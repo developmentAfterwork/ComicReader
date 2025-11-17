@@ -8,6 +8,8 @@ namespace ComicReader.Services.Queue {
 		private readonly RequestHelper requestHelper;
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly Factory factory;
+		private readonly SettingsService settingsService;
+
 		private Dictionary<string, ChapterPageSources> _chaptersToDownload = new Dictionary<string, ChapterPageSources>();
 
 		public IReadOnlyList<ChapterPageSources> ChaptersToDownload => _chaptersToDownload.Values.ToList();
@@ -19,11 +21,12 @@ namespace ComicReader.Services.Queue {
 
 		private bool _wasInit = false;
 
-		public MangaQueue(FileSaverService fileSaverService, RequestHelper requestHelper, SimpleNotificationService simpleNotificationService, Factory factory) {
+		public MangaQueue(FileSaverService fileSaverService, RequestHelper requestHelper, SimpleNotificationService simpleNotificationService, Factory factory, SettingsService settingsService) {
 			this.fileSaverService = fileSaverService;
 			this.requestHelper = requestHelper;
 			this.simpleNotificationService = simpleNotificationService;
 			this.factory = factory;
+			this.settingsService = settingsService;
 		}
 
 		public async Task Init() {
@@ -185,6 +188,31 @@ namespace ComicReader.Services.Queue {
 						await RemoveEntry(chapter.Value);
 						ChapterFinished?.Invoke(this, chapter.Value);
 					} catch (Exception) {
+						var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
+
+						foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
+							try {
+								IManga manga = await factory.GetMangaFromBookmarkId(bookmarkId);
+
+								if (chapter.Value.Source == manga.Source && chapter.Value.MangaName == manga.Name) {
+									var chapters = await manga.GetBooks();
+									var c = chapters.SingleOrDefault(c => c.Title == chapter.Value.Title);
+
+									if (c != null) {
+										if (fileSaverService.FileExists(c)) {
+											await fileSaverService.DeleteImagesFromChapter(c, factory);
+											fileSaverService.DeleteChapterFile(c);
+										}
+										await c.Save(false, factory);
+										await RemoveEntry(chapter.Value);
+										await AddChapter(c);
+									}
+
+									break;
+								}
+							} catch { }
+						}
+
 						Error?.Invoke(this, chapter.Value);
 					}
 				}
