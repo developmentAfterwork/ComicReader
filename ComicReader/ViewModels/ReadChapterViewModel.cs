@@ -68,6 +68,8 @@ namespace ComicReader.ViewModels {
 			IsLoading = true;
 
 			try {
+				var requestTimeout = settingsService.GetRequestTimeout();
+
 				var predownloadFiles = settingsService.GetPreDownloadImages();
 
 				var ffConfig = new FFImageLoading.Config.Configuration();
@@ -91,7 +93,7 @@ namespace ComicReader.ViewModels {
 							}
 
 							try {
-								await requestHelper.DownloadFile(c.Key, c.Value, 3, TimeSpan.FromSeconds(30), chapter.RequestHeaders, null);
+								await requestHelper.DownloadFile(c.Key, c.Value, 3, requestTimeout, chapter.RequestHeaders, null);
 							} catch { }
 						}
 
