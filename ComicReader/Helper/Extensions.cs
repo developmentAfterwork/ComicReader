@@ -1,9 +1,12 @@
 ﻿using ComicReader.Interpreter;
 using ComicReader.Services;
 
-namespace ComicReader.Helper {
-	public static class Extensions {
-		public static async Task Refresh(this IManga manga, Factory factory, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService) {
+namespace ComicReader.Helper
+{
+	public static class Extensions
+	{
+		public static async Task Refresh(this IManga manga, Factory factory, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService)
+		{
 			var allChapters = await manga.GetBooks();
 
 			foreach (var chapter in allChapters) {
@@ -13,6 +16,8 @@ namespace ComicReader.Helper {
 						if (chapter is SaveableChapter) {
 							var allPageUrls = await chapter.GetPageUrls(false, factory);
 							var mappedUrls = chapter.UrlToLocalFileMapper;
+
+							fileSaverService.CheckFiles(mappedUrls.Values.ToList());
 
 							// check that all images are downloaded
 							var allImagesExists = mappedUrls.Values.All(f => File.Exists(f));

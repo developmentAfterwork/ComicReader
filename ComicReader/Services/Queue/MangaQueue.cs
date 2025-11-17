@@ -205,31 +205,7 @@ namespace ComicReader.Services.Queue
 						await RemoveEntry(chapter.Value);
 						ChapterFinished?.Invoke(this, chapter.Value);
 					} catch (Exception) {
-						var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
-
-						foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
-							try {
-								IManga manga = await factory.GetMangaFromBookmarkId(bookmarkId);
-
-								if (chapter.Value.Source == manga.Source && chapter.Value.MangaName == manga.Name) {
-									var chapters = await manga.GetBooks();
-									var c = chapters.SingleOrDefault(c => c.Title == chapter.Value.Title);
-
-									if (c != null) {
-										if (fileSaverService.FileExists(c)) {
-											await fileSaverService.DeleteImagesFromChapter(c, factory);
-											fileSaverService.DeleteChapterFile(c);
-										}
-										await c.Save(false, factory);
-										await RemoveEntry(chapter.Value);
-										await AddChapter(c);
-									}
-
-									break;
-								}
-							} catch { }
-						}
-
+						await RemoveEntry(chapter.Value);
 						Error?.Invoke(this, chapter.Value);
 					}
 				}

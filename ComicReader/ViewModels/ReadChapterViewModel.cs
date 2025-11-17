@@ -9,6 +9,7 @@ using FFImageLoading.Helpers;
 using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using static Android.Graphics.Drawables.ShapeDrawable;
 
 namespace ComicReader.ViewModels
 {
@@ -99,7 +100,13 @@ namespace ComicReader.ViewModels
 							}
 
 							try {
-								await requestHelper.DownloadFile(c.Key, c.Value, 5, requestTimeout, chapter.RequestHeaders, null);
+								var header = chapter.RequestHeaders;
+								var sc = chapter as SaveableChapter;
+								if (header is null && sc is not null) {
+									header = factory.GetOriginChapter(sc).RequestHeaders;
+								}
+
+								await requestHelper.DownloadFile(c.Key, c.Value, 5, requestTimeout, header, null);
 							} catch { }
 						}
 

@@ -11,9 +11,9 @@ namespace ComicReader.Services
 
 		private int _id = 100;
 
-		public static int ErrorId => 100000;
+		public static int ErrorId = 1000000;
 
-		public static int ProgressId => 200000;
+		public static int ProgressId => 2000000;
 
 		public async Task ShowNotification(string message)
 		{
@@ -76,7 +76,7 @@ namespace ComicReader.Services
 		public async Task ShowError(string title, string message)
 		{
 			await CheckPermission();
-			NotificationRequest notification = await BuildNotification(ErrorId, title, message, "Empty", null, false);
+			NotificationRequest notification = await BuildNotification(ErrorId++, title, message, "Empty", null, true);
 
 			await LocalNotificationCenter.Current.Show(notification);
 		}

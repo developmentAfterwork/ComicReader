@@ -8,8 +8,10 @@ using CsQuery.ExtensionMethods.Internal;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels {
-	public partial class DownloadsViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class DownloadsViewModel : ObservableObject
+	{
 		private readonly MangaQueue mangaQueue;
 		private readonly SettingsService settingsService;
 		private readonly FileSaverService fileSaverService;
@@ -28,7 +30,8 @@ namespace ComicReader.ViewModels {
 
 		public ICommand StartQueueCommand { get; set; }
 
-		public DownloadsViewModel(MangaQueue mangaQueue, SettingsService settingsService, FileSaverService fileSaverService, Factory factory, BackgroundService backgroundService, SimpleNotificationService simpleNotificationService) {
+		public DownloadsViewModel(MangaQueue mangaQueue, SettingsService settingsService, FileSaverService fileSaverService, Factory factory, BackgroundService backgroundService, SimpleNotificationService simpleNotificationService)
+		{
 			this.mangaQueue = mangaQueue;
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
@@ -44,35 +47,41 @@ namespace ComicReader.ViewModels {
 			StartQueueCommand = new RelayCommand(OnStartQueueCommand);
 		}
 
-		private void OnStart(object? sender, EventArgs e) {
+		private void OnStart(object? sender, EventArgs e)
+		{
 			IsDownloading = true;
 			HasNoEntries = false;
 		}
 
-		private void OnEnd(object? sender, EventArgs e) {
+		private void OnEnd(object? sender, EventArgs e)
+		{
 			IsDownloading = false;
 			HasNoEntries = !ChaptersToDownload.Any();
 		}
 
-		private void OnChapterFinished(object? sender, ChapterPageSources e) {
+		private void OnChapterFinished(object? sender, ChapterPageSources e)
+		{
 			ChaptersToDownload.Clear();
 			ChaptersToDownload.AddRange(mangaQueue.ChaptersToDownload);
 		}
 
-		private async void OnError(object? sender, ChapterPageSources e) {
+		private async void OnError(object? sender, ChapterPageSources e)
+		{
 			await simpleNotificationService.ShowError("Queue Error At", $"{e.MangaName} - {e.Title}");
 
 			ChaptersToDownload.Clear();
 			ChaptersToDownload.AddRange(mangaQueue.ChaptersToDownload);
 		}
 
-		private void OnStartQueueCommand() {
+		private void OnStartQueueCommand()
+		{
 			var id = Guid.NewGuid().ToString();
 			backgroundService.Register(id, (t) => mangaQueue.Download(settingsService.GetRequestTimeout()));
 			backgroundService.Start(id, "Download all chapters");
 		}
 
-		public async Task OnAppearing() {
+		public async Task OnAppearing()
+		{
 			try {
 				await mangaQueue.Init();
 			} catch { }
