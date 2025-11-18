@@ -1,5 +1,6 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter;
+using ComicReader.Interpreter.Interface;
 using Interpreter.Interface;
 using Newtonsoft.Json;
 
@@ -104,7 +105,7 @@ namespace ComicReader.Services.Queue
 			}
 
 			await chapter.Save(false, factory);
-			_chaptersToDownload[$"{chapter.Source}{chapter.MangaName}{chapter.Title}"] = new ChapterPageSources(chapter);
+			_chaptersToDownload[$"{chapter.Source}{chapter.MangaName}{chapter.Title}"] = new ChapterPageSources(chapter, factory);
 			await SaveQueue();
 		}
 
@@ -123,15 +124,20 @@ namespace ComicReader.Services.Queue
 
 		public async Task RemoveEntry(ChapterPageSources source)
 		{
-			if (!_wasInit) {
-				await Init();
-			}
+			try {
+				if (!_wasInit) {
+					await Init();
+				}
 
-			var key = $"{source.Source}{source.MangaName}{source.Title}";
-			if (_chaptersToDownload.ContainsKey(key)) {
-				_chaptersToDownload.Remove(key);
+				var key = $"{source.Source}{source.MangaName}{source.Title}";
+				if (_chaptersToDownload.ContainsKey(key)) {
+					_chaptersToDownload.Remove(key);
+				}
+
+				await SaveQueue();
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError("Error At", $"RemoveEntry - {ex.Message}");
 			}
-			await SaveQueue();
 		}
 
 		private async Task SaveQueue()
@@ -179,31 +185,63 @@ namespace ComicReader.Services.Queue
 			try {
 				var copy = _chaptersToDownload.ToDictionary(c => c.Key, c => c.Value);
 
-				await simpleNotificationService.ShowProgress("Download chapters", $"0/{copy.Count}", 0, copy.Count);
-				int current = 0;
+				int chapterCount = copy.Count;
+				int currentChapter = 0;
+
 				foreach (var chapter in copy) {
 					try {
-						await simpleNotificationService.ShowProgress("Download chapters", $"{++current}/{copy.Count}", current, copy.Count);
-
+						int pagesCount = chapter.Value.UrlToLocalFileMapper.Count;
 						int currentPage = 0;
-						foreach (var urlPair in chapter.Value.UrlToLocalFileMapper) {
-							await simpleNotificationService.ShowProgress(SimpleNotificationService.ProgressId + 1, chapter.Value.MangaName, $"{++currentPage}/{chapter.Value.UrlToLocalFileMapper.Count}", currentPage, chapter.Value.UrlToLocalFileMapper.Count);
+
+						var messageTxt = $"Mangas: {++currentChapter}/{chapterCount} - Chapters: {currentPage}/{pagesCount}";
+						await simpleNotificationService.ShowProgress("Download mangas", messageTxt, currentPage, pagesCount);
+
+						bool hasError = false;
+						int index = 0;
+
+						foreach (var urlPair in chapter.Value.UrlToLocalFileMapper.ToDictionary(c => c.Key, c => c.Value)) {
+							index++;
+							messageTxt = $"Mangas: {currentChapter}/{chapterCount} - Chapters: {++currentPage}/{pagesCount}";
+							await simpleNotificationService.ShowProgress("Download mangas", messageTxt, currentPage, pagesCount);
+
 							try {
 								if (!fileSaverService.FileExists(urlPair.Value)) {
-									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, timeout, chapter.Value.RequestHeaders);
+									var header = chapter.Value.RequestHeaders;
+									if (header is null || header.Count == 0) {
+										header = factory.GetOriginChapterRequestHeaders(chapter.Value.Source);
+									}
+
+									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 5, timeout, header);
 								}
-							} catch (Exception) {
-								await Task.Delay(500);
-								if (!fileSaverService.FileExists(urlPair.Value)) {
-									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 3, timeout, chapter.Value.RequestHeaders);
+							} catch (HttpRequestException rex) {
+								var c = await GetOriginChapter(timeout, chapter, index, urlPair);
+								if (c != null) {
+									var headers = c.RequestHeaders;
+									if (headers is null || headers.Count == 0) {
+										headers = factory.GetOriginChapterRequestHeaders(c.Source);
+									}
+
+									var pair = c.UrlToLocalFileMapper.ToList()[index];
+
+									try {
+										await requestHelper.DownloadFile(pair.Key, urlPair.Value, 5, timeout, headers);
+									} catch (Exception ex) {
+										hasError = true;
+									}
 								}
+							} catch (Exception ex) {
+								hasError = true;
 							}
 						}
 
 						simpleNotificationService.Close(SimpleNotificationService.ProgressId + 1);
 
 						await RemoveEntry(chapter.Value);
-						ChapterFinished?.Invoke(this, chapter.Value);
+						if (hasError) {
+							Error?.Invoke(this, chapter.Value);
+						} else {
+							ChapterFinished?.Invoke(this, chapter.Value);
+						}
 					} catch (Exception) {
 						await RemoveEntry(chapter.Value);
 						Error?.Invoke(this, chapter.Value);
@@ -211,9 +249,45 @@ namespace ComicReader.Services.Queue
 				}
 
 				simpleNotificationService.Close();
-			} catch (Exception) { }
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError("Error At", $"DownloadAllChapters - {ex.Message}");
+			}
 
 			End?.Invoke(this, EventArgs.Empty);
+		}
+
+		private Dictionary<(string Source, string Name, string Title), IChapter> _originChapterCache = new();
+		private async Task<IChapter?> GetOriginChapter(TimeSpan timeout, KeyValuePair<string, ChapterPageSources> chapter, int index, KeyValuePair<string, string> urlPair)
+		{
+			if (_originChapterCache.TryGetValue((chapter.Value.Source, chapter.Value.MangaName, chapter.Value.Title), out var cachedChapter)) {
+				return cachedChapter;
+			}
+
+			var allUnig = settingsService.GetBookmarkedMangaUniqIdentifiers();
+
+			foreach (var bookmarkId in allUnig.Where(s => s.Contains("|"))) {
+				try {
+					IManga? manga = await factory.GetMangaFromBookmarkId(bookmarkId);
+
+					if (manga != null && chapter.Value.Source == manga.Source && chapter.Value.MangaName == manga.Name) {
+						var chapters = await manga.GetBooks();
+						var c = chapters.SingleOrDefault(c => c.Title == chapter.Value.Title);
+
+						if (c != null) {
+							var orgC = factory.GetOriginChapter(c);
+							_ = await orgC.GetPageUrls(false, factory);
+
+							_originChapterCache[(chapter.Value.Source, chapter.Value.MangaName, chapter.Value.Title)] = orgC;
+
+							return orgC;
+						}
+					}
+				} catch (Exception ex) {
+					break;
+				}
+			}
+
+			return null;
 		}
 	}
 }

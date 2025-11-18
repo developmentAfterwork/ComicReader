@@ -15,7 +15,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			string source,
 			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(id, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper, null)
 		{ }
 
 		public override async Task<List<string>> ImplGetPageUrls()

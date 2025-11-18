@@ -28,6 +28,8 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _HasNoEntries = false;
 
+		private int _numberOfErrors = 0;
+
 		public ICommand StartQueueCommand { get; set; }
 
 		public DownloadsViewModel(MangaQueue mangaQueue, SettingsService settingsService, FileSaverService fileSaverService, Factory factory, BackgroundService backgroundService, SimpleNotificationService simpleNotificationService)
@@ -67,14 +69,13 @@ namespace ComicReader.ViewModels
 
 		private async void OnError(object? sender, ChapterPageSources e)
 		{
-			await simpleNotificationService.ShowError("Queue Error At", $"{e.MangaName} - {e.Title}");
-
-			ChaptersToDownload.Clear();
-			ChaptersToDownload.AddRange(mangaQueue.ChaptersToDownload);
+			await simpleNotificationService.ShowError("Queue Error", $"Failed downloads {++_numberOfErrors}");
 		}
 
 		private void OnStartQueueCommand()
 		{
+			_numberOfErrors = 0;
+
 			var id = Guid.NewGuid().ToString();
 			backgroundService.Register(id, (t) => mangaQueue.Download(settingsService.GetRequestTimeout()));
 			backgroundService.Start(id, "Download all chapters");

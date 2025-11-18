@@ -6,7 +6,7 @@ namespace ComicReader.Interpreter
 {
 	public class MangaKatanaChapter : BaseChapter, IChapter
 	{
-		public override Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
+		private static Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
 			{ "referer", "https://mangakatana.com/" }
 		};
 
@@ -18,7 +18,7 @@ namespace ComicReader.Interpreter
 			string source,
 			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper, RequestHeaders)
 		{ }
 
 		public override async Task<List<string>> ImplGetPageUrls()

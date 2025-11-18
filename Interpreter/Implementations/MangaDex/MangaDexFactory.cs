@@ -1,4 +1,5 @@
 ﻿using ComicReader.Helper;
+using ComicReader.Interpreter.Implementations.AsuraScans;
 using ComicReader.Interpreter.Interface;
 using ComicReader.Reader;
 using Interpreter.Interface;
@@ -27,7 +28,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 			return new MangaDexReader(_requestHelper, _htmlHelper, _notification, timeout.Timeout);
 		}
 
-		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
+		public IChapter GetOriginChapter(IChapter saveableChapter)
 		{
 			return new MangaDexChapter(
 				saveableChapter.ID,
@@ -59,6 +60,13 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 				_htmlHelper,
 				timeout.Timeout
 			);
+		}
+
+		public Dictionary<string, string>? GetOriginChapterRequestHeaders()
+		{
+			var chapter = new MangaDexChapter(null, "", "", "", "", "", timeout.Timeout, _requestHelper, _htmlHelper);
+
+			return chapter.RequestHeaders;
 		}
 	}
 }

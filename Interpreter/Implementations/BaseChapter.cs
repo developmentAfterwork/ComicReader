@@ -24,7 +24,7 @@ namespace ComicReader.Interpreter.Implementations
 
 		public Dictionary<string, string> UrlToLocalFileMapper { get; } = new();
 
-		public virtual Dictionary<string, string>? RequestHeaders { get; } = null;
+		public Dictionary<string, string>? RequestHeaders { get; } = null;
 
 		public async Task<List<string>> GetPageUrls(bool preDownloadChapters, Factory factory)
 		{
@@ -42,7 +42,8 @@ namespace ComicReader.Interpreter.Implementations
 			string source,
 			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper)
+			HtmlHelper htmlHelper,
+			Dictionary<string, string>? requestHeaders)
 		{
 			ID = id;
 			Title = title;
@@ -53,6 +54,7 @@ namespace ComicReader.Interpreter.Implementations
 			Timeout = timeout;
 			this.RequestHelper = requestHelper;
 			this.HtmlHelper = htmlHelper;
+			RequestHeaders = requestHeaders;
 		}
 
 		private async Task<List<string>> ProcessPageUrls(bool preDownloadChapters, Factory factory)

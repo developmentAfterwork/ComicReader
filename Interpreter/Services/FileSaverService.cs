@@ -153,6 +153,14 @@ namespace ComicReader.Services
 			}
 		}
 
+		public bool MangaFileExists(string source, string name)
+		{
+			var path = GetMangaJsonPath(source, name);
+			var p = FixPath(path);
+
+			return File.Exists(p);
+		}
+
 		public async Task<IManga> LoadMangaFile(string source, string name)
 		{
 			var path = GetMangaJsonPath(source, name);

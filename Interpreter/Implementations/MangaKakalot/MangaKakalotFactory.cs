@@ -27,7 +27,7 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 			return new MangaKakalotReader(requestHelper, htmlHelper, notification, timeout.Timeout);
 		}
 
-		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
+		public IChapter GetOriginChapter(IChapter saveableChapter)
 		{
 			return new MangaKakalotChapter(
 				saveableChapter.Title,
@@ -55,6 +55,21 @@ namespace ComicReader.Interpreter.Implementations.MangaKakalot
 				htmlHelper,
 				timeout.Timeout
 			);
+		}
+
+		public Dictionary<string, string>? GetOriginChapterRequestHeaders()
+		{
+			var chapter = new MangaKakalotChapter(
+				"",
+				"",
+				"",
+				"",
+				"",
+				timeout.Timeout,
+				requestHelper,
+				htmlHelper);
+
+			return chapter.RequestHeaders;
 		}
 	}
 }

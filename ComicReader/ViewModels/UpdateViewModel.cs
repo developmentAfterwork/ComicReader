@@ -51,7 +51,11 @@ namespace ComicReader.ViewModels
 			foreach (var bookmarkId in bookmarked) {
 				try {
 					// TODO: check if bookmarked ID mangaFile exists
-					IManga saveableManga = await mangaFactory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+					IManga? saveableManga = await mangaFactory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+					if (saveableManga == null) {
+						continue;
+					}
+
 					var originManga = mangaFactory.GetOriginManga((SaveableManga)saveableManga);
 
 					var savedChapters = (await saveableManga.GetBooks()).ToDictionary(d => d.GetUniqIdentifier(), d => d);

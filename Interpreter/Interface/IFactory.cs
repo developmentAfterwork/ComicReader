@@ -6,7 +6,8 @@ namespace ComicReader.Interpreter.Interface
 	{
 		string SourceKey { get; }
 		IManga GetOriginManga(SaveableManga saveManga);
-		IChapter GetOriginChapter(SaveableChapter saveableChapter);
+		IChapter GetOriginChapter(IChapter saveableChapter);
 		IReader CreateReader();
+		Dictionary<string, string>? GetOriginChapterRequestHeaders();
 	}
 }

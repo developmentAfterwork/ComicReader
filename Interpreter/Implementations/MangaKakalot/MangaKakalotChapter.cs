@@ -5,7 +5,7 @@ namespace ComicReader.Interpreter.Implementations
 {
 	internal class MangaKakalotChapter : BaseChapter
 	{
-		public override Dictionary<string, string>? RequestHeaders { get; } = new() {
+		private static Dictionary<string, string>? RequestHeaders { get; } = new() {
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 
@@ -32,7 +32,7 @@ namespace ComicReader.Interpreter.Implementations
 			string source,
 			TimeSpan timeout,
 			IRequest requestHelper,
-			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper)
+			HtmlHelper htmlHelper) : base(null, title, homeUrl, lastUpdate, mangaName, source, timeout, requestHelper, htmlHelper, RequestHeaders)
 		{ }
 	}
 }

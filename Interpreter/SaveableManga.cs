@@ -60,9 +60,13 @@ namespace ComicReader.Interpreter
 			await fileSaverService.SaveFile(this);
 		}
 
-		internal static async Task<IManga> Load(string source, string title)
+		internal static async Task<IManga?> Load(string source, string title)
 		{
 			FileSaverService fileSaverService = new FileSaverService();
+
+			if (!fileSaverService.MangaFileExists(source, title)) {
+				return null;
+			}
 
 			return await fileSaverService.LoadMangaFile(source, title);
 		}

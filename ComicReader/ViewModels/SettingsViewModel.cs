@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels {
-	public partial class SettingsViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class SettingsViewModel : ObservableObject
+	{
 		private readonly SettingsService settingsService;
 		private readonly FileSaverService fileSaverService;
 		private readonly SimpleNotificationService simpleNotificationService;
@@ -42,7 +44,8 @@ namespace ComicReader.ViewModels {
 		[ObservableProperty]
 		private int _Timeout = 30;
 
-		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue) {
+		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue)
+		{
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
 			this.simpleNotificationService = simpleNotificationService;
@@ -62,7 +65,8 @@ namespace ComicReader.ViewModels {
 			ShowDownloadedPagesCount = settingsService.GetShowDownloadedPagesNumbers();
 		}
 
-		private async Task OnWriteSettings() {
+		private async Task OnWriteSettings()
+		{
 			var bookmarkedMangasIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 			Dictionary<string, int> positionsDict = new Dictionary<string, int>();
 			Dictionary<string, bool> readedDict = new Dictionary<string, bool>();
@@ -70,6 +74,10 @@ namespace ComicReader.ViewModels {
 			foreach (var id in bookmarkedMangasIds) {
 				try {
 					var manga = await factory.GetMangaFromBookmarkId(id);
+					if (manga == null) {
+						continue;
+					}
+
 					var chapters = await manga.GetBooks();
 					foreach (var chapter in chapters) {
 						var keyPos = settingsService.GetKeyPosition(chapter);
@@ -95,7 +103,8 @@ namespace ComicReader.ViewModels {
 			await fileSaverService.SaveFile(path, content);
 		}
 
-		private async Task OnReadSettings() {
+		private async Task OnReadSettings()
+		{
 			string path = fileSaverService.GetSecurePathToDocuments("backup.json");
 			var backupExists = fileSaverService.FileExists(path);
 
@@ -123,13 +132,19 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		private async Task OnRefreshAll() {
+		private async Task OnRefreshAll()
+		{
 			var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 
 			foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
 				IManga? manga = null;
 				try {
 					manga = await factory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+
+					if (manga == null) {
+						continue;
+					}
+
 					await manga.Refresh(factory, fileSaverService, simpleNotificationService).ConfigureAwait(false);
 				} catch (Exception ex) {
 					await simpleNotificationService.ShowError($"Error", $"{manga?.Name} - {ex.Message}");
@@ -137,13 +152,19 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		private async Task OnDownloadAllChapters() {
+		private async Task OnDownloadAllChapters()
+		{
 			var bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 
 			foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
 				IManga? manga = null;
 				try {
 					manga = await factory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);
+
+					if (manga == null) {
+						continue;
+					}
+
 					await mangaQueue.AddMissingChaptersFromManga(manga, simpleNotificationService);
 				} catch (Exception ex) {
 					await simpleNotificationService.ShowError($"Error", $"{manga?.Name} - {ex.Message}");
@@ -151,7 +172,8 @@ namespace ComicReader.ViewModels {
 			}
 		}
 
-		internal void OnDisappearing() {
+		internal void OnDisappearing()
+		{
 			settingsService.SetHideEmptyManga(HideEmptyManga);
 			settingsService.SetDeleteChaptersAfterReading(DeleteMangaAfterReaded);
 			settingsService.SetAutoAddChaptersToQueue(AutoAddChaptersToQueue);

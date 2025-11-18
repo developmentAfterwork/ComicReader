@@ -27,7 +27,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			return new AsuraScansReader(requestHelper, htmlHelper, notification, timeout.Timeout);
 		}
 
-		public IChapter GetOriginChapter(SaveableChapter saveableChapter)
+		public IChapter GetOriginChapter(IChapter saveableChapter)
 		{
 			return new AsureScansChapter(saveableChapter.ID, saveableChapter.Source, saveableChapter.MangaName, saveableChapter.Title, saveableChapter.HomeUrl, saveableChapter.LastUpdate, timeout.Timeout, requestHelper, htmlHelper, notification);
 		}
@@ -35,6 +35,13 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 		public IManga GetOriginManga(SaveableManga saveManga)
 		{
 			return new AsuraScansManga(saveManga.Name, saveManga.HomeUrl, saveManga.CoverUrl, saveManga.Autor, saveManga.Status, saveManga.LanguageFlagUrl, saveManga.Description, saveManga.Genres, saveManga.Source, requestHelper, htmlHelper, notification, timeout.Timeout);
+		}
+
+		public Dictionary<string, string>? GetOriginChapterRequestHeaders()
+		{
+			var chapter = new AsureScansChapter(null, "", "", "", "", "", timeout.Timeout, requestHelper, htmlHelper, notification);
+
+			return chapter.RequestHeaders;
 		}
 	}
 }
