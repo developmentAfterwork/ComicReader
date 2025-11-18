@@ -242,7 +242,7 @@ namespace ComicReader.Services.Queue
 						} else {
 							ChapterFinished?.Invoke(this, chapter.Value);
 						}
-					} catch (Exception) {
+					} catch (Exception ex) {
 						await RemoveEntry(chapter.Value);
 						Error?.Invoke(this, chapter.Value);
 					}
