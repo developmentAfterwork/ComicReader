@@ -21,7 +21,7 @@ namespace ComicReader.Services.Queue
 		public event EventHandler? Start;
 		public event EventHandler? End;
 		public event EventHandler<ChapterPageSources>? ChapterFinished;
-		public event EventHandler<ChapterPageSources>? Error;
+		public event EventHandler<(string lastError, ChapterPageSources chapter)>? Error;
 
 		private bool _wasInit = false;
 
@@ -198,6 +198,7 @@ namespace ComicReader.Services.Queue
 
 						bool hasError = false;
 						int index = 0;
+						string lastError = string.Empty;
 
 						foreach (var urlPair in chapter.Value.UrlToLocalFileMapper.ToDictionary(c => c.Key, c => c.Value)) {
 							index++;
@@ -213,7 +214,7 @@ namespace ComicReader.Services.Queue
 
 									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 5, timeout, header);
 								}
-							} catch (HttpRequestException rex) {
+							} catch (HttpRequestException) {
 								var c = await GetOriginChapter(timeout, chapter, index, urlPair);
 								if (c != null) {
 									var headers = c.RequestHeaders;
@@ -226,10 +227,12 @@ namespace ComicReader.Services.Queue
 									try {
 										await requestHelper.DownloadFile(pair.Key, urlPair.Value, 5, timeout, headers);
 									} catch (Exception ex) {
+										lastError = ex.Message;
 										hasError = true;
 									}
 								}
 							} catch (Exception ex) {
+								lastError = ex.Message;
 								hasError = true;
 							}
 						}
@@ -238,13 +241,13 @@ namespace ComicReader.Services.Queue
 
 						await RemoveEntry(chapter.Value);
 						if (hasError) {
-							Error?.Invoke(this, chapter.Value);
+							Error?.Invoke(this, (lastError, chapter.Value));
 						} else {
 							ChapterFinished?.Invoke(this, chapter.Value);
 						}
 					} catch (Exception ex) {
 						await RemoveEntry(chapter.Value);
-						Error?.Invoke(this, chapter.Value);
+						Error?.Invoke(this, (ex.Message, chapter.Value));
 					}
 				}
 
@@ -282,7 +285,7 @@ namespace ComicReader.Services.Queue
 							return orgC;
 						}
 					}
-				} catch (Exception ex) {
+				} catch (Exception) {
 					break;
 				}
 			}

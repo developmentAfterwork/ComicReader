@@ -17,8 +17,8 @@
 		<ApplicationId>com.github.developmentAfterwork.ComicReader</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>0.7.9</ApplicationDisplayVersion>
-		<ApplicationVersion>24</ApplicationVersion>
+		<ApplicationDisplayVersion>0.7.10</ApplicationDisplayVersion>
+		<ApplicationVersion>25</ApplicationVersion>
 
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
 

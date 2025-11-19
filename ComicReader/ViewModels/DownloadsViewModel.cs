@@ -5,6 +5,7 @@ using ComicReader.Services.Queue;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -12,6 +13,8 @@ namespace ComicReader.ViewModels
 {
 	public partial class DownloadsViewModel : ObservableObject
 	{
+		private readonly object syncLock = new object();
+
 		private readonly MangaQueue mangaQueue;
 		private readonly SettingsService settingsService;
 		private readonly FileSaverService fileSaverService;
@@ -67,9 +70,21 @@ namespace ComicReader.ViewModels
 			ChaptersToDownload.AddRange(mangaQueue.ChaptersToDownload);
 		}
 
-		private async void OnError(object? sender, ChapterPageSources e)
+		private async void OnError(object? sender, (string lastError, ChapterPageSources chapter) e)
 		{
 			await simpleNotificationService.ShowError("Queue Error", $"Failed downloads {++_numberOfErrors}");
+
+			var text = JsonConvert.SerializeObject(new {
+				Error = e.lastError,
+				e.chapter.Source,
+				e.chapter.MangaName,
+				e.chapter.Title,
+			});
+
+			var filename = $"error_queue_{DateTime.Now.ToString("yyyyMMddHHmmss")}.log";
+			var path = fileSaverService.GetSecurePathToDocuments(filename, new() { "Errors", "Queue" });
+
+			await fileSaverService.SaveFile(path, text);
 		}
 
 		private void OnStartQueueCommand()
