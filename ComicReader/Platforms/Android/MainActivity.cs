@@ -17,22 +17,29 @@ namespace ComicReader
 			base.OnPostCreate(savedInstanceState);
 
 #pragma warning disable CA1416
+			// access all files
 			if (!global::Android.OS.Environment.IsExternalStorageManager) {
 				Platform.CurrentActivity?.StartActivityForResult(new Intent(global::Android.Provider.Settings.ActionManageAllFilesAccessPermission), 1);
 			}
 
+			// notification permission
 			if (await LocalNotificationCenter.Current.AreNotificationsEnabled() == false) {
 				await LocalNotificationCenter.Current.RequestNotificationPermission();
 			}
 
+			// auto revoke permission whitelist
 			if (Platform.CurrentActivity?.PackageManager != null && Platform.CurrentActivity != null && !Platform.CurrentActivity.PackageManager.IsAutoRevokeWhitelisted) {
 				Platform.CurrentActivity.StartActivityForResult(new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings, Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName)), 2);
 			}
 
+			// ignore battery optimizations
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.M) {
-				Intent intent = new Intent(global::Android.Provider.Settings.ActionRequestIgnoreBatteryOptimizations);
-				intent.SetData(Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-				Platform.CurrentActivity?.StartActivityForResult(intent, IGNORE_BATTERY_OPTIMIZATION_REQUEST);
+				PowerManager? pm = (PowerManager?)GetSystemService(PowerService);
+				if (pm != null && !pm.IsIgnoringBatteryOptimizations(Android.App.Application.Context.PackageName)) {
+					Intent intent = new Intent(global::Android.Provider.Settings.ActionRequestIgnoreBatteryOptimizations);
+					intent.SetData(Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+					Platform.CurrentActivity?.StartActivityForResult(intent, IGNORE_BATTERY_OPTIMIZATION_REQUEST);
+				}
 			}
 
 #pragma warning restore CA1416
