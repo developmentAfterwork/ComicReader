@@ -9,12 +9,13 @@ using FFImageLoading.Helpers;
 using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using static Android.Graphics.Drawables.ShapeDrawable;
 
 namespace ComicReader.ViewModels
 {
 	public partial class ReadChapterViewModel : ObservableObject
 	{
+		private readonly object syncObject = new object();
+
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly SettingsService settingsService;
 		private readonly Factory factory;
@@ -93,22 +94,19 @@ namespace ComicReader.ViewModels
 				await MainThread.InvokeOnMainThreadAsync(async () => {
 					var p = await chapter.GetPageUrls(predownloadFiles, factory);
 					fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
+
 					if (predownloadFiles) {
-						foreach (var c in chapter.UrlToLocalFileMapper) {
-							if (fileSaverService.FileExists(c.Value)) {
-								continue;
-							}
-
-							try {
-								var header = chapter.RequestHeaders;
-								var sc = chapter as SaveableChapter;
-								if (header is null && sc is not null) {
-									header = factory.GetOriginChapter(sc).RequestHeaders;
-								}
-
-								await requestHelper.DownloadFile(c.Key, c.Value, 5, requestTimeout, header, null);
-							} catch { }
-						}
+						await chapter.DownloadChapterPages(
+							requestTimeout,
+							factory,
+							() => {
+								return Task.CompletedTask;
+							},
+							(ex) => { },
+							settingsService,
+							requestHelper,
+							fileSaverService
+						);
 
 						fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
 					}
@@ -143,8 +141,17 @@ namespace ComicReader.ViewModels
 			}
 		}
 
+		private int position = -1;
 		public async Task Scrolled(int position)
 		{
+			lock (syncObject) {
+				if (this.position == position) {
+					return;
+				}
+
+				this.position = position;
+			}
+
 			CurrentPage = Pages[position];
 
 			int currentPosition = position + 1;

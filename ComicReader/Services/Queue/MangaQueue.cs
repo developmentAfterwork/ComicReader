@@ -197,47 +197,26 @@ namespace ComicReader.Services.Queue
 						await simpleNotificationService.ShowProgress("Download mangas", messageTxt, currentPage, pagesCount);
 
 						bool hasError = false;
-						int index = 0;
 						string lastError = string.Empty;
 
-						foreach (var urlPair in chapter.Value.UrlToLocalFileMapper.ToDictionary(c => c.Key, c => c.Value)) {
-							index++;
-							messageTxt = $"Mangas: {currentChapter}/{chapterCount} - Chapters: {++currentPage}/{pagesCount}";
-							await simpleNotificationService.ShowProgress("Download mangas", messageTxt, currentPage, pagesCount);
-
-							try {
-								if (!fileSaverService.FileExists(urlPair.Value)) {
-									var header = chapter.Value.RequestHeaders;
-									if (header is null || header.Count == 0) {
-										header = factory.GetOriginChapterRequestHeaders(chapter.Value.Source);
-									}
-
-									await requestHelper.DownloadFile(urlPair.Key, urlPair.Value, 5, timeout, header);
-								}
-							} catch (HttpRequestException) {
-								var c = await GetOriginChapter(timeout, chapter, index, urlPair);
-								if (c != null) {
-									var headers = c.RequestHeaders;
-									if (headers is null || headers.Count == 0) {
-										headers = factory.GetOriginChapterRequestHeaders(c.Source);
-									}
-
-									var pair = c.UrlToLocalFileMapper.ToList()[index];
-
-									try {
-										await requestHelper.DownloadFile(pair.Key, urlPair.Value, 5, timeout, headers);
-									} catch (Exception ex) {
-										lastError = ex.Message;
-										hasError = true;
-									}
-								}
-							} catch (Exception ex) {
+						await chapter.Value.UrlToLocalFileMapper.DownloadPages(
+							chapter.Value.RequestHeaders,
+							chapter.Value.Source,
+							chapter.Value.MangaName,
+							chapter.Value.Title,
+							timeout,
+							factory,
+							async () => {
+								messageTxt = $"Mangas: {currentChapter}/{chapterCount} - Chapters: {++currentPage}/{pagesCount}";
+								await simpleNotificationService.ShowProgress("Download mangas", messageTxt, currentPage, pagesCount);
+							},
+							(ex) => {
 								lastError = ex.Message;
 								hasError = true;
-							}
-						}
-
-						simpleNotificationService.Close(SimpleNotificationService.ProgressId + 1);
+							},
+							settingsService,
+							requestHelper,
+							fileSaverService);
 
 						await RemoveEntry(chapter.Value);
 						if (hasError) {
@@ -257,40 +236,6 @@ namespace ComicReader.Services.Queue
 			}
 
 			End?.Invoke(this, EventArgs.Empty);
-		}
-
-		private Dictionary<(string Source, string Name, string Title), IChapter> _originChapterCache = new();
-		private async Task<IChapter?> GetOriginChapter(TimeSpan timeout, KeyValuePair<string, ChapterPageSources> chapter, int index, KeyValuePair<string, string> urlPair)
-		{
-			if (_originChapterCache.TryGetValue((chapter.Value.Source, chapter.Value.MangaName, chapter.Value.Title), out var cachedChapter)) {
-				return cachedChapter;
-			}
-
-			var allUnig = settingsService.GetBookmarkedMangaUniqIdentifiers();
-
-			foreach (var bookmarkId in allUnig.Where(s => s.Contains("|"))) {
-				try {
-					IManga? manga = await factory.GetMangaFromBookmarkId(bookmarkId);
-
-					if (manga != null && chapter.Value.Source == manga.Source && chapter.Value.MangaName == manga.Name) {
-						var chapters = await manga.GetBooks();
-						var c = chapters.SingleOrDefault(c => c.Title == chapter.Value.Title);
-
-						if (c != null) {
-							var orgC = factory.GetOriginChapter(c);
-							_ = await orgC.GetPageUrls(false, factory);
-
-							_originChapterCache[(chapter.Value.Source, chapter.Value.MangaName, chapter.Value.Title)] = orgC;
-
-							return orgC;
-						}
-					}
-				} catch (Exception) {
-					break;
-				}
-			}
-
-			return null;
 		}
 	}
 }

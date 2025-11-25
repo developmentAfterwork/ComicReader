@@ -41,7 +41,6 @@ namespace ComicReader
 					Platform.CurrentActivity?.StartActivityForResult(intent, IGNORE_BATTERY_OPTIMIZATION_REQUEST);
 				}
 			}
-
 #pragma warning restore CA1416
 
 			DeviceDisplay.Current.KeepScreenOn = true;
