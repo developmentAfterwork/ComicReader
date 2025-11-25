@@ -213,30 +213,36 @@ namespace ComicReader.ViewModels
 		public async Task OnDeleteManga()
 		{
 
-			var result = await popupService.ShowPopupAsync("Delete Manga", "Do you want to delete that mange?", "Yes", "No");
+			var result = await popupService.ShowPopupAsync("Delete Manga", "Do you want to delete that manga?", "Yes", "No");
 			if (!result) {
 				return;
 			}
 
-			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
+			await Task.Run(async () => {
+				IsSearching = true;
 
-			try {
-				var chapters = await manga.GetBooks();
+				IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 
-				settingsService.RemoveManga(manga);
-				fileSaverService.DeleteManga(manga);
+				try {
+					var chapters = await manga.GetBooks();
 
-				int i = 0;
-				foreach (var chapter in chapters) {
-					await simpleNotificationService.ShowProgress("Remove chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
-					await mangaQueue.RemoveChapter(chapter);
+					settingsService.RemoveManga(manga);
+					fileSaverService.DeleteManga(manga);
+
+					int i = 0;
+					foreach (var chapter in chapters) {
+						await simpleNotificationService.ShowProgress("Remove chapters", $"{++i}/{chapters.Count}", i, chapters.Count);
+						await mangaQueue.RemoveChapter(chapter);
+					}
+					simpleNotificationService.Close();
+
+					await navigation.CloseCurrent();
+				} catch (Exception ex) {
+					await simpleNotificationService.ShowError($"Error", $"{manga.Name} - {ex.Message}");
 				}
-				simpleNotificationService.Close();
 
-				await navigation.CloseCurrent();
-			} catch (Exception ex) {
-				await simpleNotificationService.ShowError($"Error", $"{manga.Name} - {ex.Message}");
-			}
+				IsSearching = false;
+			});
 		}
 
 		public async Task OnDownloadMissingManga()
