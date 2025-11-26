@@ -183,7 +183,6 @@ namespace ComicReader.ViewModels
 
 		public async Task AddBookmarkManga()
 		{
-
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 			try {
 				settingsService.BookmarkManga(manga);
@@ -212,7 +211,6 @@ namespace ComicReader.ViewModels
 
 		public async Task OnDeleteManga()
 		{
-
 			var result = await popupService.ShowPopupAsync("Delete Manga", "Do you want to delete that manga?", "Yes", "No");
 			if (!result) {
 				return;
