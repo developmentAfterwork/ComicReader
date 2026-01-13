@@ -91,7 +91,7 @@ namespace ComicReader.ViewModels
 				imageService.Initialize(ffConfig);
 
 				List<string> pages = [];
-				await MainThread.InvokeOnMainThreadAsync(async () => {
+				await Task.Run(async () => {
 					var p = await chapter.GetPageUrls(predownloadFiles, factory);
 					fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
 
@@ -111,8 +111,11 @@ namespace ComicReader.ViewModels
 						fileSaverService.CheckFiles(chapter.UrlToLocalFileMapper.Values.ToList());
 					}
 
-					pages = p;
+					await MainThread.InvokeOnMainThreadAsync(() => {
+						pages = p;
+					});
 				});
+
 
 				inMemoryDatabase.Set<IChapter>("selectedChapter", chapter);
 				inMemoryDatabase.Set<IChapter>("ichapterParameter", chapter);
