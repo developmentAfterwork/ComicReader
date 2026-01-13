@@ -58,15 +58,34 @@ namespace ComicReader.ViewModels
 
 					var originManga = mangaFactory.GetOriginManga((SaveableManga)saveableManga);
 
-					var savedChapters = (await saveableManga.GetBooks()).ToDictionary(d => d.GetUniqIdentifier(), d => d);
-					var newChapters = (await originManga.GetBooks()).ToDictionary(d => d.GetUniqIdentifier(), d => d);
+					Dictionary<string, List<IChapter>> savedChapters = new Dictionary<string, List<IChapter>>();
+					foreach (var chapter in (await saveableManga.GetBooks()).Take(1)) {
+						var key = chapter.GetUniqIdentifier();
+						if (savedChapters.ContainsKey(key) == false) {
+							savedChapters.Add(key, new());
+						}
+
+						savedChapters[chapter.GetUniqIdentifier()].Add(chapter);
+					}
+
+					Dictionary<string, List<IChapter>> newChapters = new Dictionary<string, List<IChapter>>();
+					foreach (var chapter in await originManga.GetBooks()) {
+						var key = chapter.GetUniqIdentifier();
+						if (newChapters.ContainsKey(key) == false) {
+							newChapters.Add(key, new());
+						}
+
+						newChapters[chapter.GetUniqIdentifier()].Add(chapter);
+					}
+
 					var diff = newChapters.Keys.Except(savedChapters.Keys).ToList();
 
 					if (diff.Any()) {
 						foreach (var key in diff) {
-							chaptersForUpdate.Add(new MangaChapterViewModel(saveableManga, newChapters[key]));
+							foreach (var c in newChapters[key]) {
+								chaptersForUpdate.Add(new MangaChapterViewModel(saveableManga, c));
+							}
 						}
-
 
 						await originManga.Save();
 					}
