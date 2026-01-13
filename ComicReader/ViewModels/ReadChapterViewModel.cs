@@ -155,7 +155,11 @@ namespace ComicReader.ViewModels
 				this.position = position;
 			}
 
-			CurrentPage = Pages[position];
+			if (Pages.Count == 0) {
+				return;
+			}
+
+			CurrentPage = Pages[Math.Clamp(position, 0, Pages.Count)];
 
 			int currentPosition = position + 1;
 
