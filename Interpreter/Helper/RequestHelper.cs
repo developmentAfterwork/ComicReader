@@ -87,9 +87,9 @@ namespace ComicReader.Helper
 					return;
 				} catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested) {
 					throw new TimeoutException($"Request to {url} timed out after {timeout.TotalSeconds:F1} seconds.");
-				} catch (HttpRequestException rex) {
+				} catch (HttpRequestException) {
 					throw;
-				} catch (Exception ex) {
+				} catch (Exception) {
 					await Task.Delay(500, linkedCts.Token);
 				}
 			}

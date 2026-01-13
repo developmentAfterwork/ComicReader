@@ -5,7 +5,7 @@ namespace ComicReader.Interpreter.Implementations
 {
 	internal class MangaKakalotChapter : BaseChapter
 	{
-		private static Dictionary<string, string>? RequestHeaders { get; } = new() {
+		private new static Dictionary<string, string>? RequestHeaders { get; } = new() {
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 

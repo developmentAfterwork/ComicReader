@@ -6,7 +6,7 @@ namespace ComicReader.Interpreter
 {
 	public class MangaKatanaChapter : BaseChapter, IChapter
 	{
-		private static Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
+		private new static Dictionary<string, string>? RequestHeaders => new Dictionary<string, string>() {
 			{ "referer", "https://mangakatana.com/" }
 		};
 
