@@ -59,7 +59,7 @@ namespace ComicReader.ViewModels
 					var originManga = mangaFactory.GetOriginManga((SaveableManga)saveableManga);
 
 					Dictionary<string, List<IChapter>> savedChapters = new Dictionary<string, List<IChapter>>();
-					foreach (var chapter in (await saveableManga.GetBooks()).Take(1)) {
+					foreach (var chapter in (await saveableManga.GetBooks())) {
 						var key = chapter.GetUniqIdentifier();
 						if (savedChapters.ContainsKey(key) == false) {
 							savedChapters.Add(key, new());
