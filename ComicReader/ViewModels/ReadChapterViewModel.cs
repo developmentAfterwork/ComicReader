@@ -189,13 +189,13 @@ namespace ComicReader.ViewModels
 			var chapters = await manga.GetBooks();
 			var currentIndex = chapters.IndexOf(Chapter);
 
-			if (currentIndex > 0 && currentIndex + 1 <= chapters.Count) {
+			if (currentIndex >= 0 && currentIndex + 1 <= chapters.Count) {
 				if (settingsService.GetDeleteChaptersAfterReading()) {
 					await fileSaverService.DeleteImagesFromChapter(chapters[currentIndex], factory);
 				}
 
 				Pages.Clear();
-				await InitChapter(chapters[currentIndex + 1]);
+				await InitChapter(chapters[Math.Clamp(currentIndex + 1, 0, chapters.Count)]);
 			}
 		}
 
