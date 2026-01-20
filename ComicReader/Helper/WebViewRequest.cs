@@ -23,7 +23,8 @@ public class WebViewRequest
 		_webView = new WebView {
 			WidthRequest = 400,
 			HeightRequest = 400,
-			IsVisible = true
+			IsVisible = true,
+			BackgroundColor = Colors.Red
 		};
 
 		_done = new Button {
@@ -48,7 +49,8 @@ public class WebViewRequest
 		};
 
 		var hStack = new HorizontalStackLayout {
-			Children = { _cancel, _autoCancel }
+			Children = { _cancel, _autoCancel },
+			HeightRequest = 100
 		};
 
 		var stack = new StackLayout {
@@ -57,7 +59,7 @@ public class WebViewRequest
 
 		_page = new ContentPage {
 			Content = stack,
-			IsVisible = false,
+			IsVisible = true,
 			Opacity = 1.00
 		};
 	}
@@ -70,13 +72,13 @@ public class WebViewRequest
 		_cancel.Clicked -= Cancel_Clicked;
 		_autoCancel.Clicked -= AutoCancel_Clicked;
 		_webView.Navigated -= OnNavigated;
+		_page.Disappearing -= OnDisappearing;
 
 		RequestUrl = url;
 
 		tcs = new TaskCompletionSource<string>();
 
-		MainThread.BeginInvokeOnMainThread(async () => {
-			_page.IsVisible = false;
+		await MainThread.InvokeOnMainThreadAsync(async () => {
 			_webView.Source = "about:blank";
 
 			var nav = Application.Current?.MainPage?.Navigation;
@@ -91,16 +93,8 @@ public class WebViewRequest
 		_webView.Navigated += OnNavigated;
 		_page.Disappearing += OnDisappearing;
 
-		MainThread.BeginInvokeOnMainThread(() => {
+		await MainThread.InvokeOnMainThreadAsync(() => {
 			_webView.Source = url;
-		});
-
-		using var cts = new CancellationTokenSource(timeout);
-		await using var reg = cts.Token.Register(() => {
-			MainThread.BeginInvokeOnMainThread(() => {
-				_webView.Navigated -= OnNavigated;
-				_page.IsVisible = true;
-			});
 		});
 
 		if (WebViewRequest.Settings.AutoCancelWebRequest) {
@@ -141,7 +135,6 @@ public class WebViewRequest
 			var raw = System.Text.RegularExpressions.Regex.Unescape(html ?? "");
 
 			if (raw.Contains("Just a moment")) {
-				_page.IsVisible = true;
 				return;
 			}
 
