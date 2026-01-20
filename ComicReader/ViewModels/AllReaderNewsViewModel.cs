@@ -56,7 +56,7 @@ namespace ComicReader.ViewModels
 						List<IManga> r = await a;
 						List<IMangaModel> mList = new();
 						foreach (var manga in r) {
-							var mangaModel = await IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
+							var mangaModel = IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
 							mList.Add(mangaModel);
 						}
 

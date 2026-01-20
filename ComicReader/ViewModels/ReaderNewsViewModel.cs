@@ -51,7 +51,7 @@ namespace ComicReader.ViewModels
 
 					List<IMangaModel> mangaModels = new List<IMangaModel>();
 					foreach (var manga in mangas) {
-						mangaModels.Add(await IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders));
+						mangaModels.Add(IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders));
 					}
 
 					LoadResult.Clear();
