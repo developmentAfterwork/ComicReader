@@ -63,7 +63,7 @@
 						<ffimageloading:CachedImage
 							Aspect="AspectFit"
 							Source="{Binding ., Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
-							WidthRequest="400" />
+							WidthRequest="{Binding Source={x:Reference pagesCarusel}, Path=Width}" />
 					</ScrollView>
 				</DataTemplate>
 			</controls:CarouselViewControl.ItemTemplate>
@@ -72,7 +72,7 @@
 			<ffimageloading:CachedImage
 				Aspect="AspectFit"
 				Source="{Binding CurrentPage, Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
-				WidthRequest="400" />
+				WidthRequest="{Binding Source={x:Reference pagesCarusel}, Path=Width}" />
 		</local:PinchToZoomContainer>
 		<ActivityIndicator
 			Grid.Row="0"
