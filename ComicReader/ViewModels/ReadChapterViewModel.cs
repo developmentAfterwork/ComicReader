@@ -138,6 +138,7 @@ namespace ComicReader.ViewModels
 					});
 				} else {
 					SelectedItem = Pages[0];
+					CurrentPage = Pages[0];
 				}
 			} finally {
 				IsLoading = false;
