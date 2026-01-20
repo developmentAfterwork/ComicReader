@@ -251,9 +251,14 @@ namespace ComicReader.ViewModels
 		{
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 
-			IsSearching = true;
-			await mangaQueue.AddMissingChaptersFromManga(manga, simpleNotificationService);
-			IsSearching = false;
+			try {
+				IsSearching = true;
+				await mangaQueue.AddMissingChaptersFromManga(manga, simpleNotificationService);
+				IsSearching = false;
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError("Error", ex.Message);
+				IsSearching = false;
+			}
 		}
 
 		public async Task OnRefresh()
@@ -262,17 +267,21 @@ namespace ComicReader.ViewModels
 
 			IsSearching = true;
 
-			await manga.Refresh(factory, fileSaverService, simpleNotificationService);
+			try {
+				await manga.Refresh(factory, fileSaverService, simpleNotificationService);
 
-			IManga? reloadedManga = await factory.GetMangaFromBookmarkId(manga.GetUniqIdentifier());
-			if (reloadedManga == null) {
-				await simpleNotificationService.ShowError("Error", "Can't reload manga after refresh.");
-				IsSearching = false;
-				return;
+				IManga? reloadedManga = await factory.GetMangaFromBookmarkId(manga.GetUniqIdentifier());
+				if (reloadedManga == null) {
+					await simpleNotificationService.ShowError("Error", "Can't reload manga after refresh.");
+					IsSearching = false;
+					return;
+				}
+
+				inMemoryDatabase.Set<IManga>("selectedManga", reloadedManga);
+				await Init();
+			} catch (Exception ex) {
+				await simpleNotificationService.ShowError("Error", ex.Message);
 			}
-
-			inMemoryDatabase.Set<IManga>("selectedManga", reloadedManga);
-			await Init();
 
 			IsSearching = false;
 		}
