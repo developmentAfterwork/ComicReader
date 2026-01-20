@@ -1,13 +1,19 @@
 ﻿using ComicReader.Converter;
 using ComicReader.Helper;
 using ComicReader.Interpreter;
+using ComicReader.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Interpreter.Interface;
 using System.Windows.Input;
 
-namespace ComicReader.ViewModels {
-	public partial class MangaViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class MangaViewModel : ObservableObject
+	{
 		private readonly IManga manga;
+		private readonly IRequest request;
+		private readonly SettingsService settingsService;
 
 		[ObservableProperty]
 		private string _CoverUrl = string.Empty;
@@ -29,9 +35,13 @@ namespace ComicReader.ViewModels {
 
 		public event EventHandler<IManga>? StartToDownload;
 
-		public MangaViewModel(IManga manga) {
+		public MangaViewModel(IManga manga, IRequest request, SettingsService settingsService)
+		{
 			CoverUrl = manga.CoverUrl;
+
 			this.manga = manga;
+			this.request = request;
+			this.settingsService = settingsService;
 			this.Title = manga.Name;
 
 			_ = Task.Run(async () => {
@@ -41,20 +51,26 @@ namespace ComicReader.ViewModels {
 				if (File.Exists(pathWithFile)) {
 					CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
 				} else {
-					var mem = await (new RequestHelper(TimeSpan.FromSeconds(30))).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
-					if (mem != null) {
-						CoverUrlImageSource = ImageSource.FromStream(() => mem);
+					if (!File.Exists(pathWithFile)) {
+						await request.DownloadFile(manga.CoverUrl, pathWithFile, 3, settingsService.GetRequestTimeout(), manga.RequestHeaders);
+					}
+
+					if (File.Exists(pathWithFile)) {
+						CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
 					}
 				}
+
 				IsLoadingImage = false;
 			});
 		}
 
-		private void OnMangeSelected() {
+		private void OnMangeSelected()
+		{
 			Selected?.Invoke(this, manga);
 		}
 
-		private void OnDownloadManga() {
+		private void OnDownloadManga()
+		{
 			StartToDownload?.Invoke(this, manga);
 		}
 	}

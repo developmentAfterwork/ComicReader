@@ -169,15 +169,22 @@ namespace ComicReader.ViewModels
 			Genres.Clear();
 			Genres.AddRange(manga.Genres);
 
-			string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
-			if (File.Exists(pathWithFile)) {
-				CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
-			} else {
-				var mem = await (new RequestHelper(TimeSpan.FromSeconds(30))).DoGetRequestStream(manga.CoverUrl, manga.RequestHeaders);
-				if (mem != null) {
-					CoverUrlImageSource = ImageSource.FromStream(() => mem);
+			_ = Task.Run(async () => {
+				await Task.Delay(500);
+
+				string pathWithFile = CachedImageConverter.CheckAndGetPathFromUrl(manga.CoverUrl);
+				if (File.Exists(pathWithFile)) {
+					CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
+				} else {
+					if (!File.Exists(pathWithFile)) {
+						await requestHelper.DownloadFile(manga.CoverUrl, pathWithFile, 3, settingsService.GetRequestTimeout(), manga.RequestHeaders);
+					}
+
+					if (File.Exists(pathWithFile)) {
+						CoverUrlImageSource = ImageSource.FromFile(pathWithFile);
+					}
 				}
-			}
+			});
 
 			IsSearching = false;
 		}

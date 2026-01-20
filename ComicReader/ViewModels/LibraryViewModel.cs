@@ -2,6 +2,7 @@
 using ComicReader.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CsQuery.ExtensionMethods;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -13,6 +14,7 @@ namespace ComicReader.ViewModels
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
 		private readonly Factory factory;
+		private readonly IRequest request;
 
 		[ObservableProperty]
 		private bool _isBusy = false;
@@ -20,12 +22,13 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private ObservableCollection<MangaViewModel> _BookmarkedMangas = new ObservableCollection<MangaViewModel>();
 
-		public LibraryViewModel(SettingsService settingsService, InMemoryDatabase inMemoryDatabase, Navigation navigation, Factory factory)
+		public LibraryViewModel(SettingsService settingsService, InMemoryDatabase inMemoryDatabase, Navigation navigation, Factory factory, IRequest request)
 		{
 			this.settingsService = settingsService;
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
 			this.factory = factory;
+			this.request = request;
 		}
 
 		public async Task OnAppearing()
@@ -51,7 +54,7 @@ namespace ComicReader.ViewModels
 					if (manga == null)
 						continue;
 
-					MangaViewModel model = new MangaViewModel(manga);
+					MangaViewModel model = new MangaViewModel(manga, request, settingsService);
 					model.Selected += OnMangeSelected;
 
 					if (settingsService.GetHideEmptyManga()) {
