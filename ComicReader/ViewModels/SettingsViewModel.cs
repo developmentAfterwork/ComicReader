@@ -71,6 +71,11 @@ namespace ComicReader.ViewModels
 
 		private async Task OnWriteSettings()
 		{
+			await WriteBackup("backup.json", settingsService, factory, fileSaverService);
+		}
+
+		public static async Task WriteBackup(string filename, SettingsService settingsService, Factory factory, FileSaverService fileSaverService)
+		{
 			var bookmarkedMangasIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 			Dictionary<string, int> positionsDict = new Dictionary<string, int>();
 			Dictionary<string, bool> readedDict = new Dictionary<string, bool>();
@@ -101,7 +106,7 @@ namespace ComicReader.ViewModels
 				readedDict,
 			};
 
-			string path = fileSaverService.GetSecurePathToDocuments("backup.json");
+			string path = fileSaverService.GetSecurePathToDocuments(filename);
 			string content = JsonConvert.SerializeObject(toWrite);
 
 			await fileSaverService.SaveFile(path, content);
