@@ -100,7 +100,11 @@ namespace ComicReader.ViewModels
 
 			if (settingsService.GetAutoAddChaptersToQueue()) {
 				foreach (var chapter in NewChapters) {
-					await mangaQueue.AddChapter(chapter.Chapter);
+					try {
+						await mangaQueue.AddChapter(chapter.Chapter);
+					} catch (Exception ex) {
+						await simpleNotificationService.ShowError("Error", ex.Message);
+					}
 				}
 			}
 
