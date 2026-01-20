@@ -21,6 +21,7 @@
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
 			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -242,6 +243,26 @@
 				Grid.Column="1"
 				HorizontalOptions="End"
 				IsToggled="{Binding ShowDownloadedPagesCount}" />
+		</Grid>
+		<Grid
+			Grid.Row="11"
+			Grid.Column="0"
+			Margin="8,-8,8,8">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Text="Read chapters in endless scroll mode"
+				VerticalOptions="Center" />
+			<Switch
+				Grid.Column="1"
+				HorizontalOptions="End"
+				IsToggled="{Binding EndlessScrollMode}" />
 		</Grid>
 	</Grid>
 </ContentPage>

@@ -13,6 +13,7 @@ namespace ComicReader.Services
 		private const string PreDownloadImagesKey = "PreDownloadImages";
 		private const string RequestTimeoutKey = "RequestTimeout";
 		private const string ShowDownloadedPagesNumbersKey = "ShowDownloadedPagesNumbers";
+		private const string EndlessScrollModeKey = "EndlessScrollModeKey";
 
 		public SettingsService() { }
 
@@ -170,6 +171,16 @@ namespace ComicReader.Services
 		public void SetShowDownloadedPagesNumbers(bool value)
 		{
 			Preferences.Set(ShowDownloadedPagesNumbersKey, value);
+		}
+
+		internal bool GetEndlessScrollMode()
+		{
+			return Preferences.Get(EndlessScrollModeKey, false);
+		}
+
+		internal void SetEndlessScrollMode(bool endlessScrollMode)
+		{
+			Preferences.Set(EndlessScrollModeKey, endlessScrollMode);
 		}
 	}
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.ReadChapterEndlessScrollView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:controls="clr-namespace:CarouselView.Abstractions;assembly=CarouselView.Maui"
+	xmlns:converters="clr-namespace:ComicReader.Converter"
+	xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+	xmlns:local="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:pin="clr-namespace:ComicReader.Controls;assembly=ComicReader"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	x:DataType="viewModel:ReadChapterEndlessScrollViewModel"
+	Shell.NavBarIsVisible="True"
+	Shell.TabBarIsVisible="False">
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+			<converters:CachedImageConverter x:Key="CachedImageConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	<Shell.TitleView>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<StackLayout Grid.Column="1" Orientation="Horizontal">
+				<Button
+					BackgroundColor="Transparent"
+					Command="{Binding OpenInBrowser}"
+					Text="🌍" />
+			</StackLayout>
+		</Grid>
+	</Shell.TitleView>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<CollectionView
+			x:Name="CollView"
+			Grid.Row="0"
+			Grid.Column="0"
+			BackgroundColor="{StaticResource Primary}"
+			IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+			ItemSizingStrategy="MeasureAllItems"
+			ItemsLayout="VerticalList"
+			ItemsSource="{Binding Pages}"
+			SelectionMode="None">
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="x:String">
+					<ffimageloading:CachedImage
+						Margin="0,0,0,5"
+						Aspect="AspectFit"
+						Source="{Binding ., Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
+						WidthRequest="{Binding Source={x:Reference CollView}, Path=Width}" />
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+		<ActivityIndicator
+			Grid.Row="0"
+			Grid.Column="0"
+			IsEnabled="{Binding IsLoading}"
+			IsRunning="{Binding IsLoading}"
+			IsVisible="{Binding IsLoading}"
+			Color="Orange" />
+		<Border
+			Grid.Row="0"
+			Grid.Column="0"
+			Margin="12"
+			Padding="8"
+			Background="#B0000000"
+			HorizontalOptions="Center"
+			Stroke="Transparent"
+			VerticalOptions="End">
+			<Label
+				x:Name="currentPageLabel"
+				FontAttributes="Bold"
+				FontSize="12"
+				HorizontalOptions="Center"
+				Text="{Binding Position}"
+				TextColor="#B0FFFFFF"
+				VerticalOptions="Center" />
+		</Border>
+	</Grid>
+</ContentPage>

@@ -44,6 +44,9 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private int _Timeout = 30;
 
+		[ObservableProperty]
+		private bool _EndlessScrollMode = false;
+
 		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue)
 		{
 			this.settingsService = settingsService;
@@ -63,6 +66,7 @@ namespace ComicReader.ViewModels
 			PredownloadImages = settingsService.GetPreDownloadImages();
 			Timeout = (int)settingsService.GetRequestTimeout().TotalSeconds;
 			ShowDownloadedPagesCount = settingsService.GetShowDownloadedPagesNumbers();
+			EndlessScrollMode = settingsService.GetEndlessScrollMode();
 		}
 
 		private async Task OnWriteSettings()
@@ -180,6 +184,7 @@ namespace ComicReader.ViewModels
 			settingsService.SetPreDownloadImages(PredownloadImages);
 			settingsService.SetRequestTimeout(TimeSpan.FromSeconds(Timeout));
 			settingsService.SetShowDownloadedPagesNumbers(ShowDownloadedPagesCount);
+			settingsService.SetEndlessScrollMode(EndlessScrollMode);
 		}
 	}
 }

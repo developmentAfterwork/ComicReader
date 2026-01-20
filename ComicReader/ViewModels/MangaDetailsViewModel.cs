@@ -177,7 +177,11 @@ namespace ComicReader.ViewModels
 				inMemoryDatabase.Set<IChapter>("selectedChapter", SelectedItem.Chapter);
 				SelectedItem = null;
 
-				await navigation.GoToReadChapter();
+				if (settingsService.GetEndlessScrollMode()) {
+					await navigation.GoToReadEndlessScrollChapter();
+				} else {
+					await navigation.GoToReadChapter();
+				}
 			}
 		}
 

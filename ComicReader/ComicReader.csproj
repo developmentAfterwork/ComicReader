@@ -80,6 +80,9 @@
 	  <Compile Update="Views\AllReaderNewsView.xaml.cs">
 	    <DependentUpon>AllReaderNewsView.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\ReadChapterEndlessScrollView.xaml.cs">
+	    <DependentUpon>ReadChapterEndlessScrollView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -93,6 +96,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MangaDetailsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ReadChapterEndlessScrollView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\ReadChapterView.xaml">
