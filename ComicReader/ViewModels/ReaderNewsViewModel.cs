@@ -5,6 +5,7 @@ using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -14,6 +15,8 @@ namespace ComicReader.ViewModels
 	{
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
+		private readonly IRequest request;
+		private readonly SettingsService settingsService;
 
 		[ObservableProperty]
 		private ObservableCollection<IMangaModel> _LoadResult = new ObservableCollection<IMangaModel>();
@@ -27,11 +30,12 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private IMangaModel? _SelectedItem;
 
-		public ReaderNewsViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation)
+		public ReaderNewsViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation, IRequest request, SettingsService settingsService)
 		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
-
+			this.request = request;
+			this.settingsService = settingsService;
 			ItemSelectedCommand = new AsyncRelayCommand<object>(MangaSelected);
 		}
 
@@ -47,7 +51,7 @@ namespace ComicReader.ViewModels
 
 					List<IMangaModel> mangaModels = new List<IMangaModel>();
 					foreach (var manga in mangas) {
-						mangaModels.Add(await IMangaModel.Create(manga, manga.RequestHeaders));
+						mangaModels.Add(await IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders));
 					}
 
 					LoadResult.Clear();

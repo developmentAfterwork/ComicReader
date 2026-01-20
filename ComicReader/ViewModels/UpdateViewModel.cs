@@ -48,7 +48,12 @@ namespace ComicReader.ViewModels
 			List<MangaChapterViewModel> chaptersForUpdate = new List<MangaChapterViewModel>();
 
 			var bookmarked = allBookmarkedMangas.Where(s => s.Contains("|")).ToList();
+			int currentChapter = 0;
+
 			foreach (var bookmarkId in bookmarked) {
+				var messageTxt = $"Mangas: {++currentChapter}/{bookmarked.Count}";
+				await simpleNotificationService.ShowProgress("Check mangas", messageTxt, currentChapter, bookmarked.Count);
+
 				try {
 					// TODO: check if bookmarked ID mangaFile exists
 					IManga? saveableManga = await mangaFactory.GetMangaFromBookmarkId(bookmarkId).ConfigureAwait(false);

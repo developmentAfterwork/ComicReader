@@ -9,6 +9,7 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsQuery.ExtensionMethods.Internal;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using PopupService = ComicReader.Services.PopupService;
@@ -24,7 +25,7 @@ namespace ComicReader.ViewModels
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly FileSaverService fileSaverService;
 		private readonly Factory factory;
-		private readonly RequestHelper requestHelper;
+		private readonly IRequest requestHelper;
 		private readonly PopupService popupService;
 
 		[ObservableProperty]
@@ -80,7 +81,7 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		public ImageSource _coverUrlImageSource = default!;
 
-		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, RequestHelper requestHelper, PopupService popupService)
+		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, IRequest requestHelper, PopupService popupService)
 		{
 			inMemoryDatabase = database;
 			this.navigation = navigation;

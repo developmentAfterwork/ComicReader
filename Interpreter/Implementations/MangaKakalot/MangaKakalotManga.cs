@@ -141,13 +141,13 @@ namespace ComicReader.Interpreter.Implementations
 				var chapterHtmlStart = allChapterHtmls[0];
 				var chapterHtmlEnd = allChapterHtmls[1];
 
-				var startNumberStr = htmlHelper.GetAttribute(chapterHtmlStart, "href").Substring(htmlHelper.GetAttribute(chapterHtmlStart, "href").LastIndexOf("-") + 1);
-				var endNumberStr = htmlHelper.GetAttribute(chapterHtmlEnd, "href").Substring(htmlHelper.GetAttribute(chapterHtmlEnd, "href").LastIndexOf("-") + 1);
+				var startNumberStr = htmlHelper.GetAttribute(chapterHtmlStart ?? "", "href").Substring(htmlHelper.GetAttribute(chapterHtmlStart ?? "", "href").LastIndexOf("-") + 1);
+				var endNumberStr = htmlHelper.GetAttribute(chapterHtmlEnd ?? "", "href").Substring(htmlHelper.GetAttribute(chapterHtmlEnd ?? "", "href").LastIndexOf("-") + 1);
 
 				var start = int.Parse(startNumberStr);
 				var end = int.Parse(endNumberStr);
 
-				var url = htmlHelper.GetAttribute(chapterHtmlStart, "href").Substring(0, htmlHelper.GetAttribute(chapterHtmlStart, "href").LastIndexOf("-") + 1);
+				var url = htmlHelper.GetAttribute(chapterHtmlStart ?? "", "href").Substring(0, htmlHelper.GetAttribute(chapterHtmlStart ?? "", "href").LastIndexOf("-") + 1);
 				for (int i = start; i <= end; i++) {
 					var u = url + i.ToString();
 					var title = u.Replace(HomeUrl, "").Substring(1);

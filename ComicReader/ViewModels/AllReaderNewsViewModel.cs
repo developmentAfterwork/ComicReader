@@ -4,12 +4,17 @@ using ComicReader.Services;
 using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CsQuery.ExtensionMethods.Internal;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 
-namespace ComicReader.ViewModels {
-	public partial class AllReaderNewsViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class AllReaderNewsViewModel : ObservableObject
+	{
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
+		private readonly IRequest request;
+		private readonly SettingsService settingsService;
 
 		[ObservableProperty]
 		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = [];
@@ -17,12 +22,16 @@ namespace ComicReader.ViewModels {
 		[ObservableProperty]
 		private bool _IsSearching = true;
 
-		public AllReaderNewsViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation) {
+		public AllReaderNewsViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation, IRequest request, SettingsService settingsService)
+		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
+			this.request = request;
+			this.settingsService = settingsService;
 		}
 
-		public void OnAppearing() {
+		public void OnAppearing()
+		{
 			if (IsSearching == false) {
 				return;
 			}
@@ -47,7 +56,7 @@ namespace ComicReader.ViewModels {
 						List<IManga> r = await a;
 						List<IMangaModel> mList = new();
 						foreach (var manga in r) {
-							var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
+							var mangaModel = await IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
 							mList.Add(mangaModel);
 						}
 
@@ -65,7 +74,8 @@ namespace ComicReader.ViewModels {
 			});
 		}
 
-		public async Task MangaSelected(object? mangaObj) {
+		public async Task MangaSelected(object? mangaObj)
+		{
 			if (mangaObj is IMangaModel model) {
 				inMemoryDatabase.Set<IManga>("selectedManga", model.Manga);
 

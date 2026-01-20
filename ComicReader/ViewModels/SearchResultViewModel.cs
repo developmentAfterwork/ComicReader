@@ -4,12 +4,17 @@ using ComicReader.Services;
 using ComicReader.ViewModels.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CsQuery.ExtensionMethods.Internal;
+using Interpreter.Interface;
 using System.Collections.ObjectModel;
 
-namespace ComicReader.ViewModels {
-	public partial class SearchResultViewModel : ObservableObject {
+namespace ComicReader.ViewModels
+{
+	public partial class SearchResultViewModel : ObservableObject
+	{
 		private readonly InMemoryDatabase inMemoryDatabase;
 		private readonly Navigation navigation;
+		private readonly IRequest request;
+		private readonly SettingsService settingsService;
 
 		[ObservableProperty]
 		private ObservableCollection<IMangaModelGroup> _SearchResultGroup = new();
@@ -19,12 +24,16 @@ namespace ComicReader.ViewModels {
 
 		private string lastSearchWord = "";
 
-		public SearchResultViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation) {
+		public SearchResultViewModel(InMemoryDatabase inMemoryDatabase, Navigation navigation, IRequest request, SettingsService settingsService)
+		{
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
+			this.request = request;
+			this.settingsService = settingsService;
 		}
 
-		public void OnAppearing() {
+		public void OnAppearing()
+		{
 			string searchWords = inMemoryDatabase.Get<string>("searchText");
 			IsSearching = !(lastSearchWord == searchWords);
 
@@ -53,7 +62,7 @@ namespace ComicReader.ViewModels {
 						List<IManga> r = await a;
 						List<IMangaModel> mList = new();
 						foreach (var manga in r) {
-							var mangaModel = await IMangaModel.Create(manga, manga.RequestHeaders);
+							var mangaModel = await IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
 							mList.Add(mangaModel);
 						}
 
@@ -71,7 +80,8 @@ namespace ComicReader.ViewModels {
 			});
 		}
 
-		public async Task MangaSelected(object? mangaObj) {
+		public async Task MangaSelected(object? mangaObj)
+		{
 			var model = mangaObj as IMangaModel;
 			if (model != null) {
 				inMemoryDatabase.Set<IManga>("selectedManga", model.Manga);

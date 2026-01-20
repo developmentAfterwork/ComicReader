@@ -1,8 +1,10 @@
 ﻿
 using System.Threading.Tasks;
 
-public class WebViewRequest {
-	private static class Settings {
+public class WebViewRequest
+{
+	private static class Settings
+	{
 		public static bool AutoCancelWebRequest = false;
 	}
 
@@ -16,7 +18,8 @@ public class WebViewRequest {
 	private TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
 	private string RequestUrl = "";
 
-	public WebViewRequest() {
+	public WebViewRequest()
+	{
 		_webView = new WebView {
 			WidthRequest = 400,
 			HeightRequest = 400,
@@ -59,7 +62,8 @@ public class WebViewRequest {
 		};
 	}
 
-	public async Task<string> GetHtmlAsync(string url, TimeSpan timeout) {
+	public async Task<string> GetHtmlAsync(string url, TimeSpan timeout)
+	{
 		await _semaphore.WaitAsync();
 
 		_done.Clicked -= Done_Clicked;
@@ -85,6 +89,7 @@ public class WebViewRequest {
 		_cancel.Clicked += Cancel_Clicked;
 		_autoCancel.Clicked += AutoCancel_Clicked;
 		_webView.Navigated += OnNavigated;
+		_page.Disappearing += OnDisappearing;
 
 		MainThread.BeginInvokeOnMainThread(() => {
 			_webView.Source = url;
@@ -110,7 +115,27 @@ public class WebViewRequest {
 		return await tcs.Task;
 	}
 
-	private async void OnNavigated(object? sender, WebNavigatedEventArgs e) {
+	private void OnDisappearing(object? sender, EventArgs e)
+	{
+		try {
+			_done.Clicked -= Done_Clicked;
+			_cancel.Clicked -= Cancel_Clicked;
+			_autoCancel.Clicked -= AutoCancel_Clicked;
+			_webView.Navigated -= OnNavigated;
+			_page.Disappearing -= OnDisappearing;
+
+			tcs.TrySetException(new Exception("Request failed"));
+		} catch (Exception ex) {
+			tcs.TrySetException(ex);
+		} finally {
+			try {
+				_semaphore.Release();
+			} catch { }
+		}
+	}
+
+	private async void OnNavigated(object? sender, WebNavigatedEventArgs e)
+	{
 		if (e.Url.StartsWith(RequestUrl)) {
 			var html = await _webView.EvaluateJavaScriptAsync("document.documentElement.outerHTML");
 			var raw = System.Text.RegularExpressions.Regex.Unescape(html ?? "");
@@ -124,26 +149,31 @@ public class WebViewRequest {
 			_cancel.Clicked -= Cancel_Clicked;
 			_autoCancel.Clicked -= AutoCancel_Clicked;
 			_webView.Navigated -= OnNavigated;
+			_page.Disappearing -= OnDisappearing;
 
 			_ = ReadResult();
 		}
 	}
 
-	private async void Done_Clicked(object? sender, EventArgs e) {
+	private async void Done_Clicked(object? sender, EventArgs e)
+	{
 		_done.Clicked -= Done_Clicked;
 		_cancel.Clicked -= Cancel_Clicked;
 		_autoCancel.Clicked -= AutoCancel_Clicked;
 		_webView.Navigated -= OnNavigated;
+		_page.Disappearing -= OnDisappearing;
 
 		await ReadResult();
 	}
 
-	private async void AutoCancel_Clicked(object? sender, EventArgs e) {
+	private async void AutoCancel_Clicked(object? sender, EventArgs e)
+	{
 		WebViewRequest.Settings.AutoCancelWebRequest = true;
 		await Cancel();
 	}
 
-	private async Task ReadResult() {
+	private async Task ReadResult()
+	{
 		try {
 			var html = await _webView.EvaluateJavaScriptAsync("document.documentElement.outerHTML");
 			var raw = System.Text.RegularExpressions.Regex.Unescape(html ?? "");
@@ -165,15 +195,19 @@ public class WebViewRequest {
 		}
 	}
 
-	private async void Cancel_Clicked(object? sender, EventArgs e) {
+	private async void Cancel_Clicked(object? sender, EventArgs e)
+	{
 		await Cancel();
 	}
 
-	private async Task Cancel() {
+	private async Task Cancel()
+	{
 		try {
 			_done.Clicked -= Done_Clicked;
 			_cancel.Clicked -= Cancel_Clicked;
+			_autoCancel.Clicked -= AutoCancel_Clicked;
 			_webView.Navigated -= OnNavigated;
+			_page.Disappearing -= OnDisappearing;
 
 			var nav = Application.Current?.MainPage?.Navigation;
 			if (nav != null) {
