@@ -116,7 +116,12 @@ namespace ComicReader.ViewModels
 			bool showDownloadPages = settingsService.GetShowDownloadedPagesNumbers();
 
 			if (_lastManga != null && manga == _lastManga) {
-				var cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c.Chapter)).ToList();
+				List<IChapterModel> cToShow;
+				if (settingsService.GetHideEmptyManga()) {
+					cToShow = Chapters.Where(c => !settingsService.GetChapterReaded(c.Chapter)).ToList();
+				} else {
+					cToShow = Chapters.ToList();
+				}
 				Chapters.Clear();
 
 				List<IChapterModel> cModels = new List<IChapterModel>();
@@ -145,7 +150,13 @@ namespace ComicReader.ViewModels
 
 			TotalChapersCount = $"{chaptersList.Count} Chapters";
 
-			var chaptersToShow = chaptersList.Where(c => !settingsService.GetChapterReaded(c)).ToList();
+			List<IChapter> chaptersToShow;
+			if (settingsService.GetHideEmptyManga()) {
+				chaptersToShow = chaptersList.Where(c => !settingsService.GetChapterReaded(c)).ToList();
+			} else {
+				chaptersToShow = chaptersList.ToList();
+			}
+
 			Chapters.Clear();
 
 			List<IChapterModel> chapterModels = new List<IChapterModel>();
