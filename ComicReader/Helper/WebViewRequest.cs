@@ -59,7 +59,7 @@ public class WebViewRequest
 
 		_page = new ContentPage {
 			Content = stack,
-			IsVisible = true,
+			IsVisible = false,
 			Opacity = 1.00
 		};
 	}
@@ -79,6 +79,8 @@ public class WebViewRequest
 		tcs = new TaskCompletionSource<string>();
 
 		await MainThread.InvokeOnMainThreadAsync(async () => {
+			_page.IsVisible = false;
+
 			_webView.Source = "about:blank";
 
 			var nav = Application.Current?.MainPage?.Navigation;
@@ -97,10 +99,18 @@ public class WebViewRequest
 			_webView.Source = url;
 		});
 
+		using var cts = new CancellationTokenSource(timeout);
+		await using var reg = cts.Token.Register(async () => {
+			await MainThread.InvokeOnMainThreadAsync(() => {
+				_webView.Navigated -= OnNavigated;
+				_page.IsVisible = true;
+			});
+		});
+
 		if (WebViewRequest.Settings.AutoCancelWebRequest) {
 			using var ctsCancel = new CancellationTokenSource(timeout + timeout);
-			await using var regCancel = ctsCancel.Token.Register(() => {
-				MainThread.BeginInvokeOnMainThread(async () => {
+			await using var regCancel = ctsCancel.Token.Register(async () => {
+				await MainThread.InvokeOnMainThreadAsync(async () => {
 					await Cancel();
 				});
 			});
@@ -135,6 +145,7 @@ public class WebViewRequest
 			var raw = System.Text.RegularExpressions.Regex.Unescape(html ?? "");
 
 			if (raw.Contains("Just a moment")) {
+				_page.IsVisible = true;
 				return;
 			}
 
