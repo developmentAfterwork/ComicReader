@@ -136,7 +136,7 @@ namespace ComicReader.ViewModels
 				}
 
 				var saved = settingsService.GetSaveChapterPosition(Chapter);
-				if (saved > 0) {
+				if (saved > 0 && settingsService.GetHideEmptyManga()) {
 					var c = pages.Count;
 					if (automaticSwitchToNextChapter) {
 						c++;

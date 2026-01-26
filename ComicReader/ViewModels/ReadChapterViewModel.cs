@@ -131,7 +131,7 @@ namespace ComicReader.ViewModels
 				Position = $"1/{Pages.Count}";
 
 				var saved = settingsService.GetSaveChapterPosition(Chapter);
-				if (saved > 0) {
+				if (saved > 0 && settingsService.GetHideEmptyManga()) {
 					_ = Task.Run(async () => {
 						await Task.Delay(500);
 						SelectedItem = Pages[saved - 1];
