@@ -32,7 +32,7 @@ namespace ComicReader
 
 			_ = Task.Run(async () => {
 				try {
-					await SettingsViewModel.WriteBackup("backup.auto.json", settingsService, factory, fileSaverService);
+					await SettingsViewModel.WriteBackup($"backup.{DateTime.Now:yyyyMMdd}.auto.json", new List<string>() { "backups" }, settingsService, factory, fileSaverService);
 				} catch { }
 			});
 		}
