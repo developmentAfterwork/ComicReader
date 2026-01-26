@@ -28,9 +28,11 @@ namespace ComicReader.ViewModels.Model
 
 		public string Description { get; set; } = default!;
 
-		public ImageSource? SourcCoverUrlSource { get; set; }
+		[ObservableProperty]
+		private ImageSource? _sourcCoverUrlSource;
 
-		public string CoverUrl { get; set; } = default!;
+		[ObservableProperty]
+		private string _coverUrl = default!;
 
 		public IManga Manga { get; set; } = default!;
 
