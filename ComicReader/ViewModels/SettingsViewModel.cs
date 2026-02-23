@@ -17,6 +17,7 @@ namespace ComicReader.ViewModels
 		private readonly SimpleNotificationService simpleNotificationService;
 		private readonly Factory factory;
 		private readonly MangaQueue mangaQueue;
+		private readonly Navigation navigation;
 
 		public ICommand WriteSettings { get; set; }
 
@@ -25,6 +26,8 @@ namespace ComicReader.ViewModels
 		public ICommand RefreshAll { get; set; }
 
 		public ICommand DownloadAllChapters { get; set; }
+
+		public ICommand UnitTests { get; set; }
 
 		[ObservableProperty]
 		private bool _HideEmptyManga = true;
@@ -47,18 +50,20 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private bool _EndlessScrollMode = false;
 
-		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue)
+		public SettingsViewModel(SettingsService settingsService, FileSaverService fileSaverService, SimpleNotificationService simpleNotificationService, Factory factory, MangaQueue mangaQueue, Navigation navigation)
 		{
 			this.settingsService = settingsService;
 			this.fileSaverService = fileSaverService;
 			this.simpleNotificationService = simpleNotificationService;
 			this.factory = factory;
 			this.mangaQueue = mangaQueue;
+			this.navigation = navigation;
 
 			WriteSettings = new AsyncRelayCommand(OnWriteSettings);
 			ReadSettings = new AsyncRelayCommand(OnReadSettings);
 			RefreshAll = new AsyncRelayCommand(OnRefreshAll);
 			DownloadAllChapters = new AsyncRelayCommand(OnDownloadAllChapters);
+			UnitTests = new AsyncRelayCommand(OnUnitTests);
 
 			HideEmptyManga = settingsService.GetHideEmptyManga();
 			DeleteMangaAfterReaded = settingsService.GetDeleteChaptersAfterReading();
@@ -179,6 +184,11 @@ namespace ComicReader.ViewModels
 					await simpleNotificationService.ShowError($"Error", $"{manga?.Name} - {ex.Message}");
 				}
 			}
+		}
+
+		private Task OnUnitTests()
+		{
+			return navigation.GotoTests();
 		}
 
 		internal void OnDisappearing()

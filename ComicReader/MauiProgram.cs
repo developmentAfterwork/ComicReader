@@ -103,6 +103,7 @@ namespace ComicReader
 			builder.Services.AddTransient<SettingsViewModel>();
 			builder.Services.AddTransient<ReaderNewsViewModel>();
 			builder.Services.AddTransient<AllReaderNewsViewModel>();
+			builder.Services.AddTransient<TestViewModel>();
 		}
 
 		private static void AddViews(MauiAppBuilder builder)
@@ -118,6 +119,7 @@ namespace ComicReader
 			builder.Services.AddTransient<ReadChapterEndlessScrollView>();
 			builder.Services.AddTransient<ReaderNewsView>();
 			builder.Services.AddTransient<AllReaderNewsView>();
+			builder.Services.AddTransient<TestView>();
 		}
 
 		private static void AddUnhandledExceptionHandler()

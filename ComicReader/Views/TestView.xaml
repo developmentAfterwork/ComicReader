@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="ComicReader.Views.TestView"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:viewModel="clr-namespace:ComicReader.ViewModels"
+	Title="TestView"
+	x:DataType="viewModel:TestViewModel"
+	FlyoutItem.IsVisible="False"
+	Shell.NavBarIsVisible="False">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Label
+			Grid.Row="0"
+			Grid.Column="0"
+			Margin="8"
+			FontSize="Large"
+			HorizontalOptions="Center"
+			Text="Unit tests"
+			VerticalOptions="Center" />
+		<CollectionView
+			Grid.Row="1"
+			Margin="8,0,8,0"
+			ItemsSource="{Binding TestResults}"
+			SelectionMode="None">
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="x:String">
+					<StackLayout>
+						<Label Text="{Binding .}" />
+					</StackLayout>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</Grid>
+</ContentPage>
