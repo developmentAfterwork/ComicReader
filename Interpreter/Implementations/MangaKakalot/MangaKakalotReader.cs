@@ -45,7 +45,7 @@ namespace ComicReader.Interpreter.Implementations
 
 				return mangas;
 			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				return new();
 			}
 		}
@@ -91,7 +91,7 @@ namespace ComicReader.Interpreter.Implementations
 					var cont = HtmlHelper.ElementById(response, "contentBox");
 					desc = cont;
 				} catch (Exception ex) {
-					await Notification.ShowError($"Error", ex.Message);
+					await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				}
 			}
 
@@ -132,7 +132,7 @@ namespace ComicReader.Interpreter.Implementations
 					List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateTruyen(url); });
 					l.AddRange(mangas);
 				} catch (Exception ex) {
-					await Notification.ShowError($"Error", ex.Message);
+					await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				}
 			}
 
@@ -145,7 +145,7 @@ namespace ComicReader.Interpreter.Implementations
 					List<IManga> mangas = await TryGetList(() => { return GetMangasFromResponseUpdateTruyen(url); });
 					l.AddRange(mangas);
 				} catch (Exception ex) {
-					await Notification.ShowError($"Error", ex.Message);
+					await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				}
 			}
 

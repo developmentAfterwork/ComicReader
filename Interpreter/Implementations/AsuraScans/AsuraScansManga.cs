@@ -89,7 +89,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _timeout, _requestHelper, _htmlHelper, _notification));
 				}
 			} catch (Exception ex) {
-				await _notification.ShowError($"Error", ex.Message);
+				await _notification.ShowError($"Error", $"{Name} - {ex.Message}");
 			}
 
 			return chapters;

@@ -275,7 +275,7 @@ namespace ComicReader.ViewModels
 				await mangaQueue.AddMissingChaptersFromManga(manga, simpleNotificationService);
 				IsSearching = false;
 			} catch (Exception ex) {
-				await simpleNotificationService.ShowError("Error", ex.Message);
+				await simpleNotificationService.ShowError("Error", $"{manga.Name} - {ex.Message}");
 				IsSearching = false;
 			}
 		}
@@ -299,7 +299,7 @@ namespace ComicReader.ViewModels
 				inMemoryDatabase.Set<IManga>("selectedManga", reloadedManga);
 				await Init();
 			} catch (Exception ex) {
-				await simpleNotificationService.ShowError("Error", ex.Message);
+				await simpleNotificationService.ShowError("Error", $"{manga.Name} - {ex.Message}");
 			}
 
 			IsSearching = false;

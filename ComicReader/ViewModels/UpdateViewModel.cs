@@ -95,7 +95,7 @@ namespace ComicReader.ViewModels
 						await originManga.Save();
 					}
 				} catch (Exception ex) {
-					await simpleNotificationService.ShowError("Error", ex.Message);
+					await simpleNotificationService.ShowError("Error", $"{bookmarkId} - {ex.Message}");
 				}
 			}
 
@@ -108,7 +108,7 @@ namespace ComicReader.ViewModels
 					try {
 						await mangaQueue.AddChapter(chapter.Chapter);
 					} catch (Exception ex) {
-						await simpleNotificationService.ShowError("Error", ex.Message);
+						await simpleNotificationService.ShowError("Error", $"{chapter.Chapter.MangaName} - {chapter.Chapter.Title} - {ex.Message}");
 					}
 				}
 			}

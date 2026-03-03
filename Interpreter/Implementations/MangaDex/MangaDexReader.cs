@@ -53,7 +53,7 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 							l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper, _timeout));
 						} catch (Exception) { }
 					} catch (Exception ex) {
-						await _notification.ShowError($"Error", ex.Message);
+						await _notification.ShowError($"Error", $"{Title} - {ex.Message}");
 					}
 				}
 			}
@@ -87,14 +87,14 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 								l.Add(new MangaDexManga(m.Id, "MangaDex", m.Attributes.Title["en"], homeUrl, coverUrl, "unknown", m.Attributes.Status, langFlagUrl, m.Attributes.Description["en"], genres, _requestHelper, _htmlHelper, _timeout));
 							} catch (Exception) { }
 						} catch (Exception ex) {
-							await _notification.ShowError($"Error", ex.Message);
+							await _notification.ShowError($"Error", $"{Title} - {ex.Message}");
 						}
 					}
 				}
 
 				return l;
 			} catch (Exception ex) {
-				await _notification.ShowError($"Error", ex.Message);
+				await _notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				return new();
 			}
 		}

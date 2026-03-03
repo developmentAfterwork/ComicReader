@@ -43,7 +43,7 @@ namespace ComicReader.Reader
 
 				return mangas;
 			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				return new();
 			}
 		}
@@ -100,7 +100,7 @@ namespace ComicReader.Reader
 			try {
 				l.AddRange(GetMangasFromResponse(response));
 			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 			}
 
 			url = "https://mangakatana.com/latest";
@@ -108,7 +108,7 @@ namespace ComicReader.Reader
 			try {
 				l.AddRange(GetMangasFromResponse(response));
 			} catch (Exception ex) {
-				await Notification.ShowError($"Error", ex.Message);
+				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 			}
 
 			return l;

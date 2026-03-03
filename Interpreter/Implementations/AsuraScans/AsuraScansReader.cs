@@ -48,7 +48,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 					}
 				}
 			} catch (Exception ex) {
-				await notification.ShowError($"Error", ex.Message);
+				await notification.ShowError($"Error", $"{Title} - {ex.Message}");
 			}
 
 			return l;
@@ -76,7 +76,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 						}
 					}
 				} catch (Exception ex) {
-					await notification.ShowError($"Error", ex.Message);
+					await notification.ShowError($"Error", $"{Title} - {ex.Message}");
 				}
 			}
 
