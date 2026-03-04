@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Microsoft.Maui.Controls.PlatformConfiguration;
+using AndroidX.Core.View;
 using Plugin.LocalNotification;
 
 namespace ComicReader
@@ -55,6 +55,28 @@ namespace ComicReader
 				manager?.CreateNotificationChannel(channel);
 #pragma warning restore CA1416
 			}
+
+			try {
+				AppTheme currentTheme = App.Current?.RequestedTheme ?? AppTheme.Unspecified;
+				WindowCompat.SetDecorFitsSystemWindows(Window, false);
+				var controller = WindowCompat.GetInsetsController(Window, Window?.DecorView);
+
+				if (currentTheme == AppTheme.Dark) {
+#pragma warning disable CA1422 // Plattformkompatibilität überprüfen
+					Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#000000"));
+					Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#000000"));
+
+					if (controller != null)
+						controller.AppearanceLightNavigationBars = false;
+				} else if (currentTheme == AppTheme.Light) {
+					Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#512BD4"));
+					Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#512BD4"));
+#pragma warning restore CA1422 // Plattformkompatibilität überprüfen
+
+					if (controller != null)
+						controller.AppearanceLightNavigationBars = true;
+				}
+			} catch { }
 		}
 	}
 }
