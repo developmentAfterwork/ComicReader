@@ -52,24 +52,22 @@ namespace ComicReader.ViewModels
 
 			_ = Task.Run(async () => {
 				foreach (IReader reader in activeReaders) {
-					await reader.LoadUpdatesAndNewMangs().ContinueWith(async a => {
-						List<IManga> r = await a;
-						List<IMangaModel> mList = new();
-						foreach (var manga in r) {
-							var mangaModel = IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
-							mList.Add(mangaModel);
+					try {
+						var group = SearchResultGroup.FirstOrDefault(m => m.Source == reader.Title);
+						if (group == null) {
+							continue;
 						}
 
-						var group = SearchResultGroup.First(m => m.Source == (mList.FirstOrDefault()?.Source ?? ""));
-						if (group != null) {
-							group.Mangas.AddRange(mList);
-							group.IsSearching = false;
-						}
-					});
-				}
+						List<IManga> mangas = await reader.LoadUpdatesAndNewMangs().ConfigureAwait(false);
+						group.IsSearching = false;
 
-				foreach (var item in SearchResultGroup) {
-					item.IsSearching = false;
+						foreach (var manga in mangas) {
+							try {
+								var mangaModel = IMangaModel.Create(manga, request, settingsService, manga.RequestHeaders);
+								group.Mangas.Add(mangaModel);
+							} catch { }
+						}
+					} catch { }
 				}
 			});
 		}
