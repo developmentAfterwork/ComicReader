@@ -72,7 +72,7 @@
 			<ffimageloading:CachedImage
 				Aspect="AspectFit"
 				Source="{Binding CurrentPage, Converter={StaticResource CachedImageConverter}, ConverterParameter='ichapterParameter'}"
-				WidthRequest="{Binding Source={x:Reference pagesCarusel}, Path=Width}" />
+				WidthRequest="{Binding Source={x:Reference pagesCarusel}}" />
 		</local:PinchToZoomContainer>
 		<ActivityIndicator
 			Grid.Row="0"
