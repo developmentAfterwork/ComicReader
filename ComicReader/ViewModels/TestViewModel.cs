@@ -54,35 +54,28 @@ namespace ComicReader.ViewModels
 				return;
 			}
 
-			IManga? mangaWithChapters = null;
+			bool foundMangaWithPages = false;
 			foreach (var manga in mangas) {
 				try {
-					var chp = await manga.GetBooks();
-					if (chp != null && chp.Count > 0) {
-						mangaWithChapters = manga;
-						break;
+					var chapters = await manga.GetBooks();
+					if (chapters != null && chapters.Count > 0) {
+						foreach (var chapter in chapters) {
+							var pages = await chapter.GetPageUrls(false, factory);
+							if (pages != null && pages.Count > 0) {
+								foundMangaWithPages = true;
+								break;
+							}
+						}
+
+						if (foundMangaWithPages) {
+							break;
+						}
 					}
-				} catch {
-					// Ignore errors and continue searching for a manga with chapters
-				}
+				} catch { }
 			}
 
-			if (mangaWithChapters == null) {
-				TestResults.Add("Update: no manga");
-				return;
-			}
-
-			var chapters = await mangaWithChapters.GetBooks();
-			if (chapters == null || chapters.Count == 0) {
-				TestResults.Add("Update: no chapters");
-				return;
-			}
-
-			var chapter = chapters.First();
-			var pages = await chapter.GetPageUrls(false, factory);
-			if (pages == null || pages.Count == 0) {
-				TestResults.Add("Update: no pages");
-				return;
+			if (!foundMangaWithPages) {
+				TestResults.Add("failed");
 			}
 
 			TestResults.Add("Update: completed");
@@ -96,35 +89,28 @@ namespace ComicReader.ViewModels
 				return;
 			}
 
-			IManga? mangaWithChapters = null;
+			bool foundMangaWithPages = false;
 			foreach (var manga in mangas) {
 				try {
-					var chp = await manga.GetBooks();
-					if (chp != null && chp.Count > 0) {
-						mangaWithChapters = manga;
-						break;
+					var chapters = await manga.GetBooks();
+					if (chapters != null && chapters.Count > 0) {
+						foreach (var chapter in chapters) {
+							var pages = await chapter.GetPageUrls(false, factory);
+							if (pages != null && pages.Count > 0) {
+								foundMangaWithPages = true;
+								break;
+							}
+						}
+
+						if (foundMangaWithPages) {
+							break;
+						}
 					}
-				} catch {
-					// Ignore errors and continue searching for a manga with chapters
-				}
+				} catch { }
 			}
 
-			if (mangaWithChapters == null) {
-				TestResults.Add("Search: no manga");
-				return;
-			}
-
-			var chapters = await mangaWithChapters.GetBooks();
-			if (chapters == null || chapters.Count == 0) {
-				TestResults.Add("Search: no chapters");
-				return;
-			}
-
-			var chapter = chapters.First();
-			var pages = await chapter.GetPageUrls(false, factory);
-			if (pages == null || pages.Count == 0) {
-				TestResults.Add("Search: no pages");
-				return;
+			if (!foundMangaWithPages) {
+				TestResults.Add("failed");
 			}
 
 			TestResults.Add("Search: completed");
