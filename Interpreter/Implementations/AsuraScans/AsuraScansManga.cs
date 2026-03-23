@@ -32,6 +32,8 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		public string Source { get; }
 
+		public bool IsFavorite { get; set; } = false;
+
 		public AsuraScansManga(
 			string name,
 			string homeUrl,

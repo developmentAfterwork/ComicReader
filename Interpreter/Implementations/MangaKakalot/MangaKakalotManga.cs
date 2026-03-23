@@ -35,6 +35,8 @@ namespace ComicReader.Interpreter.Implementations
 			{ "referer", "https://www.mangakakalot.gg/" }
 		};
 
+		public bool IsFavorite { get; set; } = false;
+
 		public MangaKakalotManga(
 			string name,
 			string homeUrl,

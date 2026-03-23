@@ -31,50 +31,54 @@ namespace ComicReader.ViewModels
 			this.request = request;
 		}
 
-		public async Task OnAppearing()
+		public Task OnAppearing()
 		{
 			IsBusy = true;
 
-			List<string> bookmarkedUniqIds = new();
+			return Task.Run(async () => {
+				List<string> bookmarkedUniqueIds = new();
 
-			BookmarkedMangas.ForEach(b => b.Selected -= OnMangeSelected);
-			BookmarkedMangas.Clear();
+				BookmarkedMangas.ForEach(b => b.Selected -= OnMangeSelected);
+				BookmarkedMangas.Clear();
 
-			bookmarkedUniqIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
+				bookmarkedUniqueIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
 
-			ObservableCollection<MangaViewModel> m = new();
-			BookmarkedMangas = m;
+				ObservableCollection<MangaViewModel> m = new();
+				BookmarkedMangas = m;
 
-			IsBusy = false;
+				IsBusy = false;
 
-			foreach (var bookmarkId in bookmarkedUniqIds.Where(s => s.Contains("|"))) {
-				Stopwatch sw = Stopwatch.StartNew();
-				try {
-					IManga? manga = await factory.GetMangaFromBookmarkId(bookmarkId);
-					if (manga == null)
-						continue;
+				List<IManga> cachedMangas = new();
+				foreach (var bookmarkId in bookmarkedUniqueIds.Where(s => s.Contains("|"))) {
+					try {
+						IManga? manga = await factory.GetMangaFromBookmarkId(bookmarkId);
+						if (manga == null)
+							continue;
 
-					MangaViewModel model = new MangaViewModel(manga, request, settingsService);
-					model.Selected += OnMangeSelected;
-
-					if (settingsService.GetHideEmptyManga()) {
-						try {
-							var chapters = await manga.GetBooks().ConfigureAwait(false);
-							var toGo = chapters.Where(c => !settingsService.GetChapterReaded(c)).ToList();
-
-							if (toGo.Any()) {
-								m.Add(model);
-							}
-						} catch { }
-					} else {
-						m.Add(model);
-					}
-				} catch (Exception ex) {
-					var e = ex.ToString();
+						cachedMangas.Add(manga);
+					} catch { }
 				}
-				sw.Stop();
-				Console.WriteLine($"Loaded manga {bookmarkId} in {sw.ElapsedMilliseconds} ms");
-			}
+
+				foreach (var manga in cachedMangas.OrderBy(c => c.IsFavorite ? 1 : 2).ThenBy(c => c.Name)) {
+					try {
+						MangaViewModel model = new MangaViewModel(manga, request, settingsService);
+						model.Selected += OnMangeSelected;
+
+						if (settingsService.GetHideEmptyManga()) {
+							try {
+								var chapters = await manga.GetBooks().ConfigureAwait(false);
+								var toGo = chapters.Where(c => !settingsService.GetChapterReaded(c)).ToList();
+
+								if (toGo.Any()) {
+									m.Add(model);
+								}
+							} catch { }
+						} else {
+							m.Add(model);
+						}
+					} catch { }
+				}
+			});
 		}
 
 		private async void OnMangeSelected(object? sender, IManga e)

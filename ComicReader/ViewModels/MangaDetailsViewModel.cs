@@ -74,12 +74,17 @@ namespace ComicReader.ViewModels
 
 		public ICommand Open { get; set; }
 
+		public ICommand Favorite { get; set; }
+
 		private IManga? _lastManga;
 
 		private Task _initTask;
 
 		[ObservableProperty]
 		public ImageSource _coverUrlImageSource = default!;
+
+		[ObservableProperty]
+		private bool _isFavorite = false;
 
 		public MangaDetailsViewModel(InMemoryDatabase database, Navigation navigation, SettingsService settingsService, MangaQueue mangaQueue, SimpleNotificationService simpleNotificationService, FileSaverService fileSaverService, Factory factory, IRequest requestHelper, PopupService popupService)
 		{
@@ -99,6 +104,7 @@ namespace ComicReader.ViewModels
 			Refesh = new AsyncRelayCommand(OnRefresh);
 			DeleteManga = new AsyncRelayCommand(OnDeleteManga);
 			Open = new AsyncRelayCommand(OnOpen);
+			Favorite = new AsyncRelayCommand(OnFavorite);
 
 			_initTask = new Task(async () => await Init());
 		}
@@ -146,6 +152,7 @@ namespace ComicReader.ViewModels
 			Status = manga.Status;
 			LanguageFlagUrl = manga.LanguageFlagUrl;
 			Description = manga.Description;
+			IsFavorite = manga.IsFavorite;
 
 			var chaptersList = await manga.GetBooks().ConfigureAwait(false);
 
@@ -310,6 +317,15 @@ namespace ComicReader.ViewModels
 			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
 
 			await Browser.OpenAsync(manga.HomeUrl, BrowserLaunchMode.SystemPreferred);
+		}
+
+		private async Task OnFavorite()
+		{
+			IManga manga = inMemoryDatabase.Get<IManga>("selectedManga");
+			manga.IsFavorite = !manga.IsFavorite;
+			IsFavorite = manga.IsFavorite;
+
+			await manga.Save();
 		}
 	}
 }

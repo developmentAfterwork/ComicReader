@@ -27,6 +27,9 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private string _Title = string.Empty;
 
+		[ObservableProperty]
+		private bool _isFavorite = false;
+
 		public ICommand MangeSelected => new RelayCommand(OnMangeSelected);
 
 		public ICommand DownloadManga => new RelayCommand(OnDownloadManga);
@@ -43,6 +46,7 @@ namespace ComicReader.ViewModels
 			this.request = request;
 			this.settingsService = settingsService;
 			this.Title = manga.Name;
+			this.IsFavorite = manga.IsFavorite;
 
 			_ = Task.Run(async () => {
 				await Task.Delay(500);

@@ -25,5 +25,7 @@
 		List<string> Genres { get; }
 
 		Dictionary<string, string>? RequestHeaders { get; }
+
+		bool IsFavorite { get; set; }
 	}
 }

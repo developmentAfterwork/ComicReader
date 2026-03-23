@@ -32,6 +32,8 @@ namespace ComicReader.Interpreter.Implementations.MangaDex
 
 		public Dictionary<string, string>? RequestHeaders => null;
 
+		public bool IsFavorite { get; set; } = false;
+
 		public MangaDexManga(string? id, string source, string name, string homeUrl, string coverUrl, string autor, string status, string languageFlagUrl, string description, List<string> genres, IRequest requestHelper, HtmlHelper htmlHelper, TimeSpan timeout)
 		{
 			ID = id ?? throw new Exception("ID is null");

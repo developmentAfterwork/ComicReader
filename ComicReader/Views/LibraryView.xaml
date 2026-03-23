@@ -42,13 +42,25 @@
 						StrokeShape="RoundRectangle 12"
 						StrokeThickness="1">
 						<VerticalStackLayout>
-							<Label
-								Margin="4"
-								FontAttributes="Bold"
-								FontSize="12"
-								HorizontalOptions="Center"
-								MaxLines="1"
-								Text="{Binding Title}" />
+							<Grid ColumnDefinitions="*, Auto">
+								<Label
+									Grid.Column="0"
+									Margin="4"
+									FontAttributes="Bold"
+									FontSize="12"
+									HorizontalOptions="Center"
+									MaxLines="1"
+									Text="{Binding Title}" />
+								<Label
+									Grid.Column="1"
+									Margin="-12,4,4,4"
+									FontAttributes="Bold"
+									FontSize="12"
+									HorizontalOptions="Center"
+									IsVisible="{Binding IsFavorite}"
+									Text="★"
+									TextColor="Orange" />
+							</Grid>
 							<ffimageloading:CachedImage
 								Aspect="AspectFill"
 								HeightRequest="220"

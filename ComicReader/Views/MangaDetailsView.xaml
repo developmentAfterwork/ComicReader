@@ -75,11 +75,23 @@
 								Grid.Row="0"
 								Grid.Column="1"
 								Orientation="Vertical">
-								<Label
-									FontAttributes="Bold"
-									FontSize="18"
-									MaxLines="3"
-									Text="{Binding Title}" />
+								<Grid ColumnDefinitions="*, Auto">
+									<Label
+										Grid.Column="0"
+										FontAttributes="Bold"
+										FontSize="18"
+										MaxLines="3"
+										Text="{Binding Title}" />
+									<Label
+										Grid.Column="1"
+										FontAttributes="Bold"
+										FontSize="18"
+										HorizontalOptions="Center"
+										IsVisible="{Binding IsFavorite}"
+										Text="★"
+										TextColor="Orange" />
+								</Grid>
+
 								<Label
 									Margin="0,4,0,0"
 									FontSize="12"
@@ -120,6 +132,10 @@
 									Margin="0,0,8,0"
 									Command="{Binding Open}"
 									Text="Open" />
+								<Button
+									Margin="0,0,8,0"
+									Command="{Binding Favorite}"
+									Text="Favorite" />
 							</StackLayout>
 						</ScrollView>
 						<StackLayout

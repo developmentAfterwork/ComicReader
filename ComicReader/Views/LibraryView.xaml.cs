@@ -26,6 +26,6 @@ public partial class LibraryView : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		_ = libraryViewModel.OnAppearing();
+		_ = libraryViewModel.OnAppearing().ConfigureAwait(false);
 	}
 }

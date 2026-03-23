@@ -30,6 +30,8 @@ namespace ComicReader.Interpreter
 
 		public Dictionary<string, string>? RequestHeaders { get; set; } = null;
 
+		public bool IsFavorite { get; set; } = false;
+
 		public Task<List<IChapter>> GetBooks()
 		{
 			return Task.FromResult(Books.Cast<IChapter>().ToList());
@@ -53,6 +55,7 @@ namespace ComicReader.Interpreter
 			Genres = manga.Genres;
 			Source = manga.Source;
 			RequestHeaders = manga.RequestHeaders;
+			IsFavorite = manga.IsFavorite;
 		}
 
 		public async Task Save()

@@ -35,6 +35,8 @@ namespace ComicReader.Interpreter
 			{ "referer", "https://mangakatana.com/" }
 		};
 
+		public bool IsFavorite { get; set; } = false;
+
 		public MangaKatanaManga(
 			string name,
 			string homeUrl,
