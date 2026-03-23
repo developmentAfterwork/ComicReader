@@ -15,6 +15,7 @@ namespace ComicReader.ViewModels
 		private readonly Navigation navigation;
 		private readonly Factory factory;
 		private readonly IRequest request;
+		private readonly SimpleNotificationService simpleNotificationService;
 
 		[ObservableProperty]
 		private bool _isBusy = false;
@@ -22,13 +23,14 @@ namespace ComicReader.ViewModels
 		[ObservableProperty]
 		private ObservableCollection<MangaViewModel> _BookmarkedMangas = new ObservableCollection<MangaViewModel>();
 
-		public LibraryViewModel(SettingsService settingsService, InMemoryDatabase inMemoryDatabase, Navigation navigation, Factory factory, IRequest request)
+		public LibraryViewModel(SettingsService settingsService, InMemoryDatabase inMemoryDatabase, Navigation navigation, Factory factory, IRequest request, SimpleNotificationService simpleNotificationService)
 		{
 			this.settingsService = settingsService;
 			this.inMemoryDatabase = inMemoryDatabase;
 			this.navigation = navigation;
 			this.factory = factory;
 			this.request = request;
+			this.simpleNotificationService = simpleNotificationService;
 		}
 
 		public Task OnAppearing()
@@ -56,7 +58,9 @@ namespace ComicReader.ViewModels
 							continue;
 
 						cachedMangas.Add(manga);
-					} catch { }
+					} catch (Exception ex) {
+						await simpleNotificationService.ShowError($"Error loading manga", $"bookmark id is {bookmarkId}: {ex.Message}");
+					}
 				}
 
 				foreach (var manga in cachedMangas.OrderBy(c => c.IsFavorite ? 1 : 2).ThenBy(c => c.Name)) {
@@ -72,11 +76,15 @@ namespace ComicReader.ViewModels
 								if (toGo.Any()) {
 									m.Add(model);
 								}
-							} catch { }
+							} catch (Exception ex) {
+								await simpleNotificationService.ShowError($"Error loading manga", $"manga id is {manga.ID}: {ex.Message}");
+							}
 						} else {
 							m.Add(model);
 						}
-					} catch { }
+					} catch (Exception ex) {
+						await simpleNotificationService.ShowError($"Error loading manga", $"manga id is {manga.ID}: {ex.Message}");
+					}
 				}
 			});
 		}
