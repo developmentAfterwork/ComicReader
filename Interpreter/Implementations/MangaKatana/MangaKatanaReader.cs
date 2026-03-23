@@ -1,6 +1,8 @@
 ﻿using ComicReader.Helper;
 using ComicReader.Interpreter;
 using Interpreter.Interface;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace ComicReader.Reader
 {
@@ -80,14 +82,27 @@ namespace ComicReader.Reader
 			var desc = HtmlHelper.ElementsByClass(mangaToParse, "summary").FirstOrDefault() ?? "...";
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
-			desc = FixDescription(desc);
+			desc = HtmlToPlainText_Regex(desc);
+			title = HtmlToPlainText_Regex(title);
 
 			return new MangaKatanaManga(title, homeUrl, preViewImage, autor, status, langFlagUrl, desc, genres, RequestHelper, HtmlHelper, timeout);
 		}
 
-		private string FixDescription(string desc)
+		private static string HtmlToPlainText_Regex(string html)
 		{
-			return desc.Replace("<br>", "").Replace("<b>", "").Replace("</b>", "").Replace("<i>", "").Replace("</i>", "").Replace("&quot;", "").Replace("&#8230;", "").Replace("&#8220;", "").Replace("&#8217;", "").Replace("&#8221;", "").Replace("&#8213;", "").Replace("&#333;;", "");
+			if (string.IsNullOrWhiteSpace(html)) return string.Empty;
+
+			// Ersetze <br> und </p> durch neue Zeile, sonst alle Tags entfernen
+			var withBreaks = Regex.Replace(html, @"<(br|br\s*/|/p|/div|/li)\s*>", "\n", RegexOptions.IgnoreCase);
+			var noTags = Regex.Replace(withBreaks, "<.*?>", string.Empty);
+			var decoded = WebUtility.HtmlDecode(noTags);
+
+			// whitespace normalisieren
+			decoded = Regex.Replace(decoded, @"\r\n|\r|\n", "\n");
+			decoded = Regex.Replace(decoded, @"[ \t]+", " ");
+			decoded = Regex.Replace(decoded, @"\n\s*\n+", "\n\n");
+
+			return decoded.Trim();
 		}
 
 		public async Task<List<IManga>> LoadUpdatesAndNewMangs()
