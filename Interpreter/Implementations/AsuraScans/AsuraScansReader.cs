@@ -15,7 +15,7 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 		public bool IsEnabled { get; set; } = true;
 
-		public string HomeUrl => "https://asuracomic.net/";
+		public string HomeUrl => "https://asurascans.com/";
 
 		public bool ShowReader { get; set; } = true;
 
@@ -32,17 +32,19 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			List<IManga> l = new List<IManga>();
 
 			try {
-				var url = $"https://asuracomic.net/series?order=update";
+				var url = $"https://asurascans.com/browse";
 				var response = await requestHelper.DoGetRequest(url, 3, true, timeout);
 
-				var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
-				if (seriesList.Any()) {
-					var allA = htmlHelper.ElementsByType(seriesList[1], "a");
-					var allAOuter = htmlHelper.ElementsByTypeOuter(seriesList[1], "a");
+				var seriesGrid = htmlHelper.ElementById(response, "series-grid");
+				var seriesList = htmlHelper.ElementsByClass(seriesGrid, "series-card");
 
-					for (int j = 0; j < allA.Count; j++) {
+				if (seriesList.Any()) {
+					foreach (var h in seriesList) {
+						var allA = htmlHelper.ElementsByType(h, "a");
+						var allAOuter = htmlHelper.ElementsByTypeOuter(h, "a");
+
 						try {
-							var m = await ParseManga(allAOuter[j], allA[j]);
+							var m = await ParseManga(allAOuter[1], allA[1], allA[0]);
 							l.Add(m);
 						} catch { }
 					}
@@ -60,17 +62,19 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 
 			for (int i = 1; i <= 2; i++) {
 				try {
-					var url = $"https://asuracomic.net/series?page={i}&name={keyWords.Replace(" ", "%20")}";
+					var url = $"https://asurascans.com/browse?page={i}&q={keyWords.Replace(" ", "%20")}";
 					var response = await requestHelper.DoGetRequest(url, 3, true, timeout);
 
-					var seriesList = htmlHelper.ElementsByClass(response, "grid-cols-2");
-					if (seriesList.Any()) {
-						var allA = htmlHelper.ElementsByType(seriesList[1], "a");
-						var allAOuter = htmlHelper.ElementsByTypeOuter(seriesList[1], "a");
+					var seriesGrid = htmlHelper.ElementById(response, "series-grid");
+					var seriesList = htmlHelper.ElementsByClass(seriesGrid, "series-card");
 
-						for (int j = 0; j < allA.Count; j++) {
+					if (seriesList.Any()) {
+						foreach (var h in seriesList) {
+							var allA = htmlHelper.ElementsByType(h, "a");
+							var allAOuter = htmlHelper.ElementsByTypeOuter(h, "a");
+
 							try {
-								var m = await ParseManga(allAOuter[j], allA[j]);
+								var m = await ParseManga(allAOuter[1], allA[1], allA[0]);
 								l.Add(m);
 							} catch { }
 						}
@@ -83,33 +87,22 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			return l;
 		}
 
-		private async Task<AsuraScansManga> ParseManga(string? aOuter, string? a)
+		private async Task<AsuraScansManga> ParseManga(string? aOuter, string? a, string? cover)
 		{
 			var mUrl = $"{HomeUrl}{htmlHelper.GetAttribute(aOuter ?? string.Empty, "href")}";
-			var title = htmlHelper.ElementsByClass(a ?? string.Empty, "block")[2];
-			var coverImg = htmlHelper.ElementsByTypeOuter(a ?? string.Empty, "img");
-			var cover = htmlHelper.GetAttribute(coverImg.FirstOrDefault() ?? string.Empty, "src");
+			var title = htmlHelper.ElementsByType(a ?? string.Empty, "h3").FirstOrDefault() ?? "-";
+			var coverUrl = htmlHelper.GetAttribute(cover ?? string.Empty, "src");
 
 			var autor = "unknown";
 			var status = "completed";
 			var langFlagUrl = "https://www.nordisch.info/wp-content/uploads/2019/05/union-jack.png";
 
 			var response = await requestHelper.DoGetRequest(mUrl, 3, true, timeout);
-			var spans = htmlHelper.ElementsByClass(response, "text-sm");
-			var next = 0;
-			for (int i = 0; i < spans.Count; i++) {
-				if (spans[i].StartsWith("Synopsis")) {
-					next = i + 1;
-					break;
-				}
-			}
-
-			var allP = spans[next];
-			var desc = FixDesc(string.Concat(allP));
+			var desc = FixDesc(htmlHelper.ElementById(response, "description-text"));
 
 			List<string> genres = new List<string>() { "Action", "Adventure", "Comedy", "School Life", "Shounen", "Supernatural", "Manhwa", "Webtoon" };
 
-			return new AsuraScansManga(title, mUrl, cover, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper, notification, timeout);
+			return new AsuraScansManga(title, mUrl, coverUrl, autor, status, langFlagUrl, desc, genres, Title, requestHelper, htmlHelper, notification, timeout);
 		}
 
 		private string FixDesc(string desc)

@@ -71,21 +71,28 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			List<IChapter> chapters = new List<IChapter>();
 
 			try {
-				var response = await _requestHelper.DoGetRequest(HomeUrl, 3, true, _timeout);
-				var allChaptersHtml = _htmlHelper.ElementsByClass(response, "scrollbar-thumb-themecolor");
+				var homeUrl = MigrateUrl(HomeUrl);
+				var response = await _requestHelper.DoGetRequest(homeUrl, 3, true, _timeout);
+				var allChaptersHtml = _htmlHelper.ElementsByClass(response, "divide-y");
+
+				if (allChaptersHtml.Count == 0) {
+					homeUrl = RemoveRandomValueFromUrl(homeUrl);
+					response = await _requestHelper.DoGetRequest(homeUrl, 3, true, _timeout);
+					allChaptersHtml = _htmlHelper.ElementsByClass(response, "divide-y");
+				}
 
 				var allAHtmlOuter = _htmlHelper.ElementsByTypeOuter(allChaptersHtml[0], "a") ?? new List<string?>();
 				var allAHtml = _htmlHelper.ElementsByType(allChaptersHtml[0], "a");
 
 				for (int i = allAHtmlOuter.Count - 1; i > 0; i--) {
-					var url = $"https://asuracomic.net/series/{_htmlHelper.GetAttribute(allAHtmlOuter[i] ?? string.Empty, "href")}";
-					var h3s = _htmlHelper.ElementsByType(allAHtml[i], "h3");
+					var url = $"https://asurascans.com{_htmlHelper.GetAttribute(allAHtmlOuter[i] ?? string.Empty, "href")}";
+					var spans = _htmlHelper.ElementsByType(allAHtml[i], "span");
 					var last = "-";
 
-					if (h3s.Count > 1) {
-						last = _htmlHelper.ElementsByType(allAHtml[i], "h3")[1];
-					} else if (h3s.Count == 1) {
-						last = _htmlHelper.ElementsByType(allAHtml[i], "h3")[0];
+					if (spans.Count > 1) {
+						last = spans[1];
+					} else if (spans.Count == 1) {
+						last = spans[0];
 					}
 
 					chapters.Add(new AsureScansChapter(null, Source, Name, $"Chapter {allAHtmlOuter.Count - i}", url, last, _timeout, _requestHelper, _htmlHelper, _notification));
@@ -95,6 +102,20 @@ namespace ComicReader.Interpreter.Implementations.AsuraScans
 			}
 
 			return chapters;
+		}
+
+		private string MigrateUrl(string url)
+		{
+			if (url.StartsWith("https://asuracomic.net/series/")) {
+				return url.Replace("https://asuracomic.net/series/", "https://asurascans.com/comics/");
+			} else {
+				return url;
+			}
+		}
+
+		private string RemoveRandomValueFromUrl(string url)
+		{
+			return url.Substring(0, url.LastIndexOf("-"));
 		}
 	}
 }
