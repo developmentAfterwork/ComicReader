@@ -1,5 +1,6 @@
 ﻿using Interpreter.Interface;
 using Plugin.LocalNotification;
+using Plugin.LocalNotification.Core.Models;
 
 namespace ComicReader.Services
 {

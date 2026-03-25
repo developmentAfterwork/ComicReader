@@ -19,14 +19,9 @@
 			<xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 		</ResourceDictionary>
 	</ContentPage.Resources>
-	<Grid ColumnDefinitions="*" RowDefinitions="*">
-		<ActivityIndicator
-			HeightRequest="75"
-			IsEnabled="{Binding IsBusy}"
-			IsRunning="{Binding IsBusy}"
-			IsVisible="{Binding IsBusy}"
-			Color="Orange" />
+	<Grid RowDefinitions="*">
 		<CollectionView
+			Grid.Row="0"
 			Margin="4"
 			IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
 			ItemsLayout="VerticalGrid, 2"
@@ -82,5 +77,12 @@
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
+		<ActivityIndicator
+			Grid.Row="0"
+			HeightRequest="75"
+			IsEnabled="{Binding IsBusy}"
+			IsRunning="{Binding IsBusy}"
+			IsVisible="{Binding IsBusy}"
+			Color="Orange" />
 	</Grid>
 </ContentPage>

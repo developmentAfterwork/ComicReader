@@ -74,7 +74,7 @@ namespace ComicReader.Interpreter
 			var chapters = new List<IChapter>();
 			for (int i = 0; i < allChapterHtmls.Count; i++) {
 				var chapter = allChapterHtmls[i];
-				var update = allChapterUpdateTimes[i];
+				var update = allChapterUpdateTimes[Math.Min(i, allChapterUpdateTimes.Count)];
 
 				chapters.Add(ParseChapter(chapters, chapter, update));
 			}

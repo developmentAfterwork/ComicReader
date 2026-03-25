@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using PhotoBrowsers;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification.Core.Models.AndroidOption;
 using PopupService = ComicReader.Services.PopupService;
 
 namespace ComicReader
@@ -41,7 +42,7 @@ namespace ComicReader
 				.ConfigurePhotoBrowser()
 				.UseLocalNotification(config => {
 					config.AddAndroid(android => {
-						android.AddChannel(new NotificationChannelRequest {
+						android.AddChannel(new AndroidNotificationChannelRequest {
 							Id = SimpleNotificationService.ChannelId,
 							Name = "Special",
 							Description = "Special",

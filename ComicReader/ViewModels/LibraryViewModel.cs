@@ -36,6 +36,7 @@ namespace ComicReader.ViewModels
 		public Task OnAppearing()
 		{
 			IsBusy = true;
+			BookmarkedMangas.Clear();
 
 			return Task.Run(async () => {
 				List<string> bookmarkedUniqueIds = new();
