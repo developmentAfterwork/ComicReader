@@ -11,7 +11,7 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="auto" />
-			<RowDefinition Height="auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -26,13 +26,17 @@
 			VerticalOptions="Center" />
 		<CollectionView
 			Grid.Row="1"
-			Margin="8,0,8,0"
+			Margin="8,4,8,4"
 			ItemsSource="{Binding TestResults}"
 			SelectionMode="None">
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="x:String">
 					<StackLayout>
-						<Label Text="{Binding .}" />
+						<Label
+							Margin="0,1,0,1"
+							LineBreakMode="MiddleTruncation"
+							MaxLines="1"
+							Text="{Binding .}" />
 					</StackLayout>
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
