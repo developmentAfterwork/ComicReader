@@ -1,22 +1,26 @@
 ﻿using ComicReader.Interpreter;
 using ComicReader.Reader;
+using ComicReader.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using static Android.Graphics.Drawables.ShapeDrawable;
 
 namespace ComicReader.ViewModels
 {
 	public partial class TestViewModel : ObservableObject
 	{
 		private readonly Factory factory;
+		private readonly SettingsService settingsService;
 
 		private Task? testTask;
 
 		[ObservableProperty]
 		private ObservableCollection<string> _testResults = new();
 
-		public TestViewModel(Factory factory)
+		public TestViewModel(Factory factory, SettingsService settingsService)
 		{
 			this.factory = factory;
+			this.settingsService = settingsService;
 		}
 
 		public void OnAppearing()
@@ -39,6 +43,12 @@ namespace ComicReader.ViewModels
 				} catch (Exception ex) {
 					TestResults.Add(ex.Message);
 				}
+			}
+
+			try {
+				await TestCurrentMangas();
+			} catch (Exception ex) {
+				TestResults.Add(ex.Message);
 			}
 
 			TestResults.Add("Tests completed");
@@ -114,6 +124,42 @@ namespace ComicReader.ViewModels
 			}
 
 			TestResults.Add("Search: completed");
+		}
+
+		private async Task TestCurrentMangas()
+		{
+			List<string> bookmarkedUniqueIds = settingsService.GetBookmarkedMangaUniqIdentifiers();
+
+			List<IManga> cachedMangas = new();
+			foreach (var bookmarkId in bookmarkedUniqueIds.Where(s => s.Contains("|"))) {
+				try {
+					IManga? manga = await factory.GetMangaFromBookmarkId(bookmarkId);
+					if (manga == null)
+						continue;
+
+					cachedMangas.Add(manga);
+				} catch (Exception ex) {
+					TestResults.Add($"Error loading manga: " + $"bookmark id is {bookmarkId}: {ex.Message}");
+				}
+			}
+
+			foreach (var manga in cachedMangas) {
+				try {
+					var save = manga as SaveableManga;
+					if (save == null)
+						continue;
+
+					var orgManga = factory.GetOriginManga(save);
+					var books = await orgManga.GetBooks();
+
+					var book = books.First();
+					var pages = book.GetPageUrls(false, factory);
+					TestResults.Add($"{manga.Name} completed");
+
+				} catch (Exception ex) {
+					TestResults.Add($"Error loading manga: " + $"bookmark id is {manga.Name}: {ex.Message}");
+				}
+			}
 		}
 	}
 }
