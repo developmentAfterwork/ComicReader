@@ -41,6 +41,9 @@ namespace ComicReader.Helper
 					if (string.IsNullOrEmpty(text))
 						throw new HttpRequestException("Response is empty");
 
+					if (text.Contains("Just a moment") || text.Contains("cf-browser-verification"))
+						throw new HttpRequestException("Cloudflare challenge detected");
+
 					return text;
 				} catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested) {
 					throw new TimeoutException($"Request to {url} timed out after {timeout.TotalSeconds:F1} seconds.");

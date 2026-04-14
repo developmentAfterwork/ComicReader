@@ -16,15 +16,11 @@ namespace ComicReader.Services
 		public async Task<string> DoGetRequest(string url, int retries, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
 		{
 			if (withFallback) {
-				string html = string.Empty;
-
 				try {
-					html = await _request.DoGetRequest(url, retries, false, timeout, header, cancellationToken);
-				} catch {
-					html = await _webViewRequest.GetHtmlAsync(url, timeout);
+					return await _request.DoGetRequest(url, retries, false, timeout, header, cancellationToken);
+				} catch (Exception ex) when (ex is not OperationCanceledException) {
+					return await _webViewRequest.GetHtmlAsync(url, timeout);
 				}
-
-				return html;
 			} else {
 				return await _request.DoGetRequest(url, retries, false, timeout, header, cancellationToken);
 			}
