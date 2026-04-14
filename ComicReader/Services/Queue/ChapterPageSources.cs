@@ -33,6 +33,8 @@ namespace ComicReader.Services.Queue
 				if (header is null && sc is not null) {
 					header = factory.GetOriginChapter(sc).RequestHeaders;
 				}
+
+				RequestHeaders = header;
 			}
 		}
 	}

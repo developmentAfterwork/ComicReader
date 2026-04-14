@@ -131,7 +131,9 @@ namespace ComicReader.ViewModels
 
 				if (automaticSwitchToNextChapter) {
 					await Task.Delay(50);
-					Pages.Add(pages.Last());
+					if (pages.Any()) {
+						Pages.Add(pages.Last());
+					}
 					Position = $"1/{Pages.Count}";
 				}
 
@@ -167,7 +169,7 @@ namespace ComicReader.ViewModels
 				return;
 			}
 
-			CurrentPage = Pages[Math.Clamp(position, 0, Pages.Count)];
+			CurrentPage = Pages[Math.Clamp(position, 0, Pages.Count - 1)];
 
 			int currentPosition = position + 1;
 
@@ -197,13 +199,13 @@ namespace ComicReader.ViewModels
 			var chapters = await manga.GetBooks();
 			var currentIndex = chapters.IndexOf(Chapter);
 
-			if (currentIndex >= 0 && currentIndex + 1 <= chapters.Count) {
+			if (currentIndex >= 0 && currentIndex + 1 < chapters.Count) {
 				if (settingsService.GetDeleteChaptersAfterReading()) {
 					await fileSaverService.DeleteImagesFromChapter(chapters[currentIndex], factory);
 				}
 
 				Pages.Clear();
-				await InitChapter(chapters[Math.Clamp(currentIndex + 1, 0, chapters.Count)]);
+				await InitChapter(chapters[Math.Clamp(currentIndex + 1, 0, chapters.Count - 1)]);
 			}
 		}
 
@@ -218,14 +220,14 @@ namespace ComicReader.ViewModels
 
 		internal void RestorePosition(int saved, int targetPageAmount)
 		{
-			if (Pages.Count > 0) {
-				if (saved > 0) {
-					_ = Task.Run(async () => {
-						await Task.Delay(500);
+			if (Pages.Count > 0 && saved > 0) {
+				_ = Task.Run(async () => {
+					await Task.Delay(500);
+					if (saved - 1 < Pages.Count) {
 						SelectedItem = Pages[saved - 1];
 						PageIndexChanged?.Invoke(this, (saved - 1, targetPageAmount));
-					});
-				}
+					}
+				});
 			}
 		}
 	}

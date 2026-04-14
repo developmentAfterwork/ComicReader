@@ -169,8 +169,7 @@ namespace ComicReader.Services.Queue
 		{
 			Start?.Invoke(this, EventArgs.Empty);
 
-			var t = new Thread(async () => { await DownloadAllChapters(timeout); });
-			t.Start();
+			_ = Task.Run(() => DownloadAllChapters(timeout));
 		}
 
 		public Task Download(TimeSpan timeout)
