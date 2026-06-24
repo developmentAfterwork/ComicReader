@@ -72,7 +72,8 @@ namespace ComicReader.Reader
 			var homeUrlADiv = HtmlHelper.ElementByType(homeUrlDiv, "a");
 
 			var homeUrl = HtmlHelper.GetAttribute(homeUrlDiv, "href");
-			var preViewImage = HtmlHelper.GetAttribute(homeUrlADiv, "src");
+			var imgHtml = HtmlHelper.ElementsByTypeOuter(homeUrlADiv, "img").First();
+			var preViewImage = HtmlHelper.GetAttribute(imgHtml, "src");
 
 			var title = HtmlHelper.ElementByType(HtmlHelper.ElementByType(mangaToParse, "h3"), "a");
 
@@ -110,18 +111,24 @@ namespace ComicReader.Reader
 			List<IManga> l = new List<IManga>();
 
 			string url = "https://mangakatana.com/new-manga";
-			var response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
 
+			// TODO: is broken
 			try {
-				l.AddRange(GetMangasFromResponse(response));
-			} catch (Exception ex) {
-				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
-			}
+				var response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
 
-			url = "https://mangakatana.com/latest";
-			response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
-			try {
-				l.AddRange(GetMangasFromResponse(response));
+				try {
+					l.AddRange(GetMangasFromResponse(response));
+				} catch (Exception ex) {
+					await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
+				}
+
+				url = "https://mangakatana.com/latest";
+				response = await RequestHelper.DoGetRequest(url, 3, true, timeout, RequestHeaders);
+				try {
+					l.AddRange(GetMangasFromResponse(response));
+				} catch (Exception ex) {
+					await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
+				}
 			} catch (Exception ex) {
 				await Notification.ShowError($"Error", $"{Title} - {ex.Message}");
 			}

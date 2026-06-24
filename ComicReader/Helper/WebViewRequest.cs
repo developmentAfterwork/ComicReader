@@ -1,4 +1,5 @@
 ﻿
+using ComicReader.Helper;
 using System.Threading.Tasks;
 
 public class WebViewRequest
@@ -25,8 +26,11 @@ public class WebViewRequest
 			WidthRequest = 400,
 			HeightRequest = 400,
 			IsVisible = true,
-			BackgroundColor = Colors.Red
+			BackgroundColor = Colors.Red,
+			//UserAgent = RequestHelper.UserAgent
 		};
+		_webView.Navigating -= OnNavigating;
+		_webView.Navigating += OnNavigating;
 
 		_done = new Button {
 			Text = "Done",
@@ -147,6 +151,16 @@ public class WebViewRequest
 			try {
 				_semaphore.Release();
 			} catch { }
+		}
+	}
+
+	private void OnNavigating(object? sender, WebNavigatingEventArgs e)
+	{
+		var url = e.Url ?? "";
+		if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+			!url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
+			!url.StartsWith("about:", StringComparison.OrdinalIgnoreCase)) {
+			e.Cancel = true;
 		}
 	}
 

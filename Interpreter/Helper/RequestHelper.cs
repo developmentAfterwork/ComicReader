@@ -6,14 +6,20 @@ namespace ComicReader.Helper
 {
 	public class RequestHelper : IRequest
 	{
+		public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36";
 		private readonly FileSaverService fileSaverService = new FileSaverService();
 
-		private HttpClient _httpClient = new HttpClient();
+		private HttpClient _httpClient;
 
 		public RequestHelper(TimeSpan timeout)
 		{
+#if ANDROID
+			_httpClient = new HttpClient(new Xamarin.Android.Net.AndroidMessageHandler());
+#else
+			_httpClient = new HttpClient();
+#endif
 			_httpClient.Timeout = timeout;
-			_httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36");
+			//_httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
 		}
 
 		public async Task<string> DoGetRequest(string url, int repeatCount, bool withFallback, TimeSpan timeout, Dictionary<string, string>? header = null, CancellationToken? cancellationToken = null)
@@ -35,7 +41,10 @@ namespace ComicReader.Helper
 					}
 
 					using var response = await _httpClient.SendAsync(request, linkedCts.Token);
-					response.EnsureSuccessStatusCode();
+					if (!response.IsSuccessStatusCode) {
+						var body = await response.Content.ReadAsStringAsync(cancellationToken ?? CancellationToken.None);
+						throw new HttpRequestException($"HTTP {(int)response.StatusCode} {response.StatusCode} — {body}", null, response.StatusCode);
+					}
 
 					var text = await response.Content.ReadAsStringAsync(cancellationToken ?? CancellationToken.None);
 					if (string.IsNullOrEmpty(text))
@@ -47,6 +56,8 @@ namespace ComicReader.Helper
 					return text;
 				} catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested) {
 					throw new TimeoutException($"Request to {url} timed out after {timeout.TotalSeconds:F1} seconds.");
+				} catch (HttpRequestException ex) when (ex.StatusCode.HasValue && (int)ex.StatusCode.Value < 500) {
+					throw; // 4xx nicht wiederholen – der Server lehnt die Anfrage grundsätzlich ab
 				} catch (Exception) {
 					await Task.Delay(500, linkedCts.Token);
 				}

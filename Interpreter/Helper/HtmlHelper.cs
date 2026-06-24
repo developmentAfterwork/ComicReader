@@ -50,7 +50,9 @@ namespace ComicReader.Helper
 		{
 			CQ dom = CQ.CreateDocument(elementHtml);
 
-			var att = dom["body"].FirstElement().FirstChild.Attributes.Where(e => e.Key == attributeName).First();
+			var e = dom["body"].FirstElement();
+			var a = e.FirstChild.Attributes;
+			var att = a.Where(e => e.Key == attributeName).First();
 
 			return att.Value;
 		}
